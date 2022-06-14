@@ -6,6 +6,9 @@
 #define LETCOMPILEFLY_QUATERNARY_H
 
 #include <string>
+#include <vector>
+#include "Token.h"
+using  namespace  std;
 
 enum QTOparation{
     ADD,SUB,MUL,DIV,    //算术表达式
@@ -22,24 +25,20 @@ enum QTOparation{
 struct QtNode//四元式节点
 {
     QTOparation oparation;
-    int operationac;
-    string firstargument;
-    int firstac;
-    string secondargument;
-    int secondac;
-    string result;
-    int resultac;
+    Token firstargument;
+    Token secondargument;
+    toekn result;
 };
 vector<QtNode>QtList;
 
-class Quaternary {
-public:
-    QTOparation oparation;
-    std::string argument1,argument2;
-    std::string result;
-    Quaternary()=default;
-    Quaternary(QTOparation op,std::string arg1,std::string arg2,std::string res);
-};
+//class Quaternary {
+//public:
+//    QTOparation oparation;
+//    std::string argument1,argument2;
+//    std::string result;
+//    Quaternary()=default;
+//    Quaternary(QTOparation op,std::string arg1,std::string arg2,std::string res);
+//};
 
 
 #endif //LETCOMPILEFLY_QUATERNARY_H
