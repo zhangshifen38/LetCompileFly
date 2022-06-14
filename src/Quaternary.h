@@ -31,14 +31,14 @@ struct QtNode//四元式节点
 };
 vector<QtNode>QtList;
 
-class Quaternary {
-public:
-    QTOparation oparation;
-    std::string argument1,argument2;
-    std::string result;
-    Quaternary()=default;
-    Quaternary(QTOparation op,std::string arg1,std::string arg2,std::string res);
-};
+//class Quaternary {
+//public:
+//    QTOparation oparation;
+//    std::string argument1,argument2;
+//    std::string result;
+//    Quaternary()=default;
+//    Quaternary(QTOparation op,std::string arg1,std::string arg2,std::string res);
+//};
 
 
 #endif //LETCOMPILEFLY_QUATERNARY_H
