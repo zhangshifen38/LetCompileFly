@@ -29,7 +29,7 @@ struct QtNode//四元式节点
     Token secondargument;
     toekn result;
 };
-vector<QtNode>QtList;
+
 
 //class Quaternary {
 //public:
