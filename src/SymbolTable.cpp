@@ -29,3 +29,43 @@ SymbolTable::SymbolTable() {
     TYPEL.emplace_back(TypeTable(R,NIL));
     TYPEL.emplace_back(TypeTable(B,NIL));
 }
+
+
+
+//静态符号表初始化
+const map<string, size_t> SymbolTable::KEYWORDL {
+        {"int",		1},
+        {"void",	    2},
+        {"break",	3},
+        {"float",	4},
+        {"while",	5},
+        {"do",		6},
+        {"struct",	7},
+        {"const",	8},
+        {"case",	    9},
+        {"for",		10},
+        {"return",	11},
+        {"if",		12},
+        {"default",	13},
+        {"else",	    14},
+        {"var",      15}
+};
+const map<string, size_t> SymbolTable::DELIMITERL {
+        {"-",		1},
+        {"/",		2},
+        {"(",		3},
+        {")",		4},
+        {"==",		5},
+        {"<=",		6},
+        {"<",		7},
+        {"+",		8},
+        {"*",		9},
+        {">",		10},
+        {"=",		11},
+        {",",		12},
+        {";",		13},
+        {"++",		14},
+        {"{",		15},
+        {"}",		16},
+        {":",        17}
+};

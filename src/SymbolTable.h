@@ -82,6 +82,8 @@ private:
     vector<ConstTable> CONSL;
     vector<LengthTable> LENL;
     vector<FunctionInfoTable> PFINFL;
+    static const map<string ,size_t > KEYWORDL;
+    static const map<string ,size_t > DELIMITERL;
 };
 
 const int SymbolTable::NIL=-1;
