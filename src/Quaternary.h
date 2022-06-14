@@ -9,11 +9,28 @@
 
 enum QTOparation{
     ADD,SUB,MUL,DIV,    //算术表达式
+    AND,OR,XOR,NEG,     //逻辑运算表达式
     IF,EL,IE,           //条件表达式
     WH,DO,WE,           //循环表达式
-    ASG                 //赋值表达式(assignment)
+    ASG,                 //赋值表达式(assignment)
+    FUNC,CALL,           //函数与函数调用表达式
+    RET,END,            //函数返回与结束标志(可合为一)
+
     //有需要的话这里还可以继续添加
 };
+
+struct QtNode//四元式节点
+{
+    QTOparation oparation;
+    int operationac;
+    string firstargument;
+    int firstac;
+    string secondargument;
+    int secondac;
+    string result;
+    int resultac;
+};
+vector<QtNode>QtList;
 
 class Quaternary {
 public:
