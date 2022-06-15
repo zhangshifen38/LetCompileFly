@@ -27,10 +27,13 @@ void Identifier::addSentence() {
 void Identifier::nextW() {
     string ret = "";
     at.reset();
+    if(!hasNext()){
+        this->currentWord=make_pair(ret, 0);
+        return;             //没有要识别的单词了，返回结束标记0
+    }
     if (!todo) {
         if (buffer.empty()) {
-            this->currentWord=make_pair(ret, 0);
-            return;             //没有要识别的单词了，返回错误
+            addSentence();
         }
         tmp = buffer.front();
         buffer.pop();
@@ -51,7 +54,7 @@ void Identifier::nextW() {
     return;   //将取得的单词与状态码送回
 }
 bool Identifier::hasNext() {
-    if (!todo && buffer.empty()) {
+    if (!todo && buffer.empty()&&sourceCode.eof()) {
         return false;
     } else {
         return true;

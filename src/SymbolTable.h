@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include <iostream>
 
 using std::string,std::map,std::vector,std::pair;
 
@@ -76,6 +77,13 @@ public:
     size_t isDelimiterl(LexicalToken token);        //判断token是否是标识符
     Type getType(LexicalToken token);               //获取关键字对应的类型代号，不是类型返回NAT
     bool addVariable(string name,Type type);        //添加定义的变量，返回是否添加成功（不成功原因：同层次重名）
+
+    void printMain(){
+        for(auto& i:SYNBL){
+            std::cout<<i.name<<' '<<i.type<<' '<<(i.category==V?"Var":"Others")<<' '<<i.address<<std::endl;
+        }
+    }
+
 private:
     vector<MainTable> SYNBL;
     vector<TypeTable> TYPEL;

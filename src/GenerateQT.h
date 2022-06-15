@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include "ENTITY.h"
+#include "SyntacticTranslate/VariableDeclare.h"
 
 using namespace std;
 

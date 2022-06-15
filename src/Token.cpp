@@ -5,7 +5,7 @@
 #include "Token.h"
 
 
-Token::Token(string fname, int ftype, bool factiveInfo)
+Token::Token(std::string fname, int ftype, bool factiveInfo)
     :name(fname),type(ftype),activeInfo(factiveInfo){}
 
 
