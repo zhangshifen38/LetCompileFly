@@ -28,6 +28,7 @@ struct QtNode//四元式节点
     Token firstargument;
     Token secondargument;
     Token result;
+    void clear(){oparation=EMPTY;firstargument.clear();secondargument.clear();result.clear();};
 };
 //vector<QtNode>QtList;
 
