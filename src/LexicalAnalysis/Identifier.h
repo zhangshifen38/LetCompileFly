@@ -9,22 +9,27 @@
 #include <queue>
 #include <string>
 #include <utility>
+#include <fstream>
 
-using std::queue,std::string,std::pair;
+using std::queue,std::string,std::pair,std::ifstream,std::ofstream;
 
 class Identifier {
 public:
     Identifier();						//构造函数
     void reset();						//重置状态
-    void addSentense(string st);		//添加待识别的字符串
-    pair<string, int> getWord();		//利用自动机获取一个单词
+    void addSentence();		            //添加待识别的字符串
+    void openSourceFile(string st);     //打开源文件
+    void nextW();		                //利用自动机获取一个单词
     bool hasNext();						//判断字符串是否有待识别的部分
+    pair<string ,int> getCurrentWord(); //获取当前待识别的符号
 private:
     AutomatonLA at;						//识别器自动机
     queue<string> buffer;				//待识别的字符串暂存队列
     string tmp;							//当前识别的字符串
     size_t index;						//识别到的下标
     bool todo;							//识别器是否还有任务的判断变量
+    ifstream sourceCode;                //源文件流
+    pair<string ,int> currentWord;      //当前的符号
 };
 
 

@@ -18,16 +18,19 @@ void Identifier::reset() {
         buffer.pop();
     }
 }
-void Identifier::addSentense(string st) {
+void Identifier::addSentence() {
+    string st;
+    std::getline(sourceCode,st);
     st += '\0';         //手动添加一个代表终结的符号。
     buffer.push(std::move(st));
 }
-pair<string, int> Identifier::getWord() {
+void Identifier::nextW() {
     string ret = "";
     at.reset();
     if (!todo) {
         if (buffer.empty()) {
-            return make_pair(ret, 0);       //没有要识别的单词了，返回错误
+            this->currentWord=make_pair(ret, 0);
+            return;             //没有要识别的单词了，返回错误
         }
         tmp = buffer.front();
         buffer.pop();
@@ -44,7 +47,8 @@ pair<string, int> Identifier::getWord() {
     if (tmp[index] == '\0') {
         todo = false;
     }
-    return make_pair(ret, at.getState());   //将取得的单词与状态码送回
+    this->currentWord=make_pair(ret, at.getState());
+    return;   //将取得的单词与状态码送回
 }
 bool Identifier::hasNext() {
     if (!todo && buffer.empty()) {
@@ -52,4 +56,12 @@ bool Identifier::hasNext() {
     } else {
         return true;
     }
+}
+
+void Identifier::openSourceFile(string st) {
+    this->sourceCode.open(st,std::ios::in);
+}
+
+pair<string, int> Identifier::getCurrentWord() {
+    return this->currentWord;
 }

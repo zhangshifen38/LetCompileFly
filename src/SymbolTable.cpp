@@ -30,25 +30,83 @@ SymbolTable::SymbolTable() {
     TYPEL.emplace_back(TypeTable(B,NIL));
 }
 
+size_t SymbolTable::isKeyWord(SymbolTable::LexicalToken token) {
+    if(token.second!=-1){           //将-1定义为关键字或者标识符
+        return 0;                   //关键词表的0没有项目，则0代表找不到
+    }
+    if(this->KEYWORDL.find(token.first)!=this->KEYWORDL.end()){
+        return this->KEYWORDL.at(token.first);      //若找到，返回标识符编号
+    }
+    return 0;                       //否则不是关键字
+}
+size_t SymbolTable::isDelimiterl(SymbolTable::LexicalToken token) {
+    if(token.second!=-4){       //-4定义为界符
+        return 0;               //同样，0没有项目
+    }
+    if(this->DELIMITERL.find(token.first)!=this->DELIMITERL.end()){
+        return this->DELIMITERL.at(token.first);
+    }
+    return 0;
+}
+Type SymbolTable::getType(SymbolTable::LexicalToken token) {
+    size_t num= isKeyWord(token);
+    if(num==0){
+        return NAT;
+    }
+    switch (num) {
+        case 1:
+            return I;
+        case 4:
+            return R;
+        case 16:
+            return CH;
+        case 17:
+            return B;
+    }
+    return NAT;
+}
+bool SymbolTable::addVariable(string name, Type type) {
+    for(auto& i:SYNBL){
+        if(i.name==name){
+            return false;
+        }
+    }
+    int typeID=-1;
+    switch (type) {
+        case B:
+            ++typeID;
+        case R:
+            ++typeID;
+        case CH:
+            ++typeID;
+        case I:
+            ++typeID;
+    }
+    SYNBL.emplace_back(MainTable(name,typeID,V,NIL));   //还没构造活动记录，地址暂时填NIL
+    return true;
+}
+
 
 
 //静态符号表初始化
 const map<string, size_t> SymbolTable::KEYWORDL {
         {"int",		1},
-        {"void",	    2},
+        {"void",	2},
         {"break",	3},
         {"float",	4},
         {"while",	5},
         {"do",		6},
         {"struct",	7},
         {"const",	8},
-        {"case",	    9},
+        {"case",	9},
         {"for",		10},
         {"return",	11},
         {"if",		12},
         {"default",	13},
-        {"else",	    14},
-        {"var",      15}
+        {"else",	14},
+        {"var",     15},
+        {"char",    16},
+        {"bool",    17}
 };
 const map<string, size_t> SymbolTable::DELIMITERL {
         {"-",		1},
@@ -69,3 +127,10 @@ const map<string, size_t> SymbolTable::DELIMITERL {
         {"}",		16},
         {":",        17}
 };
+
+
+
+
+
+
+

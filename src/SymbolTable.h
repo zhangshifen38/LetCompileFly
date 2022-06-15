@@ -8,16 +8,17 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <utility>
 
-using std::string,std::map,std::vector;
+using std::string,std::map,std::vector,std::pair;
 
 enum Category{
     F,C,T,D,V,VN,VF
     //函数、常量、类型、域名、变量、换名形参、赋值形参
 };
 enum Type{
-    I,R,CH,B,A,ST
-    //int real char bool array struct
+    NAT,I,R,CH,B,A,ST
+    //not a type,int,real,char,bool,array,struct
 };
 
 struct MainTable{           //符号表主表构造
@@ -62,18 +63,19 @@ struct FunctionInfoTable{   //函数表构造
     int entry;              //入口首地址
     int param;              //形参表
     FunctionInfoTable()=default;
-
     FunctionInfoTable(size_t offset, size_t paramNumber, int entry, int param);
-
 };
-
 
 
 class SymbolTable {
 public:
+    using LexicalToken = std::pair<std::string, int>;
     static const int NIL;
     SymbolTable();
-
+    size_t isKeyWord(LexicalToken token);           //判断词法分析token是否为关键字
+    size_t isDelimiterl(LexicalToken token);        //判断token是否是标识符
+    Type getType(LexicalToken token);               //获取关键字对应的类型代号，不是类型返回NAT
+    bool addVariable(string name,Type type);        //添加定义的变量，返回是否添加成功（不成功原因：同层次重名）
 private:
     vector<MainTable> SYNBL;
     vector<TypeTable> TYPEL;
