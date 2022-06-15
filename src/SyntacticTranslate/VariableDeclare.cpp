@@ -16,6 +16,7 @@ bool VariableDeclare::analysis() {
             }else{
                 return false;
             }
+            identifier.nextW();
         }
     }else{
         return false;
@@ -34,6 +35,7 @@ bool VariableDeclare::analysis() {
     if(symbolTable.isDelimiterl(identifier.getCurrentWord())!=13){          //分号编号13
         return false;
     }
+    identifier.nextW();
     return generateIdentifier();
 }
 
