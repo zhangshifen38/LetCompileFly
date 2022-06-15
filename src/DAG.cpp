@@ -100,7 +100,21 @@ void DAG::SwapMark(DAGnode &node) {
 }
 
 string DAG::Calculate(string C1, string C2, QTOparation op) {
-    double tmpC=stod(C1,0)+stod(C2,0);//将string字符串转换为double型后计算
+    double tmpC;
+    switch (op) {
+        case ADD:
+            tmpC=stod(C1,0)+stod(C2,0);//将string字符串转换为double型后相加计算
+            break;
+        case SUB:
+            tmpC=stod(C1,0)-stod(C2,0);//将string字符串转换为double型后相减计算
+            break;
+        case MUL:
+            tmpC=stod(C1,0)*stod(C2,0);//将string字符串转换为double型后相乘计算
+            break;
+        case DIV:
+            tmpC=stod(C1,0)/stod(C2,0);//将string字符串转换为double型后相除计算
+            break;
+    }
     string tmpS;
     stringstream ss;
     ss<<tmpC;
@@ -182,6 +196,7 @@ void DAG::CreateDAG(vector<QtNode> Block) {
             }
                 break;
             case 1://双目赋值四元式
+            case 2://单目赋值四元式
             {
                 if(tmp.firstargument.type==1&&tmp.secondargument.type==1)//A=C1 op C2
                 {
@@ -245,5 +260,98 @@ void DAG::CreateDAG(vector<QtNode> Block) {
             }
                 break;
         }
+    }
+    vector<DAGnode>::iterator it;
+    for(it=NodeList.begin();it!=NodeList.end();it++){
+        SwapMark(*it);//遍历交换节点主副标记
+    }
+}
+
+void DAG::CreateQT(vector<QtNode> &QTlist) {
+    QTlist.clear();
+    vector<DAGnode>::iterator  it;
+    QtNode tmp;
+    for(it=NodeList.begin();it!=NodeList.end();it++){
+        if(it->op==EMPTY)//叶节点
+        {
+            for(int i=1;i<66;i++)//遍历所有标记，如果是非临时变量则生成Ai=B
+            {
+                if(it->mark[i].type==2){
+                    tmp.clear();
+                    tmp.oparation=ASG;
+                    tmp.firstargument=it->mark[0];
+                    tmp.result=it->mark[i];
+                    QTlist.push_back(tmp);
+                }
+            }
+        }
+        else {//非叶节点
+            if(NodeList[it->right].mark[0].name=="")//A=op B
+            {
+                tmp.oparation=it->op;
+                tmp.firstargument=NodeList[it->left].mark[0];//以主标记参加运算
+                tmp.result=it->mark[0];
+                QTlist.push_back(tmp);
+                tmp.clear();
+                for(int i=1;i<66;i++)//遍历所有副标记，如果Ai是非临时变量则生成Ai=A
+                {
+                    if(it->mark[i].type==2)
+                    {
+                        tmp.oparation=ASG;
+                        tmp.firstargument=it->mark[0];
+                        tmp.result=it->mark[i];
+                        QTlist.push_back(tmp);
+                        tmp.clear();
+                    }
+                }
+            }
+            else //A=B op C
+            {
+                tmp.oparation=it->op;
+                tmp.firstargument=NodeList[it->left].mark[0];//以主标记参加运算
+                tmp.secondargument=NodeList[it->right].mark[0];
+                tmp.result=it->mark[0];
+                QTlist.push_back(tmp);
+                tmp.clear();
+                for(int i=1;i<66;i++)//遍历所有副标记，如果Ai是非临时变量则生成Ai=A
+                {
+                    if(it->mark[i].type==2)
+                    {
+                        tmp.oparation=ASG;
+                        tmp.firstargument=it->mark[0];
+                        tmp.result=it->mark[i];
+                        QTlist.push_back(tmp);
+                        tmp.clear();
+                    }
+                }
+            }
+        }
+    }
+}
+
+void DAG::PrintQT(vector<QtNode> QTlist) {
+    ofstream file;
+    file.open("../QTdata/QT1.txt");
+    vector<QtNode>::iterator  it;
+    for(it=QTlist.begin();it!=QTlist.end();it++){
+        if(it->oparation==ASG)
+            file<<"=";
+        if(it->oparation==ADD)
+            file<<"+";
+        if(it->oparation==SUB)
+            file<<"-";
+        if(it->oparation==MUL)
+            file<<"*";
+        if(it->oparation==DIV)
+            file<<"/";
+        file<<"\t";
+        file<<it->firstargument.name;
+        file<<"\t";
+        if(it->secondargument.name=="")
+            file<<"_";
+        else file<<it->secondargument.name;
+        file<<"\t";
+        file<<it->result.name;
+        file<<endl;
     }
 }

@@ -19,6 +19,7 @@ public:
     Token()=default;
     Token(string fname, int ftype, bool factiveInfo);
     void clear();//token串初始化函数
+    void Set(string fname, int ftype, bool factiveInfo);
 };
 
 

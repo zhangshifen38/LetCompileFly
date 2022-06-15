@@ -9,6 +9,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <fstream>
 
 
 
@@ -22,17 +23,20 @@ struct DAGnode{
 
 class DAG {
 public:
-    int CreateNode();
-    int SearchInOneNode(string Mark, int NodeNum);
-    int SearchNodeByName(string name);
-    int SearchTwo(QTOparation op, string B, string C);
-    int SearchOne(QTOparation op, string B);
-    int JudgeQT(QTOparation op);
-    void Attach(int NodeNum, Token mark);
-    void SwapMark(DAGnode &node);
-    string Calculate(string C1, string C2, QTOparation op);
-    void DeleteMark(int NodeNum, string mark);
-    void CreateDAG(vector<QtNode> Block);
+    DAG()=default;
+    int CreateNode();//创建一个新节点
+    int SearchInOneNode(string Mark, int NodeNum);//在一个特定节点中查找指定标记
+    int SearchNodeByName(string name);//在DAG中查找指定标记
+    int SearchTwo(QTOparation op, string B, string C);//查找公共表达式B op C
+    int SearchOne(QTOparation op, string B);//查找公共表达式op B
+    int JudgeQT(QTOparation op);//判断四元式类型
+    void Attach(int NodeNum, Token mark);//将标记附加到指定节点上
+    void SwapMark(DAGnode &node);//交换主副标记，保持主标记优先级方面常数>非临时变量>临时变量
+    string Calculate(string C1, string C2, QTOparation op);//计算常量值
+    void DeleteMark(int NodeNum, string mark);//删除指定节点以外的所有mark标记
+    void CreateDAG(vector<QtNode> Block);//根据基本块内的四元式创建DAG图
+    void CreateQT(vector<QtNode> &QTlist);//根据DAG图生成优化后的四元式
+    void PrintQT(vector<QtNode> QTlist);//打印优化后的四元式
 private:
     vector<DAGnode> NodeList;
 };

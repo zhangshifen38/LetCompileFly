@@ -10,3 +10,9 @@ Token::Token(std::string fname, int ftype, bool factiveInfo)
 
 
 void Token::clear() { name="";type=0;activeInfo= false;}
+
+void Token::Set(string fname, int ftype, bool factiveInfo) {
+    name=fname;
+    type=ftype;
+    activeInfo=factiveInfo;
+}
