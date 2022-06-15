@@ -6,12 +6,12 @@
 
 bool VariableDeclare::analysis() {
     identifier.nextW();
-    if(!symbolTable.isKeyWord(identifier.getCurrentWord())){
+    if(identifier.getCurrentWord().second==-1&&!symbolTable.isKeyWord(identifier.getCurrentWord())){
         this->varID.push(identifier.getCurrentWord().first);
         identifier.nextW();
         while(symbolTable.isDelimiterl(identifier.getCurrentWord())==12){   //逗号在界符表里编号12
             identifier.nextW();
-            if(!symbolTable.isKeyWord(identifier.getCurrentWord())){
+            if(identifier.getCurrentWord().second==-1&&!symbolTable.isKeyWord(identifier.getCurrentWord())){
                 this->varID.push(identifier.getCurrentWord().first);
             }else{
                 return false;
