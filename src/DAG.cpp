@@ -69,11 +69,11 @@ int DAG::SearchOne(QTOparation op, string B) {
 int DAG::JudgeQT(QTOparation op) {
     if(op==ASG)//A=B
         return 0;
-    else if(op==ADD||op==SUB||op==MUL||op==DIV||op==AND||op==OR||op==XOR)//A=B op C
+    else if(op==ADD||op==SUB||op==MUL||op==DIV||op==AND||op==OR||op==XOR||op==BIG||op==LESS||op==BIGE||op==LESSE)//A=B op C
         return 1;
     else if(op==NEG)//A=opB
         return 2;
-    else return 3;//其他特殊四元式
+    else return 3;//其他特殊四元式(转向四元式)
 }
 
 void DAG::Attach(int NodeNum, Token mark) {
@@ -140,6 +140,8 @@ void DAG::DeleteMark(int NodeNum, string mark) {
 }
 
 void DAG::CreateDAG(vector<QtNode> Block) {
+    FindGoto(Block);//该基本块内转向语句的位置
+    int SpecialQTCount=0;
     NodeList.clear();//DAG置空
     vector<QtNode>::iterator  itQT;
     QtNode tmp;
@@ -259,6 +261,26 @@ void DAG::CreateDAG(vector<QtNode> Block) {
                 }
             }
                 break;
+            case 3://其他特殊四元式（转向四元式）
+            {
+                if(Goto==0)//特殊四元式在结尾
+                {
+                    SpecialQTend=tmp;//保存特殊四元式
+                }
+                else if(Goto==1)//特殊四元式既在开头也在结尾
+                {
+                    if(SpecialQTCount==0)
+                    {
+                        SpecialQTbegin=tmp;
+                        SpecialQTCount++;
+                    }
+                    else if(SpecialQTCount==1)
+                    {
+                        SpecialQTend=tmp;
+                    }
+                }
+            }
+                break;
         }
     }
     vector<DAGnode>::iterator it;
@@ -271,6 +293,10 @@ void DAG::CreateQT(vector<QtNode> &QTlist) {
     QTlist.clear();
     vector<DAGnode>::iterator  it;
     QtNode tmp;
+    if(Goto==1)//特殊四元式既在开头也在结尾
+    {
+        QTlist.push_back(SpecialQTbegin);
+    }
     for(it=NodeList.begin();it!=NodeList.end();it++){
         if(it->op==EMPTY)//叶节点
         {
@@ -327,31 +353,72 @@ void DAG::CreateQT(vector<QtNode> &QTlist) {
             }
         }
     }
+    if(Goto==0||Goto==1)//特殊四元式在末尾或者既在开头又在末尾
+    {
+        QTlist.push_back(SpecialQTend);
+        for(vector<QtNode>::iterator it=QTlist.begin();it!=QTlist.end();it++)
+        {
+            it->block=SpecialQTend.block;//给所有四元式赋基本块编号
+        }
+    }
 }
 
-void DAG::PrintQT(vector<QtNode> QTlist) {
-    ofstream file;
-    file.open("../QTdata/QT1.txt");
-    vector<QtNode>::iterator  it;
-    for(it=QTlist.begin();it!=QTlist.end();it++){
-        if(it->oparation==ASG)
-            file<<"=";
-        if(it->oparation==ADD)
-            file<<"+";
-        if(it->oparation==SUB)
-            file<<"-";
-        if(it->oparation==MUL)
-            file<<"*";
-        if(it->oparation==DIV)
-            file<<"/";
-        file<<"\t";
-        file<<it->firstargument.name;
-        file<<"\t";
-        if(it->secondargument.name=="")
-            file<<"_";
-        else file<<it->secondargument.name;
-        file<<"\t";
-        file<<it->result.name;
-        file<<endl;
+//void DAG::PrintQT(vector<QtNode> QTlist,ofstream &file) {
+//
+//    vector<QtNode>::iterator  it;
+//    for(it=QTlist.begin();it!=QTlist.end();it++){
+//        if(it->oparation==ASG)
+//            file<<"=";
+//        if(it->oparation==ADD)
+//            file<<"+";
+//        if(it->oparation==SUB)
+//            file<<"-";
+//        if(it->oparation==MUL)
+//            file<<"*";
+//        if(it->oparation==DIV)
+//            file<<"/";
+//        if(it->oparation==IF)
+//            file<<"if";
+//        if(it->oparation==EL)
+//            file<<"el";
+//        if(it->oparation==IE)
+//            file<<"ie";
+//        if(it->oparation==BIG)
+//            file<<">";
+//        if(it->oparation==LESS)
+//            file<<"<";
+//        if(it->oparation==BIGE)
+//            file<<">=";
+//        if(it->oparation==LESSE)
+//            file<<"<=";
+//        if(it->oparation==EQU)
+//            file<<"==";
+//        file<<"\t";
+//        if(it->firstargument.name=="")
+//            file<<"_";
+//        else file<<it->firstargument.name;
+//        file<<"\t";
+//        if(it->secondargument.name=="")
+//            file<<"_";
+//        else file<<it->secondargument.name;
+//        file<<"\t";
+//        if(it->result.name=="")
+//            file<<"_";
+//        else file<<it->result.name;
+//        file<<endl;
+//    }
+//}
+
+void DAG::FindGoto(vector<QtNode> QTlist) {
+    if(QTlist[QTlist.size()-1].oparation==IF||QTlist[QTlist.size()-1].oparation==EL||QTlist[QTlist.size()-1].oparation==IE)
+    {
+        Goto=0;
     }
+}
+
+void DAG::clear() {
+    NodeList.clear();
+    Goto=-1;
+    SpecialQTbegin.clear();
+    SpecialQTend.clear();
 }

@@ -36,9 +36,14 @@ public:
     void DeleteMark(int NodeNum, string mark);//删除指定节点以外的所有mark标记
     void CreateDAG(vector<QtNode> Block);//根据基本块内的四元式创建DAG图
     void CreateQT(vector<QtNode> &QTlist);//根据DAG图生成优化后的四元式
-    void PrintQT(vector<QtNode> QTlist);//打印优化后的四元式
+//    void PrintQT(vector<QtNode> QTlist,ofstream &file);//打印优化后的四元式
+    void FindGoto(vector<QtNode> QTlist);//找到一个基本块内的转向语句，设置标识Goto
+    void clear();
 private:
     vector<DAGnode> NodeList;
+    int Goto;//0表示转向语句在末尾，1表示转向语句既在开头也在末尾
+    QtNode SpecialQTbegin; //在开头的转向四元式
+    QtNode SpecialQTend;  //在结尾的转向四元式
 };
 
 
