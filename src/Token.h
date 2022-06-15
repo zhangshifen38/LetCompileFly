@@ -6,8 +6,8 @@
 #define LETCOMPILEFLY_TOKEN_H
 
 #include <string>
-#include "DAG.h"
-#include "Quaternary.h"
+//#include "DAG.h"
+//#include "Quaternary.h"
 
 using  namespace  std;
 
