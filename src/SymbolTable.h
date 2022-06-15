@@ -67,11 +67,12 @@ struct FunctionInfoTable{   //函数表构造
     FunctionInfoTable(size_t offset, size_t paramNumber, int entry, int param);
 };
 
+const int ST_NIL=-1;
 
 class SymbolTable {
 public:
     using LexicalToken = std::pair<std::string, int>;
-    static const int NIL;
+
     SymbolTable();
     size_t isKeyWord(LexicalToken token);           //判断词法分析token是否为关键字
     size_t isDelimiterl(LexicalToken token);        //判断token是否是标识符
@@ -96,7 +97,6 @@ private:
     static const map<string ,size_t > DELIMITERL;
 };
 
-const int SymbolTable::NIL=-1;
 
 
 

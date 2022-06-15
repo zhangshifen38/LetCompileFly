@@ -24,10 +24,10 @@ FunctionInfoTable::FunctionInfoTable(size_t offset, size_t paramNumber, int entr
                                                                                                 entry(entry),
                                                                                                 param(param) {}
 SymbolTable::SymbolTable() {
-    TYPEL.emplace_back(TypeTable(I,NIL));
-    TYPEL.emplace_back(TypeTable(CH,NIL));
-    TYPEL.emplace_back(TypeTable(R,NIL));
-    TYPEL.emplace_back(TypeTable(B,NIL));
+    TYPEL.emplace_back(TypeTable(I, ST_NIL));
+    TYPEL.emplace_back(TypeTable(CH, ST_NIL));
+    TYPEL.emplace_back(TypeTable(R, ST_NIL));
+    TYPEL.emplace_back(TypeTable(B, ST_NIL));
 }
 
 size_t SymbolTable::isKeyWord(SymbolTable::LexicalToken token) {
@@ -82,7 +82,7 @@ bool SymbolTable::addVariable(string name, Type type) {
         case I:
             ++typeID;
     }
-    SYNBL.emplace_back(MainTable(name,typeID,V,NIL));   //还没构造活动记录，地址暂时填NIL
+    SYNBL.emplace_back(MainTable(name, typeID, V, ST_NIL));   //还没构造活动记录，地址暂时填NIL
     return true;
 }
 

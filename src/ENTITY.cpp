@@ -2,9 +2,6 @@
 // Created by AlexHoring on 2022/6/15.
 //
 
-#ifndef LETCOMPILEFLY_ENTITY_H
-#define LETCOMPILEFLY_ENTITY_H
-
 #include "Quaternary.h"
 #include "SymbolTable.h"
 #include "LexicalAnalysis/Identifier.h"
@@ -19,4 +16,3 @@ SymbolTable symbolTable;
 Identifier identifier;
 
 
-#endif //LETCOMPILEFLY_ENTITY_H

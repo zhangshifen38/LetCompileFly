@@ -6,8 +6,11 @@
 #define LETCOMPILEFLY_GENERATEQT_H
 
 #include <iostream>
-#include "ENTITY.h"
 #include "SyntacticTranslate/VariableDeclare.h"
+
+extern SymbolTable symbolTable;
+extern Identifier identifier;
+
 
 using namespace std;
 

@@ -8,7 +8,11 @@
 #include <utility>
 #include <string>
 #include <queue>
-#include "../ENTITY.h"
+#include "../SymbolTable.h"
+#include "../LexicalAnalysis/Identifier.h"
+
+extern SymbolTable symbolTable;
+extern Identifier identifier;
 
 class VariableDeclare {
 public:

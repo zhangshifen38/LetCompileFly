@@ -27,37 +27,46 @@ bool AutomatonLA::machineHalt(char ch) {
     }
 }
 
-
 //几个特殊的字符翻译函数
-char trans1(char ch) {
-    if (isalpha(ch)) {
-        return 'A';
-    } else if (ch == '0') {
-        return '0';
-    } else if (isdigit(ch)) {
-        return '1';
-    } else {
-        return ch;
+class TransChar1:public TransChar{
+public:
+    char operator()(const char ch) const{
+        if (isalpha(ch)) {
+            return 'A';
+        } else if (ch == '0') {
+            return '0';
+        } else if (isdigit(ch)) {
+            return '1';
+        } else {
+            return ch;
+        }
     }
-}
-char trans3(char ch) {
-    if (isdigit(ch)) {
-        return '0';
-    } else if (ch == 'x') {
-        return 'X';
-    } else {
-        return ch;
+};
+class TransChar3:public TransChar{
+public:
+    char operator()(const char ch) const{
+        if (isdigit(ch)) {
+            return '0';
+        } else if (ch == 'x') {
+            return 'X';
+        } else {
+            return ch;
+        }
     }
-}
-char trans5(char ch) {
-    if (isdigit(ch)) {
-        return '0';
-    } else if ((ch >= 'a' && ch <= 'e') || (ch >= 'A' && ch <= 'E')) {
-        return 'a';
-    } else {
-        return ch;
+};
+class TransChar5:public TransChar{
+public:
+    char operator()(const char ch) const{
+        if (isdigit(ch)) {
+            return '0';
+        } else if ((ch >= 'a' && ch <= 'e') || (ch >= 'A' && ch <= 'E')) {
+            return 'a';
+        } else {
+            return ch;
+        }
     }
-}
+};
+
 //状态转移函数初始化
 const array<TransFunc, 23> AutomatonLA::table {
         TransFunc(map<char, int>()),	//0
@@ -70,7 +79,7 @@ const array<TransFunc, 23> AutomatonLA::table {
                 {'+',	13},
                 {'\'',	15},
                 {'\"',	18}
-        }, 21, trans1),
+        }, 21, TransChar1()),
         TransFunc(map<char, int>{		//2
                 {'A',	2},
                 {'0',	2}
@@ -80,16 +89,16 @@ const array<TransFunc, 23> AutomatonLA::table {
                 {'0',	4},
                 {'.',	6},
                 {'e',	7}
-        }, -2, trans3),
+        }, -2, TransChar3()),
         TransFunc(map<char, int>{		//4
                 {'0',	4},
                 {'.',	6},
                 {'e',	7}
-        }, -2, trans3),
+        }, -2, TransChar3()),
         TransFunc(map<char, int>{		//5
                 {'0',	22},
                 {'a',	22}
-        }, 0, trans5),
+        }, 0, TransChar5()),
         TransFunc(map<char, int>{		//6
                 {'0',	10}
         }),
@@ -107,7 +116,7 @@ const array<TransFunc, 23> AutomatonLA::table {
         TransFunc(map<char, int>{		//10
                 {'0',	10},
                 {'e',	7}
-        }, -3, trans3),
+        }, -3, TransChar3()),
         TransFunc(map<char, int>{		//11
                 {'=',	12}
         }, -4),
@@ -130,5 +139,5 @@ const array<TransFunc, 23> AutomatonLA::table {
         TransFunc(map<char, int>{		//22
                 {'0',	22},
                 {'a',	22},
-        }, -2, trans5)
+        }, -2, TransChar5())
 };

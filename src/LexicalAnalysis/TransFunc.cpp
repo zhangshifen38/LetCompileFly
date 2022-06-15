@@ -4,7 +4,7 @@
 
 #include "TransFunc.h"
 
-TransFunc::TransFunc(map<char, int> &&mp, int df, char (*tr)(char))
+TransFunc::TransFunc(map<char, int> &&mp, int df, TransChar tr)
         : defaultState(df), t(tr), transTable(mp) {}
 
 int TransFunc::getNextState(char ch) const {
