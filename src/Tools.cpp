@@ -17,7 +17,7 @@ void Tools::GetBlocks(vector<QtNode> &QTlist,vector<pair<int,int>> &BlocksInOut)
             it->block=1;
             tmp.first=countQT;
         }
-        else if(it->oparation==IF)//当前语句是IF转向语句，则下一句是基本块的入口（该句是基本块出口）
+        else if(it->operation==IF)//当前语句是IF转向语句，则下一句是基本块的入口（该句是基本块出口）
         {
             tmp.second=countQT;
             it->block=countBlock;
@@ -25,7 +25,7 @@ void Tools::GetBlocks(vector<QtNode> &QTlist,vector<pair<int,int>> &BlocksInOut)
             BlocksInOut.push_back(tmp);//一个基本块划分完毕
             preIn=1;
         }
-        else if(it->oparation==EL)//当前语句是EL转向语句，则下一句或者跳转到的语句是基本块的入口（该句是基本块出口）
+        else if(it->operation==EL)//当前语句是EL转向语句，则下一句或者跳转到的语句是基本块的入口（该句是基本块出口）
         {
             tmp.second=countQT;
             it->block=countBlock;
@@ -33,7 +33,7 @@ void Tools::GetBlocks(vector<QtNode> &QTlist,vector<pair<int,int>> &BlocksInOut)
             BlocksInOut.push_back(tmp);//一个基本块划分完毕
             preIn=1;
         }
-        else if(it->oparation==IE)//当前语句是IE转向语句，则下一句或者跳转到的语句是基本块的入口（该句是基本块出口）
+        else if(it->operation==IE)//当前语句是IE转向语句，则下一句或者跳转到的语句是基本块的入口（该句是基本块出口）
         {
             tmp.second=countQT;
             it->block=countBlock;
@@ -41,7 +41,7 @@ void Tools::GetBlocks(vector<QtNode> &QTlist,vector<pair<int,int>> &BlocksInOut)
             BlocksInOut.push_back(tmp);//一个基本块划分完毕
             preIn=1;
         }
-        else if(it->oparation==DO)//当前语句是DO转向语句，则下一句或者跳转到的语句是基本块的入口（该句是基本块出口）
+        else if(it->operation==DO)//当前语句是DO转向语句，则下一句或者跳转到的语句是基本块的入口（该句是基本块出口）
         {
             tmp.second=countQT;
             it->block=countBlock;
@@ -49,7 +49,7 @@ void Tools::GetBlocks(vector<QtNode> &QTlist,vector<pair<int,int>> &BlocksInOut)
             BlocksInOut.push_back(tmp);//一个基本块划分完毕
             preIn=1;
         }
-        else if(it->oparation==WE)//当前语句是WE转向语句，则下一句或者跳转到的语句是基本块的入口（该句是基本块出口）
+        else if(it->operation==WE)//当前语句是WE转向语句，则下一句或者跳转到的语句是基本块的入口（该句是基本块出口）
         {
             tmp.second=countQT;
             it->block=countBlock;
@@ -126,39 +126,39 @@ void Tools::PrintQT(vector<QtNode> QTlist,ofstream &file) {
 
     vector<QtNode>::iterator  it;
     for(it=QTlist.begin();it!=QTlist.end();it++){
-        if(it->oparation==ASG)
+        if(it->operation==ASG)
             file<<"=";
-        if(it->oparation==ADD)
+        if(it->operation==ADD)
             file<<"+";
-        if(it->oparation==SUB)
+        if(it->operation==SUB)
             file<<"-";
-        if(it->oparation==MUL)
+        if(it->operation==MUL)
             file<<"*";
-        if(it->oparation==DIV)
+        if(it->operation==DIV)
             file<<"/";
-        if(it->oparation==IF)
+        if(it->operation==IF)
             file<<"if";
-        if(it->oparation==EL)
+        if(it->operation==EL)
             file<<"el";
-        if(it->oparation==IE)
+        if(it->operation==IE)
             file<<"ie";
-        if(it->oparation==JG)
+        if(it->operation==JG)
             file<<">";
-        if(it->oparation==JL)
+        if(it->operation==JL)
             file<<"<";
-        if(it->oparation==JGE)
+        if(it->operation==JGE)
             file<<">=";
-        if(it->oparation==JLE)
+        if(it->operation==JLE)
             file<<"<=";
-        if(it->oparation==JE)
+        if(it->operation==JE)
             file<<"==";
-        if(it->oparation==SBRAC)
+        if(it->operation==SBRAC)
             file<<"[]";
-        if(it->oparation==WH)
+        if(it->operation==WH)
             file<<"wh";
-        if(it->oparation==DO)
+        if(it->operation==DO)
             file<<"do";
-        if(it->oparation==WE)
+        if(it->operation==WE)
             file<<"we";
         file<<"\t";
         if(it->firstargument.name=="")

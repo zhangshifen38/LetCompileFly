@@ -5,6 +5,7 @@
 #include "SyntacticTranslate/ReportingError.h"
 #include "SyntacticTranslate/ArithmeticExpression.h"
 #include "SyntacticTranslate/VariableDeclare.h"
+#include "ObjectCodeGeneration/ObjectCode.h"
 using namespace  std;
 
 extern ReportingError reportingError;
@@ -18,6 +19,7 @@ int main() {
     Tools tools;
     tools.PrintQT(QtList,file);
     tools.BlocksDAG();
+    runObjectCode();
 
 
 //    ArithmeticExpression arithmeticExpression;

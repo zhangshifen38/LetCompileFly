@@ -1,19 +1,25 @@
 //
 // Created by jing'ying on 2022/6/16.
 //
-#include "ObjectCode.h"
+#include"ObjectCode.h"
+extern vector<ObjQtNode>ObjQtList;
+extern vector<ObjectstoreCode>CodeList;//存储目标代码
+extern vector<Register>RegisterList;
+extern stack<int>Sem;//语义栈(登记待返填的目标地址)
+extern vector<QtNode>QtList;
 void dataReading()
 {
     for(int i=0;i<QtList.size();i++)
     {
         ObjQtNode tempnode;
-        tempnode.operation = QtList[i].oparation;
+        tempnode.operation = QtList[i].operation;
         tempnode.firstargument = QtList[i].firstargument.name;
         tempnode.firstac = QtList[i].firstargument.activeInfo;
         tempnode.secondargument = QtList[i].secondargument.name;
         tempnode.secondac = QtList[i].secondargument.activeInfo;
         tempnode.result = QtList[i].result.name;
         tempnode.resultac = QtList[i].result.activeInfo;
+        ObjQtList.push_back(tempnode);
     }
 }
 
@@ -543,6 +549,6 @@ void runObjectCode()
     qtDivision();
     for(int i=0;i<CodeList.size();i++)
     {
-        cout<<CodeList[i].id<<":"<<CodeList[i].operation<<" "<<CodeList[i].dest<<" "<<CodeList[i].source;
+        cout<<CodeList[i].id<<":"<<CodeList[i].operation<<" "<<CodeList[i].dest<<" "<<CodeList[i].source<<endl;
     }
 }

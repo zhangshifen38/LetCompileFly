@@ -32,7 +32,7 @@ void GenerateQT::run() {
     if(ok){
         symbolTable.printMain();
         for(auto& i:QtList){
-            cout<<i.oparation<<' '<<i.firstargument.name<<' '<<i.secondargument.name<<' '<<i.result.name<<endl;
+            cout<<i.operation<<' '<<i.firstargument.name<<' '<<i.secondargument.name<<' '<<i.result.name<<endl;
         }
     }else{
         cout<<"Error!"<<endl;

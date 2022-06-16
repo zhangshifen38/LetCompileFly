@@ -1,6 +1,7 @@
 //
 // Created by jing'ying on 2022/6/16.
 //
+
 #ifndef LETCOMPILEFLY_OBJECTCODE_H
 #define LETCOMPILEFLY_OBJECTCODE_H
 #include<bits/stdc++.h>
@@ -35,11 +36,6 @@ struct Register//寄存器
     string content;//内容
     int acnumber;//活跃信息
 };
-vector<ObjQtNode>ObjQtList;
-vector<ObjectstoreCode>CodeList;//存储目标代码
-vector<Register>RegisterList;
-stack<int>Sem;//语义栈(登记待返填的目标地址)
-extern vector<QtNode> QtList;
 void swapQt(int i);
 void storeCode(string operation, string dest, string source);
 void backfill(int pi, int pk);

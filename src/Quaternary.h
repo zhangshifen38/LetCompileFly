@@ -27,20 +27,20 @@ enum QTOperation{
 struct QtNode//四元式节点
 {
     int block;//基本块编号
-    QTOperation oparation;
+    QTOperation operation;
     Token firstargument;
     Token secondargument;
     Token result;
     QtNode()=default;
-    QtNode(QTOperation oparation, const Token &firstargument, const Token &secondargument, const Token &result);
+    QtNode(QTOperation operation, const Token &firstargument, const Token &secondargument, const Token &result);
 
-    void clear(){block=0;oparation=EMPTY;firstargument.clear();secondargument.clear();result.clear();};
+    void clear(){block=0;operation=EMPTY;firstargument.clear();secondargument.clear();result.clear();};
 };
 //vector<QtNode>QtList;
 
 //class Quaternary {
 //public:
-//    QTOperation oparation;
+//    QTOperation operation;
 //    std::string argument1,argument2;
 //    std::string result;
 //    Quaternary()=default;

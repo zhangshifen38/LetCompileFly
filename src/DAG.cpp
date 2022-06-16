@@ -163,10 +163,10 @@ void DAG::CreateDAG(vector<QtNode> Block) {
             NodeList[numC].mark[0].name=tmp.secondargument.name;
             NodeList[numC].mark[0].type=tmp.secondargument.type;
         }
-        int judgeQT=JudgeQT(tmp.oparation);
+        int judgeQT=JudgeQT(tmp.operation);
 //        if(SpecialQTWHsym==1)
 //        {
-//            WHnextOP=tmp.oparation;
+//            WHnextOP=tmp.operation;
 //            WHnextL=tmp.firstargument.name;
 //            WHnextR=tmp.secondargument.name;
 //            SpecialQTWHsym=0;
@@ -209,7 +209,7 @@ void DAG::CreateDAG(vector<QtNode> Block) {
             {
                 if(tmp.firstargument.type==1&&tmp.secondargument.type==1)//A=C1 op C2
                 {
-                    string CalRes= Calculate(tmp.firstargument.name,tmp.secondargument.name,tmp.oparation);
+                    string CalRes= Calculate(tmp.firstargument.name,tmp.secondargument.name,tmp.operation);
                     //保存计算结果
                     int FindC= SearchNodeByName(CalRes);//查找C是否定义过
                     if(FindC!=-1)//C定义过
@@ -232,7 +232,7 @@ void DAG::CreateDAG(vector<QtNode> Block) {
                 }
                 else if(tmp.secondargument.name=="")//A=opB
                 {
-                    int Find= SearchOne(tmp.oparation,tmp.firstargument.name);//查找opB
+                    int Find= SearchOne(tmp.operation,tmp.firstargument.name);//查找opB
                     if(Find!=-1)//存在公共表达式
                     {
                         Attach(Find,tmp.result);//把A附加
@@ -242,14 +242,14 @@ void DAG::CreateDAG(vector<QtNode> Block) {
                         Find=CreateNode();
                         NodeList[Find].mark[0].name=tmp.result.name;
                         NodeList[Find].mark[0].type=tmp.result.type;
-                        NodeList[Find].op=tmp.oparation;
+                        NodeList[Find].op=tmp.operation;
                         NodeList[Find].left=numB;
                     }
                     if(SearchNodeByName(tmp.result.name)!=-1) DeleteMark(Find,tmp.result.name);
                 }
                 else//A=BopC，包括了两个操作数都不是常数，其中有一个是常数的情况
                 {
-                    int Find= SearchTwo(tmp.oparation,tmp.firstargument.name,tmp.secondargument.name);
+                    int Find= SearchTwo(tmp.operation,tmp.firstargument.name,tmp.secondargument.name);
                     if(Find!=-1)//存在公共表达式
                     {
                         Attach(Find,tmp.result);
@@ -259,7 +259,7 @@ void DAG::CreateDAG(vector<QtNode> Block) {
                         Find=CreateNode();
                         NodeList[Find].mark[0].name=tmp.result.name;
                         NodeList[Find].mark[0].type=tmp.result.type;
-                        NodeList[Find].op=tmp.oparation;
+                        NodeList[Find].op=tmp.operation;
                         NodeList[Find].left=numB;
                         NodeList[Find].right=numC;
                         NodeList[Find].num=Find;
@@ -274,7 +274,7 @@ void DAG::CreateDAG(vector<QtNode> Block) {
                 {
                     SpecialQTend=tmp;//保存特殊四元式
                 }
-                if(tmp.oparation==WH)//特殊四元式WH
+                if(tmp.operation==WH)//特殊四元式WH
                 {
                     int WHnum=CreateNode();
                     NodeList[WHnum].op=WH;
@@ -299,7 +299,7 @@ void DAG::CreateQT(vector<QtNode> &QTlist) {
         if(it->op==WH)//特殊四元式WH
         {
             tmp.clear();
-            tmp.oparation=WH;
+            tmp.operation=WH;
             QTlist.push_back(tmp);
         }
         else if(it->op==EMPTY)//叶节点
@@ -308,7 +308,7 @@ void DAG::CreateQT(vector<QtNode> &QTlist) {
             {
                 if(it->mark[i].type==2){
                     tmp.clear();
-                    tmp.oparation=ASG;
+                    tmp.operation=ASG;
                     tmp.firstargument=it->mark[0];
                     tmp.result=it->mark[i];
                     QTlist.push_back(tmp);
@@ -318,7 +318,7 @@ void DAG::CreateQT(vector<QtNode> &QTlist) {
         else {//非叶节点
             if(NodeList[it->right].mark[0].name=="")//A=op B
             {
-                tmp.oparation=it->op;
+                tmp.operation=it->op;
                 tmp.firstargument=NodeList[it->left].mark[0];//以主标记参加运算
                 tmp.result=it->mark[0];
                 QTlist.push_back(tmp);
@@ -327,7 +327,7 @@ void DAG::CreateQT(vector<QtNode> &QTlist) {
                 {
                     if(it->mark[i].type==2)
                     {
-                        tmp.oparation=ASG;
+                        tmp.operation=ASG;
                         tmp.firstargument=it->mark[0];
                         tmp.result=it->mark[i];
                         QTlist.push_back(tmp);
@@ -337,7 +337,7 @@ void DAG::CreateQT(vector<QtNode> &QTlist) {
             }
             else //A=B op C
             {
-                tmp.oparation=it->op;
+                tmp.operation=it->op;
                 tmp.firstargument=NodeList[it->left].mark[0];//以主标记参加运算
                 tmp.secondargument=NodeList[it->right].mark[0];
                 tmp.result=it->mark[0];
@@ -347,7 +347,7 @@ void DAG::CreateQT(vector<QtNode> &QTlist) {
                 {
                     if(it->mark[i].type==2)
                     {
-                        tmp.oparation=ASG;
+                        tmp.operation=ASG;
                         tmp.firstargument=it->mark[0];
                         tmp.result=it->mark[i];
                         QTlist.push_back(tmp);
@@ -369,7 +369,7 @@ void DAG::CreateQT(vector<QtNode> &QTlist) {
 
 
 void DAG::FindGoto(vector<QtNode> QTlist) {
-    if(QTlist[QTlist.size()-1].oparation==IF||QTlist[QTlist.size()-1].oparation==EL||QTlist[QTlist.size()-1].oparation==IE||QTlist[QTlist.size()-1].oparation==DO||QTlist[QTlist.size()-1].oparation==WE)
+    if(QTlist[QTlist.size()-1].operation==IF||QTlist[QTlist.size()-1].operation==EL||QTlist[QTlist.size()-1].operation==IE||QTlist[QTlist.size()-1].operation==DO||QTlist[QTlist.size()-1].operation==WE)
     {
         Goto=0;
     }
