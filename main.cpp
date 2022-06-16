@@ -11,7 +11,7 @@ int main() {
     ofstream file;
     file.open("../QTdata/QT2.txt");
     Tools tools;
-    tools.ReadFromFile(43);
+    tools.ReadFromFile(47);//用于后端测试，从QT.txt中读取四元式放入QTlist
     tools.PrintQT(QtList,file);
     tools.BlocksDAG();
 //    runObjectCode();

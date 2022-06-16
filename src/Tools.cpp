@@ -20,7 +20,7 @@ void Tools::GetBlocks(vector<QtNode> &QTlist,vector<pair<int,int>> &BlocksInOut)
         }
         else if(it->operation==FUNC)//该句是函数段开始，则该句是入口，上一句是出口
         {
-            tmp.second=countQT;
+            tmp.second=countQT-1;
             pre->block=countBlock;//设置上句
             countBlock++;
             BlocksInOut.push_back(tmp);//一个基本块划分完毕

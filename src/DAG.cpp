@@ -141,7 +141,7 @@ void DAG::DeleteMark(int NodeNum, string mark) {
 
 void DAG::CreateDAG(vector<QtNode> Block) {
     FindGoto(Block);//该基本块内转向语句的位置
-    int SpecialQTWHsym=0;//标记WH语句的下一条语句
+    int SymGoto=0;
     NodeList.clear();//DAG置空
     vector<QtNode>::iterator  itQT;
     QtNode tmp;
@@ -270,6 +270,15 @@ void DAG::CreateDAG(vector<QtNode> Block) {
                 break;
             case 3://其他特殊四元式
             {
+                if(Goto==1)//特殊四元式既在开头又在结尾
+                {
+                    if(SymGoto==0)
+                    {
+                        SpecialQTbegin=tmp;
+                        SymGoto=1;
+                    }
+                    else SpecialQTend=tmp;
+                }
                 if(Goto==0)//特殊四元式在结尾
                 {
                     SpecialQTend=tmp;//保存特殊四元式
@@ -301,6 +310,11 @@ void DAG::CreateQT(vector<QtNode> &QTlist) {
     QTlist.clear();
     vector<DAGnode>::iterator  it;
     QtNode tmp;
+    if(Goto==1)//特殊四元式在开头
+    {
+        QTlist.push_back(SpecialQTbegin);
+    }
+
     for(it=NodeList.begin();it!=NodeList.end();it++){
         if(it->op==WH)//特殊四元式WH
         {

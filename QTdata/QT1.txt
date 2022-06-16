@@ -26,4 +26,8 @@ do	t1	_	_
 *	t2	c	x
 we	_	_	_
 =	5	_	M
+FUNC	_	_	print
+=	4	_	x
+=	5	_	y
+RET	1	_	_
 CALL	_	_	print
