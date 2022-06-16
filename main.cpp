@@ -11,7 +11,7 @@ int main() {
     ofstream file;
     file.open("../QTdata/QT2.txt");
     Tools tools;
-    tools.ReadFromFile(42);
+    tools.ReadFromFile(43);
     tools.PrintQT(QtList,file);
     tools.BlocksDAG();
 //    runObjectCode();

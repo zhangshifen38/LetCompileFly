@@ -6,18 +6,35 @@
 
 void Tools::GetBlocks(vector<QtNode> &QTlist,vector<pair<int,int>> &BlocksInOut) {
     vector<QtNode>::iterator it;
+    vector<QtNode>::iterator pre;
     pair<int,int> tmp;
     int countBlock=1;
     int countQT=1;
     int preIn=0;
-    for(it=QTlist.begin();it!=QTlist.end();it++,countQT++)
+    for(it=QTlist.begin();it!=QTlist.end();it++,pre=it-1,countQT++)
     {
         if(it==QTlist.begin())//程序的第一个语句是基本块入口}
         {
             it->block=1;
             tmp.first=countQT;
         }
-
+        else if(it->operation==FUNC)//该句是函数段开始，则该句是入口，上一句是出口
+        {
+            tmp.second=countQT;
+            pre->block=countBlock;//设置上句
+            countBlock++;
+            BlocksInOut.push_back(tmp);//一个基本块划分完毕
+            tmp.first=countQT;
+            it->block=countBlock;
+        }
+        else if(it->operation==RET)//当前语句是RET语句，则下一句是基本块的入口（该句是基本块出口）
+        {
+            tmp.second=countQT;
+            it->block=countBlock;
+            countBlock++;
+            BlocksInOut.push_back(tmp);//一个基本块划分完毕
+            preIn=1;
+        }
         else if(it->operation==IF)//当前语句是IF转向语句，则下一句是基本块的入口（该句是基本块出口）
         {
             tmp.second=countQT;

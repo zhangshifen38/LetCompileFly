@@ -281,6 +281,12 @@ void DAG::CreateDAG(vector<QtNode> Block) {
 //                    SpecialQTWH=tmp;//保存WH
 //                    SpecialQTWHsym=1;
                 }
+                if(tmp.operation==CALL)//特殊四元式CALL
+                {
+                    int CALLnum=CreateNode();
+                    NodeList[CALLnum].op=CALL;
+                    CALLname=tmp.result.name;
+                }
             }
                 break;
         }
@@ -300,6 +306,13 @@ void DAG::CreateQT(vector<QtNode> &QTlist) {
         {
             tmp.clear();
             tmp.operation=WH;
+            QTlist.push_back(tmp);
+        }
+        else if(it->op==CALL)//特殊四元式CALL
+        {
+            tmp.clear();
+            tmp.operation=CALL;
+            tmp.result.name=CALLname;
             QTlist.push_back(tmp);
         }
         else if(it->op==EMPTY)//叶节点
@@ -357,7 +370,7 @@ void DAG::CreateQT(vector<QtNode> &QTlist) {
             }
         }
     }
-    if(Goto==0)//特殊四元式在末尾
+    if(Goto==0||Goto==1)//特殊四元式在末尾
     {
         QTlist.push_back(SpecialQTend);
         for(vector<QtNode>::iterator it=QTlist.begin();it!=QTlist.end();it++)
@@ -373,13 +386,17 @@ void DAG::FindGoto(vector<QtNode> QTlist) {
     {
         Goto=0;
     }
+    if(QTlist[0].operation==FUNC) Goto=1;
 }
 
 void DAG::clear() {
     NodeList.clear();
     Goto=-1;
 //    SpecialQTWH.clear();
+    SpecialQTbegin.clear();
     SpecialQTend.clear();
+    FUNCname.clear();
+    CALLname.clear();
 //    WHnextL.clear();
 //    WHnextR.clear();
 //    WHnextOP=EMPTY;

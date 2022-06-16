@@ -26,3 +26,4 @@ do	t1	_	_
 *	t2	c	x
 we	_	_	_
 =	5	_	M
+CALL	_	_	print
