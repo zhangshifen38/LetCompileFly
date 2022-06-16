@@ -34,4 +34,4 @@ add_executable(
         src/SyntacticTranslate/ExpressionAssign.h
         src/SyntacticTranslate/BranchStatement.cpp
         src/SyntacticTranslate/BranchStatement.h
-)
+        src/ObjectCodeGeneration/ObjectCode.cpp src/ObjectCodeGeneration/ObjectCode.h)

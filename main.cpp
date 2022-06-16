@@ -2,7 +2,6 @@
 #include "GenerateQT.h"
 #include "DAG.h"
 #include "Tools.h"
-
 using namespace  std;
 int main() {
     //std::cout << "Hello, World!" << std::endl;

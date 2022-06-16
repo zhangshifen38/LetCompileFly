@@ -38,7 +38,7 @@ int DAG::SearchNodeByName(string name) {
     return -1;//没找到该节点
 }
 
-int DAG::SearchTwo(QTOparation op, string B, string C) {//A=B op C
+int DAG::SearchTwo(QTOperation op, string B, string C) {//A=B op C
     vector<DAGnode>::iterator it;
     for(it=NodeList.begin();it!=NodeList.end();it++){
         if(it->op==op)//如果运算符正确
@@ -53,7 +53,7 @@ int DAG::SearchTwo(QTOparation op, string B, string C) {//A=B op C
     return -1;//没找到
 }
 
-int DAG::SearchOne(QTOparation op, string B) {
+int DAG::SearchOne(QTOperation op, string B) {
     vector<DAGnode>::iterator it;
     for(it=NodeList.begin();it!=NodeList.end();it++){
         if(it->op==op)//如果运算符正确
@@ -66,10 +66,10 @@ int DAG::SearchOne(QTOparation op, string B) {
     return -1;//没找到
 }
 
-int DAG::JudgeQT(QTOparation op) {
+int DAG::JudgeQT(QTOperation op) {
     if(op==ASG)//A=B
         return 0;
-    else if(op==ADD||op==SUB||op==MUL||op==DIV||op==AND||op==OR||op==XOR||op==BIG||op==LESS||op==BIGE||op==LESSE||op==SBRAC)//A=B op C
+    else if(op==ADD||op==SUB||op==MUL||op==DIV||op==AND||op==OR||op==XOR||op==JG||op==JL||op==JGE||op==JLE||op==SBRAC)//A=B op C
         return 1;
     else if(op==NEG)//A=opB
         return 2;
@@ -99,7 +99,7 @@ void DAG::SwapMark(DAGnode &node) {
     return;
 }
 
-string DAG::Calculate(string C1, string C2, QTOparation op) {
+string DAG::Calculate(string C1, string C2, QTOperation op) {
     double tmpC;
     switch (op) {
         case ADD:
