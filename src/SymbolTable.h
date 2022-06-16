@@ -73,7 +73,6 @@ const int ST_NIL=-1;
 class SymbolTable {
 public:
     using LexicalToken = std::pair<std::string, int>;
-
     SymbolTable();
     size_t isKeyWord(LexicalToken token);           //判断词法分析token是否为关键字
     size_t isDelimiter(LexicalToken token);         //判断token是否是界符
@@ -85,8 +84,7 @@ public:
         for(auto& i:SYNBL){
             std::cout<<i.name<<' '<<i.type<<' '<<(i.category==V?"Var":"Others")<<' '<<i.address<<std::endl;
         }
-    }
-
+    }   //调试用临时函数，待删除
 private:
     vector<MainTable> SYNBL;            //符号表主表
     vector<TypeTable> TYPEL;            //类型表
