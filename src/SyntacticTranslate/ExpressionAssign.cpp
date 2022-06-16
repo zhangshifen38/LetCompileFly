@@ -144,6 +144,7 @@ bool ExpressionAssign::funcF() {
             return false;
         }
         identifier.nextW();
+        return true;
     }
     //报错：需要一个变量
     return false;
