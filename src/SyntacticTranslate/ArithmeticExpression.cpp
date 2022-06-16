@@ -1,37 +1,15 @@
 //
-// Created by AlexHoring on 2022/6/15.
+// Created by AlexHoring on 2022/6/16.
 //
 
-#include "ExpressionAssign.h"
+#include "ArithmeticExpression.h"
 
-bool ExpressionAssign::analysis() {
-    LexicalToken token;
-    //判断连续赋值形如a=b=c=d+e+f
-    while(true) {
-        token = identifier.getCurrentWord();
-        if(symbolTable.isDelimiter(token)==3){
-            break;  //左括号不属于赋值表达式部分，进入算术表达式
-        }
-        identifier.nextW();
-        if (symbolTable.isDelimiter(identifier.getCurrentWord()) == 11) {      //等号’=‘
-            this->waitForAssign.push(Token(token.first,2, true));
-            identifier.nextW();
-        }else{
-            identifier.feedBack(token);
-            break;
-        }
-    }
+bool ArithmeticExpression::analysis() {
     if(!funcE()){       //连续赋值语句判断完毕，进入算术表达式判断
         return false;
     }else{
         if(symbolTable.isDelimiter(identifier.getCurrentWord()) == 13){      //分号13
             identifier.nextW();
-            //生成赋值表达式四元式
-            while(this->waitForAssign.size()>1){
-                Token a=this->waitForAssign.top();
-                this->waitForAssign.pop();
-                QtList.emplace_back(QtNode(ASG,a,Token("_",0, false),this->waitForAssign.top()));
-            }
             return true;
         }else{
             return false;
@@ -39,7 +17,7 @@ bool ExpressionAssign::analysis() {
     }
 }
 
-bool ExpressionAssign::funcE() {
+bool ArithmeticExpression::funcE() {
     if (!funcT()) {		//进入T子程序，检查是否报错
         return false;
     }
@@ -76,7 +54,7 @@ bool ExpressionAssign::funcE() {
     }while(true);
 }
 
-bool ExpressionAssign::funcT() {
+bool ArithmeticExpression::funcT() {
     if(!funcF()){
         return false;
     }
@@ -113,7 +91,7 @@ bool ExpressionAssign::funcT() {
     }while(true);
 }
 
-bool ExpressionAssign::funcF() {
+bool ArithmeticExpression::funcF() {
     //检测到整数
     if(identifier.getCurrentWord().second==-2){
         string sint=identifier.transInt(identifier.getCurrentWord().first);
@@ -148,4 +126,8 @@ bool ExpressionAssign::funcF() {
     }
     //报错：需要一个变量
     return false;
+}
+
+Token ArithmeticExpression::getResult() {
+    return this->waitForAssign.top();
 }

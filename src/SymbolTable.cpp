@@ -136,7 +136,9 @@ const map<string, size_t> SymbolTable::DELIMITERL {
         {"++",		14},
         {"{",		15},
         {"}",		16},
-        {":",        17}
+        {":",       17},
+        {">=",      18},
+        {"!=",      19}
 };
 
 string SymbolTable::allocTemporaryVariable() {

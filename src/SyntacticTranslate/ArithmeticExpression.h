@@ -1,10 +1,9 @@
 //
-// Created by AlexHoring on 2022/6/15.
+// Created by AlexHoring on 2022/6/16.
 //
 
-#ifndef LETCOMPILEFLY_EXPRESSIONASSIGN_H
-#define LETCOMPILEFLY_EXPRESSIONASSIGN_H
-
+#ifndef LETCOMPILEFLY_ARITHMETICEXPRESSION_H
+#define LETCOMPILEFLY_ARITHMETICEXPRESSION_H
 
 #include "SymbolTable.h"
 #include "LexicalAnalysis/Identifier.h"
@@ -14,10 +13,12 @@ extern SymbolTable symbolTable;
 extern Identifier identifier;
 extern vector<QtNode> QtList;
 
-class ExpressionAssign {
+
+class ArithmeticExpression {
 public:
     using LexicalToken = std::pair<std::string, int>;
     bool analysis();
+    Token getResult();
 private:
     stack<Token> waitForAssign;
     bool funcE();
@@ -26,4 +27,4 @@ private:
 };
 
 
-#endif //LETCOMPILEFLY_EXPRESSIONASSIGN_H
+#endif //LETCOMPILEFLY_ARITHMETICEXPRESSION_H
