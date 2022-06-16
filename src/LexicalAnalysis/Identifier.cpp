@@ -33,21 +33,28 @@ void Identifier::nextW() {
     }
     string ret = "";
     at.reset();
-    if (!hasNext()) {
-        this->currentWord = make_pair(ret, 0);
-        return;             //没有要识别的单词了，返回结束标记0
-    }
-    if (!todo) {
-        if (buffer.empty()) {
-            addSentence();
+    while(1) {
+        if (!hasNext()) {
+            this->currentWord = make_pair(ret, 0);
+            return;             //没有要识别的单词了，返回结束标记0
         }
-        tmp = buffer.front();
-        buffer.pop();
-        todo = true;
-        index = 0;
-    }
-    while (isspace(tmp[index])) {               //跳过空白字符
-        ++index;
+        if (!todo) {
+            if (buffer.empty()) {
+                addSentence();
+            }
+            tmp = buffer.front();
+            buffer.pop();
+            todo = true;
+            index = 0;
+        }
+        while (isspace(tmp[index])) {               //跳过空白字符
+            ++index;
+        }
+        if(tmp[index]!='\0'){
+            break;
+        }else{
+            todo= false;
+        }
     }
     while (!at.machineHalt(tmp[index])) {
         ret += tmp[index];

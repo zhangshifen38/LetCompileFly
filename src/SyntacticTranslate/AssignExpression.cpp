@@ -28,11 +28,16 @@ bool AssignExpression::analysis() {
     }
     //获得算术表达式的计算结果
     this->waitForAssign.push(arithmeticExpression.getResult());
-    //生成赋值表达式四元式
-    while(this->waitForAssign.size()>1){
-        Token a=this->waitForAssign.top();
-        this->waitForAssign.pop();
-        QtList.emplace_back(QtNode(ASG,a,Token("_",0, false),this->waitForAssign.top()));
+    if(symbolTable.isDelimiter(identifier.getCurrentWord()) == 13){      //分号13
+        identifier.nextW();
+        //生成赋值表达式四元式
+        while(this->waitForAssign.size()>1){
+            Token a=this->waitForAssign.top();
+            this->waitForAssign.pop();
+            QtList.emplace_back(QtNode(ASG,a,Token("_",0, false),this->waitForAssign.top()));
+        }
+        return true;
+    }else{
+        return false;
     }
-    return true;
 }

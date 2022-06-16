@@ -1,7 +1,0 @@
-*	e	f	t1
--	d	t1	t2
-/	g	h	t3
-+	t3	i	t4
--	t2	t4	c
-=	c	_	b
-=	c	_	a
