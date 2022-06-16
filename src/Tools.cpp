@@ -17,6 +17,7 @@ void Tools::GetBlocks(vector<QtNode> &QTlist,vector<pair<int,int>> &BlocksInOut)
             it->block=1;
             tmp.first=countQT;
         }
+
         else if(it->operation==IF)//当前语句是IF转向语句，则下一句是基本块的入口（该句是基本块出口）
         {
             tmp.second=countQT;
@@ -59,6 +60,12 @@ void Tools::GetBlocks(vector<QtNode> &QTlist,vector<pair<int,int>> &BlocksInOut)
         }
         else if(it==QTlist.end()-1)//程序的最后一句，该句是基本块出口
         {
+            if(preIn==1)//最后一句既是出口也是入口的情况
+            {
+                tmp.first=countQT;
+                it->block=countBlock;
+                preIn=0;
+            }
             tmp.second=countQT;
             it->block=countBlock;
             countBlock++;
@@ -160,6 +167,12 @@ void Tools::PrintQT(vector<QtNode> QTlist,ofstream &file) {
             file<<"do";
         if(it->operation==WE)
             file<<"we";
+        if(it->operation==FUNC)
+            file<<"FUNC";
+        if(it->operation==RET)
+            file<<"RET";
+        if(it->operation==CALL)
+            file<<"CALL";
         file<<"\t";
         if(it->firstargument.name=="")
             file<<"_";
@@ -174,4 +187,90 @@ void Tools::PrintQT(vector<QtNode> QTlist,ofstream &file) {
         else file<<it->result.name;
         file<<endl;
     }
+}
+
+void Tools::ReadFromFile(int count) {
+    ifstream file;
+    file.open("../QTdata/QT.txt");
+//    vector<QtNode> tmpV;
+    QtNode tmpQ;
+    string qt;
+    string fir;
+    string sec;
+    string res;
+    for(int i=1;i<=count;i++)
+    {
+        tmpQ.clear();
+        qt.clear();
+        fir.clear();
+        sec.clear();
+        res.clear();
+        file>>qt>>fir>>sec>>res;
+        if(qt=="=") tmpQ.operation=ASG;
+        if(qt=="+") tmpQ.operation=ADD;
+        if(qt=="-") tmpQ.operation=SUB;
+        if(qt=="*") tmpQ.operation=MUL;
+        if(qt=="/") tmpQ.operation=DIV;
+        if(qt=="if")tmpQ.operation=IF;
+        if(qt=="el")tmpQ.operation=EL;
+        if(qt=="ie")tmpQ.operation=IE;
+        if(qt=="wh")tmpQ.operation=WH;
+        if(qt=="do")tmpQ.operation=DO;
+        if(qt=="we")tmpQ.operation=WE;
+        if(qt=="[]")tmpQ.operation=SBRAC;
+        if(qt==">")tmpQ.operation=JG;
+        if(qt=="<")tmpQ.operation=JL;
+        if(qt==">=")tmpQ.operation=JGE;
+        if(qt=="<=")tmpQ.operation=JLE;
+        if(qt=="!=")tmpQ.operation=JNE;
+        if(qt=="FUNC")tmpQ.operation=FUNC;
+        if(qt=="RET")tmpQ.operation=RET;
+        if(qt=="CALL")tmpQ.operation=CALL;
+        if(fir!="_") tmpQ.firstargument.name=fir;
+        else tmpQ.firstargument.name="";
+        if(sec!="_") tmpQ.secondargument.name=sec;
+        else tmpQ.secondargument.name="";
+        if(res!="_") tmpQ.result.name=res;
+        else tmpQ.result.name="";
+
+        if(isNum(fir))tmpQ.firstargument.type=1;
+        else if (fir[0]=='t'&&fir[1]>='1'&&fir[1]<='9') tmpQ.firstargument.type=3;
+        else tmpQ.firstargument.type=2;
+
+        if(isNum(sec))tmpQ.secondargument.type=1;
+        else if (sec[0]=='t'&&sec[1]>='1'&&sec[1]<='9') tmpQ.secondargument.type=3;
+        else tmpQ.secondargument.type=2;
+
+        if(isNum(res))tmpQ.result.type=1;
+        else if (res[0]=='t'&&res[1]>='1'&&res[1]<='9') tmpQ.result.type=3;
+        else tmpQ.result.type=2;
+
+        QtList.push_back(tmpQ);
+    }
+}
+
+
+bool Tools::isNum(string str)
+{
+    stringstream sin(str);
+    double d;
+    char c;
+    if(!(sin >> d))
+    {
+        /*解释：
+            sin>>t表示把sin转换成double的变量（其实对于int和float型的都会接收），
+            如果转换成功，则值为非0，如果转换不成功就返回为0
+        */
+        return false;
+    }
+    if (sin >> c)
+    {
+        /*解释：
+        此部分用于检测错误输入中，数字加字符串的输入形式（例如：34.f），在上面的的部分（sin>>t）
+        已经接收并转换了输入的数字部分，在stringstream中相应也会把那一部分给清除，
+        此时接收的是.f这部分，所以条件成立，返回false
+          */
+        return false;
+    }
+    return true;
 }

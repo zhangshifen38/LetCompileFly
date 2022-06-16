@@ -19,6 +19,8 @@ public:
     vector<QtNode> BlocksDAG();
     //将传入的before所有四元式集合并返回新的after四元式集合（并且存到QT1.txt里）
     static void PrintQT(vector<QtNode> QTlist,ofstream &file);//打印四元式
+    void ReadFromFile(int count);
+    static bool isNum(string str);//判断一个字符串是不是数字
 };
 
 
