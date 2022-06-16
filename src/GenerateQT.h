@@ -7,10 +7,12 @@
 
 #include <iostream>
 #include "SyntacticTranslate/VariableDeclare.h"
+#include "SyntacticTranslate/ExpressionAssign.h"
+#include "Quaternary.h"
 
 extern SymbolTable symbolTable;
 extern Identifier identifier;
-
+extern vector<QtNode> QtList;
 
 using namespace std;
 

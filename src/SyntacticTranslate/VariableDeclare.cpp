@@ -9,7 +9,7 @@ bool VariableDeclare::analysis() {
     if(identifier.getCurrentWord().second==-1&&!symbolTable.isKeyWord(identifier.getCurrentWord())){
         this->varID.push(identifier.getCurrentWord().first);
         identifier.nextW();
-        while(symbolTable.isDelimiterl(identifier.getCurrentWord())==12){   //逗号在界符表里编号12
+        while(symbolTable.isDelimiter(identifier.getCurrentWord()) == 12){   //逗号在界符表里编号12
             identifier.nextW();
             if(identifier.getCurrentWord().second==-1&&!symbolTable.isKeyWord(identifier.getCurrentWord())){
                 this->varID.push(identifier.getCurrentWord().first);
@@ -21,7 +21,7 @@ bool VariableDeclare::analysis() {
     }else{
         return false;
     }
-    if(symbolTable.isDelimiterl(identifier.getCurrentWord())==17){          //冒号编号17
+    if(symbolTable.isDelimiter(identifier.getCurrentWord()) == 17){          //冒号编号17
         identifier.nextW();
     } else{
         return false;
@@ -32,7 +32,7 @@ bool VariableDeclare::analysis() {
     } else{
         identifier.nextW();
     }
-    if(symbolTable.isDelimiterl(identifier.getCurrentWord())!=13){          //分号编号13
+    if(symbolTable.isDelimiter(identifier.getCurrentWord()) != 13){          //分号编号13
         return false;
     }
     identifier.nextW();
