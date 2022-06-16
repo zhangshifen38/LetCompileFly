@@ -140,9 +140,11 @@ bool ExpressionAssign::funcF() {
             return false;
         }
         if(symbolTable.isDelimiter(identifier.getCurrentWord())!=4){    //右括号编号4
+            //报错：需要右括号
             return false;
         }
         identifier.nextW();
     }
-    return true;
+    //报错：需要一个变量
+    return false;
 }
