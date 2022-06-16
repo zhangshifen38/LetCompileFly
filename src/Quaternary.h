@@ -14,17 +14,17 @@ enum QTOparation{
     EMPTY,              //空
     ADD,SUB,MUL,DIV,    //算术表达式
     AND,OR,XOR,NEG,     //逻辑运算表达式
-    BIG,//>
-    LESS,//<
-    EQU,//==
-    BIGE,//>=
-    LESSE,//<=
+    BIG,                //>
+    LESS,               //<
+    EQU,                //==
+    BIGE,               //>=
+    LESSE,              //<=
     IF,EL,IE,           //条件表达式
     WH,DO,WE,           //循环表达式
-    ASG                 //赋值表达式(assignment)
+    ASG,                //赋值表达式(assignment)
 //    FUNC,CALL,           //函数与函数调用表达式
 //    RET,END,            //函数返回与结束标志(可合为一)
-    SBRAC,//[]
+    SBRAC               //[]
     //有需要的话这里还可以继续添加
 };
 
