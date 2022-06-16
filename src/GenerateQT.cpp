@@ -22,7 +22,7 @@ void GenerateQT::run() {
         //如果是用户定义标识符或者左括号
         else if((identifier.getCurrentWord().second==-1&&!symbolTable.isKeyWord(identifier.getCurrentWord()))
                 ||(symbolTable.isDelimiter(identifier.getCurrentWord())==3)){
-            ExpressionAssign expressionAssign;
+            AssignExpression expressionAssign;
             if(!expressionAssign.analysis()){
                 ok= false;
                 break;

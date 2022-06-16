@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include "SyntacticTranslate/VariableDeclare.h"
-#include "SyntacticTranslate/ExpressionAssign.h"
+#include "SyntacticTranslate/AssignExpression.h"
 #include "Quaternary.h"
 
 extern SymbolTable symbolTable;

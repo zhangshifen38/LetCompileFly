@@ -14,25 +14,30 @@ bool VariableDeclare::analysis() {
             if(identifier.getCurrentWord().second==-1&&!symbolTable.isKeyWord(identifier.getCurrentWord())){
                 this->varID.push(identifier.getCurrentWord().first);
             }else{
+                //报错：已定义的标识符
                 return false;
             }
             identifier.nextW();
         }
     }else{
+        //报错：已定义的标识符
         return false;
     }
     if(symbolTable.isDelimiter(identifier.getCurrentWord()) == 17){          //冒号编号17
         identifier.nextW();
     } else{
+        //报错：定义变量语句缺少冒号
         return false;
     }
     this->type=symbolTable.getType(identifier.getCurrentWord());
     if(this->type==NAT){
+        //报错：未知的类型
         return false;
     } else{
         identifier.nextW();
     }
     if(symbolTable.isDelimiter(identifier.getCurrentWord()) != 13){          //分号编号13
+        //报错：未出现的分号
         return false;
     }
     identifier.nextW();
