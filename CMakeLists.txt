@@ -34,4 +34,13 @@ add_executable(
         src/SyntacticTranslate/AssignExpression.h
         src/SyntacticTranslate/BranchLoopStatement.cpp
         src/SyntacticTranslate/BranchLoopStatement.h
-        src/ObjectCodeGeneration/ObjectCode.cpp src/ObjectCodeGeneration/ObjectCode.h src/SyntacticTranslate/LogicExpression.cpp src/SyntacticTranslate/LogicExpression.h src/SyntacticTranslate/CompareExpression.cpp src/SyntacticTranslate/CompareExpression.h src/SyntacticTranslate/ArithmeticExpression.cpp src/SyntacticTranslate/ArithmeticExpression.h src/SyntacticTranslate/ReportingError.cpp src/SyntacticTranslate/ReportingError.h)
+        src/ObjectCodeGeneration/ObjectCode.cpp
+        src/ObjectCodeGeneration/ObjectCode.h
+        src/SyntacticTranslate/LogicExpression.cpp
+        src/SyntacticTranslate/LogicExpression.h
+        src/SyntacticTranslate/CompareExpression.cpp
+        src/SyntacticTranslate/CompareExpression.h
+        src/SyntacticTranslate/ArithmeticExpression.cpp
+        src/SyntacticTranslate/ArithmeticExpression.h
+        src/SyntacticTranslate/ReportingError.cpp
+        src/SyntacticTranslate/ReportingError.h)
