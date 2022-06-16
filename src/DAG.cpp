@@ -69,7 +69,7 @@ int DAG::SearchOne(QTOparation op, string B) {
 int DAG::JudgeQT(QTOparation op) {
     if(op==ASG)//A=B
         return 0;
-    else if(op==ADD||op==SUB||op==MUL||op==DIV||op==AND||op==OR||op==XOR||op==BIG||op==LESS||op==BIGE||op==LESSE)//A=B op C
+    else if(op==ADD||op==SUB||op==MUL||op==DIV||op==AND||op==OR||op==XOR||op==BIG||op==LESS||op==BIGE||op==LESSE||op==SBRAC)//A=B op C
         return 1;
     else if(op==NEG)//A=opB
         return 2;
@@ -141,7 +141,7 @@ void DAG::DeleteMark(int NodeNum, string mark) {
 
 void DAG::CreateDAG(vector<QtNode> Block) {
     FindGoto(Block);//该基本块内转向语句的位置
-    int SpecialQTCount=0;
+    int SpecialQTWHsym=0;//标记WH语句的下一条语句
     NodeList.clear();//DAG置空
     vector<QtNode>::iterator  itQT;
     QtNode tmp;
@@ -164,6 +164,13 @@ void DAG::CreateDAG(vector<QtNode> Block) {
             NodeList[numC].mark[0].type=tmp.secondargument.type;
         }
         int judgeQT=JudgeQT(tmp.oparation);
+//        if(SpecialQTWHsym==1)
+//        {
+//            WHnextOP=tmp.oparation;
+//            WHnextL=tmp.firstargument.name;
+//            WHnextR=tmp.secondargument.name;
+//            SpecialQTWHsym=0;
+//        }
         switch (judgeQT) {
             case 0://赋值四元式A=B
             {
@@ -213,9 +220,9 @@ void DAG::CreateDAG(vector<QtNode> Block) {
                     {
                         FindC=CreateNode();
                         NodeList[FindC].mark[0].name=CalRes;
-                        NodeList[FindC].mark[0].type=1;
+                        NodeList[FindC].mark[0].type=1;//新建节点
                         NodeList[FindC].mark[1].name=tmp.result.name;
-                        NodeList[FindC].mark[1].type=tmp.result.type;
+                        NodeList[FindC].mark[1].type=tmp.result.type;//把A附加在C上
                         NodeList[FindC].num=FindC;
                     }
                     if(SearchNodeByName(tmp.result.name)!=-1)//A定义过
@@ -240,7 +247,7 @@ void DAG::CreateDAG(vector<QtNode> Block) {
                     }
                     if(SearchNodeByName(tmp.result.name)!=-1) DeleteMark(Find,tmp.result.name);
                 }
-                else//A=BopC
+                else//A=BopC，包括了两个操作数都不是常数，其中有一个是常数的情况
                 {
                     int Find= SearchTwo(tmp.oparation,tmp.firstargument.name,tmp.secondargument.name);
                     if(Find!=-1)//存在公共表达式
@@ -261,23 +268,18 @@ void DAG::CreateDAG(vector<QtNode> Block) {
                 }
             }
                 break;
-            case 3://其他特殊四元式（转向四元式）
+            case 3://其他特殊四元式
             {
                 if(Goto==0)//特殊四元式在结尾
                 {
                     SpecialQTend=tmp;//保存特殊四元式
                 }
-                else if(Goto==1)//特殊四元式既在开头也在结尾
+                if(tmp.oparation==WH)//特殊四元式WH
                 {
-                    if(SpecialQTCount==0)
-                    {
-                        SpecialQTbegin=tmp;
-                        SpecialQTCount++;
-                    }
-                    else if(SpecialQTCount==1)
-                    {
-                        SpecialQTend=tmp;
-                    }
+                    int WHnum=CreateNode();
+                    NodeList[WHnum].op=WH;
+//                    SpecialQTWH=tmp;//保存WH
+//                    SpecialQTWHsym=1;
                 }
             }
                 break;
@@ -293,12 +295,14 @@ void DAG::CreateQT(vector<QtNode> &QTlist) {
     QTlist.clear();
     vector<DAGnode>::iterator  it;
     QtNode tmp;
-    if(Goto==1)//特殊四元式既在开头也在结尾
-    {
-        QTlist.push_back(SpecialQTbegin);
-    }
     for(it=NodeList.begin();it!=NodeList.end();it++){
-        if(it->op==EMPTY)//叶节点
+        if(it->op==WH)//特殊四元式WH
+        {
+            tmp.clear();
+            tmp.oparation=WH;
+            QTlist.push_back(tmp);
+        }
+        else if(it->op==EMPTY)//叶节点
         {
             for(int i=1;i<66;i++)//遍历所有标记，如果是非临时变量则生成Ai=B
             {
@@ -353,7 +357,7 @@ void DAG::CreateQT(vector<QtNode> &QTlist) {
             }
         }
     }
-    if(Goto==0||Goto==1)//特殊四元式在末尾或者既在开头又在末尾
+    if(Goto==0)//特殊四元式在末尾
     {
         QTlist.push_back(SpecialQTend);
         for(vector<QtNode>::iterator it=QTlist.begin();it!=QTlist.end();it++)
@@ -363,54 +367,9 @@ void DAG::CreateQT(vector<QtNode> &QTlist) {
     }
 }
 
-//void DAG::PrintQT(vector<QtNode> QTlist,ofstream &file) {
-//
-//    vector<QtNode>::iterator  it;
-//    for(it=QTlist.begin();it!=QTlist.end();it++){
-//        if(it->oparation==ASG)
-//            file<<"=";
-//        if(it->oparation==ADD)
-//            file<<"+";
-//        if(it->oparation==SUB)
-//            file<<"-";
-//        if(it->oparation==MUL)
-//            file<<"*";
-//        if(it->oparation==DIV)
-//            file<<"/";
-//        if(it->oparation==IF)
-//            file<<"if";
-//        if(it->oparation==EL)
-//            file<<"el";
-//        if(it->oparation==IE)
-//            file<<"ie";
-//        if(it->oparation==BIG)
-//            file<<">";
-//        if(it->oparation==LESS)
-//            file<<"<";
-//        if(it->oparation==BIGE)
-//            file<<">=";
-//        if(it->oparation==LESSE)
-//            file<<"<=";
-//        if(it->oparation==EQU)
-//            file<<"==";
-//        file<<"\t";
-//        if(it->firstargument.name=="")
-//            file<<"_";
-//        else file<<it->firstargument.name;
-//        file<<"\t";
-//        if(it->secondargument.name=="")
-//            file<<"_";
-//        else file<<it->secondargument.name;
-//        file<<"\t";
-//        if(it->result.name=="")
-//            file<<"_";
-//        else file<<it->result.name;
-//        file<<endl;
-//    }
-//}
 
 void DAG::FindGoto(vector<QtNode> QTlist) {
-    if(QTlist[QTlist.size()-1].oparation==IF||QTlist[QTlist.size()-1].oparation==EL||QTlist[QTlist.size()-1].oparation==IE)
+    if(QTlist[QTlist.size()-1].oparation==IF||QTlist[QTlist.size()-1].oparation==EL||QTlist[QTlist.size()-1].oparation==IE||QTlist[QTlist.size()-1].oparation==DO||QTlist[QTlist.size()-1].oparation==WE)
     {
         Goto=0;
     }
@@ -419,6 +378,9 @@ void DAG::FindGoto(vector<QtNode> QTlist) {
 void DAG::clear() {
     NodeList.clear();
     Goto=-1;
-    SpecialQTbegin.clear();
+//    SpecialQTWH.clear();
     SpecialQTend.clear();
+//    WHnextL.clear();
+//    WHnextR.clear();
+//    WHnextOP=EMPTY;
 }

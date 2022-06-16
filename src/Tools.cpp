@@ -41,6 +41,22 @@ void Tools::GetBlocks(vector<QtNode> &QTlist,vector<pair<int,int>> &BlocksInOut)
             BlocksInOut.push_back(tmp);//一个基本块划分完毕
             preIn=1;
         }
+        else if(it->oparation==DO)//当前语句是DO转向语句，则下一句或者跳转到的语句是基本块的入口（该句是基本块出口）
+        {
+            tmp.second=countQT;
+            it->block=countBlock;
+            countBlock++;
+            BlocksInOut.push_back(tmp);//一个基本块划分完毕
+            preIn=1;
+        }
+        else if(it->oparation==WE)//当前语句是WE转向语句，则下一句或者跳转到的语句是基本块的入口（该句是基本块出口）
+        {
+            tmp.second=countQT;
+            it->block=countBlock;
+            countBlock++;
+            BlocksInOut.push_back(tmp);//一个基本块划分完毕
+            preIn=1;
+        }
         else if(preIn==1)//该句是上一句转向语句的下一句或者跳转到的语句
         {
             tmp.first=countQT;
@@ -58,6 +74,10 @@ vector<QtNode> Tools::BlocksDAG(vector<QtNode> before) {
     vector<pair<int,int>> DivBlocks;//存放所有基本块的入口和出口
     DAG OneBlockDAG;
     GetBlocks(before,DivBlocks);
+    for(vector<pair<int,int>>::iterator it=DivBlocks.begin();it!=DivBlocks.end();it++)
+    {
+        cout<<it->first<<" "<<it->second<<endl;
+    }
     vector<QtNode> after;
     vector<QtNode>::iterator QTit=before.begin();
     int countQT=0;
@@ -78,9 +98,14 @@ vector<QtNode> Tools::BlocksDAG(vector<QtNode> before) {
         {
             after.push_back(*it);
         }
-//        testD.PrintQT(testv1,file);
     }
     PrintQT(after,file);
+    DivBlocks.clear();
+    GetBlocks(after,DivBlocks);
+    for(vector<pair<int,int>>::iterator it=DivBlocks.begin();it!=DivBlocks.end();it++)
+    {
+        cout<<it->first<<" "<<it->second<<endl;
+    }
     return after;
 }
 
@@ -114,6 +139,14 @@ void Tools::PrintQT(vector<QtNode> QTlist,ofstream &file) {
             file<<"<=";
         if(it->oparation==EQU)
             file<<"==";
+        if(it->oparation==SBRAC)
+            file<<"[]";
+        if(it->oparation==WH)
+            file<<"wh";
+        if(it->oparation==DO)
+            file<<"do";
+        if(it->oparation==WE)
+            file<<"we";
         file<<"\t";
         if(it->firstargument.name=="")
             file<<"_";

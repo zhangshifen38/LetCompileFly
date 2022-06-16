@@ -9,6 +9,7 @@
 //全局变量全部放在这里
 
 vector<QtNode> QtList;
+vector<pair<int,int>> BlocksInOut;//四元式集合划分基本块后基本块的入口和出口，first是入口，second是出口
 
 //符号表变量
 SymbolTable symbolTable;

@@ -41,9 +41,12 @@ public:
     void clear();
 private:
     vector<DAGnode> NodeList;
-    int Goto;//0表示转向语句在末尾，1表示转向语句既在开头也在末尾
-    QtNode SpecialQTbegin; //在开头的转向四元式
+    int Goto;//0表示转向语句在末尾，1表示转向语句既在末尾但还有其他特殊语句在其他位置
+//    QtNode SpecialQTWH; //特殊四元式WH
     QtNode SpecialQTend;  //在结尾的转向四元式
+//    QTOparation WHnextOP;//标记WH语句的下一条语句的操作符
+//    string  WHnextL;//标记WH语句的下一条语句的第一个操作数
+//    string WHnextR;//标记WH语句的下一条语句的第二个操作数
 };
 
 

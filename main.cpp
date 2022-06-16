@@ -55,6 +55,42 @@ int main() {
     tmp.result=testt;
     testV.push_back(tmp);
 
+    tmp.oparation=ADD;
+    testt.Set("a",2, false);
+    tmp.firstargument=testt;
+    testt.Set("4.6",1, false);
+    tmp.secondargument=testt;
+    testt.Set("E",2, false);
+    tmp.result=testt;
+    testV.push_back(tmp);
+
+    tmp.oparation=ADD;
+    testt.Set("a",2, false);
+    tmp.firstargument=testt;
+    testt.Set("4.6",1, false);
+    tmp.secondargument=testt;
+    testt.Set("F",2, false);
+    tmp.result=testt;
+    testV.push_back(tmp);
+
+    tmp.oparation=SBRAC;
+    testt.Set("X",2, false);
+    tmp.firstargument=testt;
+    testt.Set("3",1, false);
+    tmp.secondargument=testt;
+    testt.Set("T",2, false);
+    tmp.result=testt;
+    testV.push_back(tmp);
+
+    tmp.oparation=SBRAC;
+    testt.Set("X",2, false);
+    tmp.firstargument=testt;
+    testt.Set("3",1, false);
+    tmp.secondargument=testt;
+    testt.Set("P",2, false);
+    tmp.result=testt;
+    testV.push_back(tmp);
+
     tmp.oparation=MUL;
     testt.Set("2",1, false);
     tmp.firstargument=testt;
@@ -162,6 +198,42 @@ int main() {
     tmp.result=testt;
     testV.push_back(tmp);
 
+    tmp.oparation=ADD;
+    testt.Set("a",2, false);
+    tmp.firstargument=testt;
+    testt.Set("4.6",1, false);
+    tmp.secondargument=testt;
+    testt.Set("E",2, false);
+    tmp.result=testt;
+    testV.push_back(tmp);
+
+    tmp.oparation=ADD;
+    testt.Set("a",2, false);
+    tmp.firstargument=testt;
+    testt.Set("4.6",1, false);
+    tmp.secondargument=testt;
+    testt.Set("F",2, false);
+    tmp.result=testt;
+    testV.push_back(tmp);
+
+    tmp.oparation=SBRAC;
+    testt.Set("X",2, false);
+    tmp.firstargument=testt;
+    testt.Set("3",1, false);
+    tmp.secondargument=testt;
+    testt.Set("T",2, false);
+    tmp.result=testt;
+    testV.push_back(tmp);
+
+    tmp.oparation=SBRAC;
+    testt.Set("X",2, false);
+    tmp.firstargument=testt;
+    testt.Set("3",1, false);
+    tmp.secondargument=testt;
+    testt.Set("P",2, false);
+    tmp.result=testt;
+    testV.push_back(tmp);
+
     tmp.oparation=MUL;
     testt.Set("2",1, false);
     tmp.firstargument=testt;
@@ -260,7 +332,65 @@ int main() {
     tmp.result=testt;
     testV.push_back(tmp);
 
+    tmp.oparation=ASG;
+    testt.Set("5",1, false);
+    tmp.firstargument=testt;
+    testt.clear();
+    tmp.secondargument=testt;
+    testt.Set("G",2, false);
+    tmp.result=testt;
+    testV.push_back(tmp);
 
+    tmp.oparation=WH;
+    testt.clear();
+    tmp.firstargument=testt;
+    testt.clear();
+    tmp.secondargument=testt;
+    tmp.result=testt;
+    testV.push_back(tmp);
+
+    tmp.oparation=BIG;
+    testt.Set("a",2, false);
+    tmp.firstargument=testt;
+    testt.Set("b",2, false);
+    tmp.secondargument=testt;
+    testt.Set("t1",3, false);
+    tmp.result=testt;
+    testV.push_back(tmp);
+
+    tmp.oparation=DO;
+    testt.Set("t1",3, false);
+    tmp.firstargument=testt;
+    testt.clear();
+    tmp.secondargument=testt;
+    tmp.result=testt;
+    testV.push_back(tmp);
+
+    tmp.oparation=ADD;
+    testt.Set("a",2, false);
+    tmp.firstargument=testt;
+    testt.Set("b",2, false);
+    tmp.secondargument=testt;
+    testt.Set("t2",3, false);
+    tmp.result=testt;
+    testV.push_back(tmp);
+
+    tmp.oparation=MUL;
+    testt.Set("t2",3, false);
+    tmp.firstargument=testt;
+    testt.Set("c",2, false);
+    tmp.secondargument=testt;
+    testt.Set("x",2, false);
+    tmp.result=testt;
+    testV.push_back(tmp);
+
+    tmp.oparation=WE;
+    testt.clear();
+    tmp.firstargument=testt;
+    testt.clear();
+    tmp.secondargument=testt;
+    tmp.result=testt;
+    testV.push_back(tmp);
 
 //    for(int i=0;i<11;i++){
 //        if(testV[i].oparation==ASG)
