@@ -68,7 +68,7 @@ public:
 };
 
 //状态转移函数初始化
-const array<TransFunc, 23> AutomatonLA::table {
+const array<TransFunc, 27> AutomatonLA::table {
         TransFunc(map<char, int>()),	//0
         TransFunc(map<char, int>{		//1
                 {'A',	2},
@@ -80,7 +80,9 @@ const array<TransFunc, 23> AutomatonLA::table {
                 {'!',   11},
                 {'+',	13},
                 {'\'',	15},
-                {'\"',	18}
+                {'\"',	18},
+                {'&',   23},
+                {'|',   25}
         }, 21, TransChar1()),
         TransFunc(map<char, int>{		//2
                 {'A',	2},
@@ -140,6 +142,14 @@ const array<TransFunc, 23> AutomatonLA::table {
         TransFunc(map<char, int>(), -4),	//21
         TransFunc(map<char, int>{		//22
                 {'0',	22},
-                {'a',	22},
-        }, -2, TransChar5())
+                {'a',	22}
+        }, -2, TransChar5()),
+        TransFunc(map<char,int>{        //23
+                {'&',   24}
+        }),
+        TransFunc(map<char, int>(), -4),	//24
+        TransFunc(map<char,int>{        //25
+                {'|',   26}
+        }),
+        TransFunc(map<char, int>(), -4)	//26
 };

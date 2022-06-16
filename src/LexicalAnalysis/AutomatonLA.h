@@ -18,7 +18,7 @@ public:
 private:
     int curState;				//当前状态
     //改进后的状态转换表，数组下标对应自动机的状态
-    static const array<TransFunc, 23> table;
+    static const array<TransFunc, 27> table;
 };
 
 

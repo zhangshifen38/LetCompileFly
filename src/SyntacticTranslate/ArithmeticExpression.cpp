@@ -8,16 +8,7 @@
 extern ReportingError reportingError;
 
 bool ArithmeticExpression::analysis() {
-    if(!funcE()){       //连续赋值语句判断完毕，进入算术表达式判断
-        return false;
-    }else{
-        if(symbolTable.isDelimiter(identifier.getCurrentWord()) == 13){      //分号13
-            identifier.nextW();
-            return true;
-        }else{
-            return false;
-        }
-    }
+    return funcE();
 }
 
 bool ArithmeticExpression::funcE() {
@@ -134,5 +125,7 @@ bool ArithmeticExpression::funcF() {
 }
 
 Token ArithmeticExpression::getResult() {
-    return this->waitForAssign.top();
+    Token tk=this->waitForAssign.top();
+    this->waitForAssign.pop();
+    return tk;
 }
