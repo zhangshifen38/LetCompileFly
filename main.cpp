@@ -2,6 +2,7 @@
 #include "GenerateQT.h"
 #include "DAG.h"
 #include "Tools.h"
+#include "ObjectCodeGeneration/ObjectCode.h"
 using namespace  std;
 int main() {
     //std::cout << "Hello, World!" << std::endl;
@@ -12,5 +13,6 @@ int main() {
     Tools tools;
     tools.PrintQT(QtList,file);
     tools.BlocksDAG();
+    runObjectCode();
     return 0;
 }
