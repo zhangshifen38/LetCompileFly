@@ -1,2 +1,2 @@
-var a,b,c,d,e,f,g,h:int;
-a=b=c=(d+e*f)-(g/h)+233-456;
+a=b+3
+c=b+3

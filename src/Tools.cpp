@@ -57,6 +57,14 @@ void Tools::GetBlocks(vector<QtNode> &QTlist,vector<pair<int,int>> &BlocksInOut)
             BlocksInOut.push_back(tmp);//一个基本块划分完毕
             preIn=1;
         }
+        else if(it==QTlist.end()-1)//程序的最后一句，该句是基本块出口
+        {
+            tmp.second=countQT;
+            it->block=countBlock;
+            countBlock++;
+            BlocksInOut.push_back(tmp);//一个基本块划分完毕
+            preIn=1;
+        }
         else if(preIn==1)//该句是上一句转向语句的下一句或者跳转到的语句
         {
             tmp.first=countQT;
@@ -67,21 +75,21 @@ void Tools::GetBlocks(vector<QtNode> &QTlist,vector<pair<int,int>> &BlocksInOut)
     }
 }
 
-vector<QtNode> Tools::BlocksDAG(vector<QtNode> before) {
+vector<QtNode> Tools::BlocksDAG() {
     ofstream file;
     file.open("../QTdata/QT1.txt");
     vector<QtNode> QToneBlock;//一个基本块中的四元式集合
-    vector<pair<int,int>> DivBlocks;//存放所有基本块的入口和出口
+//    vector<pair<int,int>> DivBlocks;//存放所有基本块的入口和出口
     DAG OneBlockDAG;
-    GetBlocks(before,DivBlocks);
-    for(vector<pair<int,int>>::iterator it=DivBlocks.begin();it!=DivBlocks.end();it++)
+    GetBlocks(QtList,BlocksInOut);
+    for(vector<pair<int,int>>::iterator it=BlocksInOut.begin();it!=BlocksInOut.end();it++)
     {
         cout<<it->first<<" "<<it->second<<endl;
     }
     vector<QtNode> after;
-    vector<QtNode>::iterator QTit=before.begin();
+    vector<QtNode>::iterator QTit=QtList.begin();
     int countQT=0;
-    for(vector<pair<int,int>>::iterator it=DivBlocks.begin();it!=DivBlocks.end();it++)
+    for(vector<pair<int,int>>::iterator it=BlocksInOut.begin();it!=BlocksInOut.end();it++)
     {
         OneBlockDAG.clear();
         QToneBlock.clear();
@@ -100,9 +108,14 @@ vector<QtNode> Tools::BlocksDAG(vector<QtNode> before) {
         }
     }
     PrintQT(after,file);
-    DivBlocks.clear();
-    GetBlocks(after,DivBlocks);
-    for(vector<pair<int,int>>::iterator it=DivBlocks.begin();it!=DivBlocks.end();it++)
+    BlocksInOut.clear();
+    GetBlocks(after,BlocksInOut);
+    QtList.clear();
+    for(vector<QtNode>::iterator it=after.begin();it!=after.end();it++)
+    {
+        QtList.push_back(*it);
+    }//更新四元式集合
+    for(vector<pair<int,int>>::iterator it=BlocksInOut.begin();it!=BlocksInOut.end();it++)
     {
         cout<<it->first<<" "<<it->second<<endl;
     }
