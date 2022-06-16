@@ -142,15 +142,15 @@ void Tools::PrintQT(vector<QtNode> QTlist,ofstream &file) {
             file<<"el";
         if(it->oparation==IE)
             file<<"ie";
-        if(it->oparation==BIG)
+        if(it->oparation==JG)
             file<<">";
-        if(it->oparation==LESS)
+        if(it->oparation==JL)
             file<<"<";
-        if(it->oparation==BIGE)
+        if(it->oparation==JGE)
             file<<">=";
-        if(it->oparation==LESSE)
+        if(it->oparation==JLE)
             file<<"<=";
-        if(it->oparation==EQU)
+        if(it->oparation==JE)
             file<<"==";
         if(it->oparation==SBRAC)
             file<<"[]";
