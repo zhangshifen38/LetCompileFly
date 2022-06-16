@@ -10,8 +10,10 @@
 #include <string>
 #include <utility>
 #include <fstream>
+#include <stack>
+#include <sstream>
 
-using std::queue,std::string,std::pair,std::ifstream,std::ofstream;
+using std::queue,std::string,std::pair,std::ifstream,std::ofstream,std::stack;
 
 class Identifier {
 public:
@@ -22,6 +24,8 @@ public:
     void nextW();		                //利用自动机获取一个单词
     bool hasNext();						//判断字符串是否有待识别的部分
     pair<string ,int> getCurrentWord(); //获取当前待识别的符号
+    void feedBack(pair<string,int> fb); //送回语法成分
+    string transInt(string st);         //将整数转换为十进制表示
 private:
     AutomatonLA at;						//识别器自动机
     queue<string> buffer;				//待识别的字符串暂存队列
@@ -30,6 +34,7 @@ private:
     bool todo;							//识别器是否还有任务的判断变量
     ifstream sourceCode;                //源文件流
     pair<string ,int> currentWord;      //当前的符号
+    stack<pair<string ,int>> pushStack; //下推栈，可用于反悔分析
 };
 
 

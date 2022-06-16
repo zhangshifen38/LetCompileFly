@@ -10,6 +10,7 @@
 #include <vector>
 #include <utility>
 #include <iostream>
+#include <sstream>
 
 using std::string,std::map,std::vector,std::pair;
 
@@ -75,10 +76,11 @@ public:
 
     SymbolTable();
     size_t isKeyWord(LexicalToken token);           //判断词法分析token是否为关键字
-    size_t isDelimiterl(LexicalToken token);        //判断token是否是标识符
+    size_t isDelimiter(LexicalToken token);         //判断token是否是界符
     Type getType(LexicalToken token);               //获取关键字对应的类型代号，不是类型返回NAT
     bool addVariable(string name,Type type);        //添加定义的变量，返回是否添加成功（不成功原因：同层次重名）
-
+    Type isUserIdentifier(LexicalToken token);      //判断是否是已有用户定义标识符，返回标识符的类型信息
+    string allocTemporaryVariable();                //申请一个临时变量
     void printMain(){
         for(auto& i:SYNBL){
             std::cout<<i.name<<' '<<i.type<<' '<<(i.category==V?"Var":"Others")<<' '<<i.address<<std::endl;
@@ -86,15 +88,16 @@ public:
     }
 
 private:
-    vector<MainTable> SYNBL;
-    vector<TypeTable> TYPEL;
-    vector<ArrayInfoTable> AINFL;
-    vector<StructInfoTable> RINFL;
-    vector<ConstTable> CONSL;
-    vector<LengthTable> LENL;
-    vector<FunctionInfoTable> PFINFL;
-    static const map<string ,size_t > KEYWORDL;
-    static const map<string ,size_t > DELIMITERL;
+    vector<MainTable> SYNBL;            //符号表主表
+    vector<TypeTable> TYPEL;            //类型表
+    vector<ArrayInfoTable> AINFL;       //数组表
+    vector<StructInfoTable> RINFL;      //结构体表
+    vector<ConstTable> CONSL;           //常量表
+    vector<LengthTable> LENL;           //长度表
+    vector<FunctionInfoTable> PFINFL;   //函数表
+    vector<string> TEMPL;               //临时变量表
+    static const map<string ,size_t > KEYWORDL;     //关键字表
+    static const map<string ,size_t > DELIMITERL;   //界符表
 };
 
 

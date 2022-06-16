@@ -11,14 +11,15 @@
 using  namespace  std;
 
 enum QTOparation{
+    EMPTY,              //空
     ADD,SUB,MUL,DIV,    //算术表达式
     AND,OR,XOR,NEG,     //逻辑运算表达式
     IF,EL,IE,           //条件表达式
     WH,DO,WE,           //循环表达式
-    ASG,                 //赋值表达式(assignment)
+    ASG                 //赋值表达式(assignment)
 //    FUNC,CALL,           //函数与函数调用表达式
 //    RET,END,            //函数返回与结束标志(可合为一)
-    EMPTY,//空
+
     //有需要的话这里还可以继续添加
 };
 
@@ -28,6 +29,9 @@ struct QtNode//四元式节点
     Token firstargument;
     Token secondargument;
     Token result;
+    QtNode()=default;
+    QtNode(QTOparation oparation, const Token &firstargument, const Token &secondargument, const Token &result);
+
     void clear(){oparation=EMPTY;firstargument.clear();secondargument.clear();result.clear();};
 };
 //vector<QtNode>QtList;
