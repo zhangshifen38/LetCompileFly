@@ -3,6 +3,9 @@
 //
 
 #include "VariableDeclare.h"
+#include "ReportingError.h"
+extern ReportingError reportingError;
+
 
 bool VariableDeclare::analysis() {
     identifier.nextW();
@@ -15,29 +18,34 @@ bool VariableDeclare::analysis() {
                 this->varID.push(identifier.getCurrentWord().first);
             }else{
                 //报错：已定义的标识符
+                reportingError.clerical_error("the identifier has been defined!",0);
                 return false;
             }
             identifier.nextW();
         }
     }else{
         //报错：已定义的标识符
+        reportingError.clerical_error("the identifier has defined!",0);
         return false;
     }
     if(symbolTable.isDelimiter(identifier.getCurrentWord()) == 17){          //冒号编号17
         identifier.nextW();
     } else{
         //报错：定义变量语句缺少冒号
+        reportingError.clerical_error("the colon is missing from the defined variable statement!",0);
         return false;
     }
     this->type=symbolTable.getType(identifier.getCurrentWord());
     if(this->type==NAT){
         //报错：未知的类型
+        reportingError.clerical_error("unknown type!",0);
         return false;
     } else{
         identifier.nextW();
     }
     if(symbolTable.isDelimiter(identifier.getCurrentWord()) != 13){          //分号编号13
         //报错：未出现的分号
+        reportingError.clerical_error("no semicolons appear!",0);
         return false;
     }
     identifier.nextW();
