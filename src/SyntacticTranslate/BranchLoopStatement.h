@@ -2,8 +2,8 @@
 // Created by AlexHoring on 2022/6/16.
 //
 
-#ifndef LETCOMPILEFLY_BRANCHSTATEMENT_H
-#define LETCOMPILEFLY_BRANCHSTATEMENT_H
+#ifndef LETCOMPILEFLY_BRANCHLOOPSTATEMENT_H
+#define LETCOMPILEFLY_BRANCHLOOPSTATEMENT_H
 
 
 #include "SymbolTable.h"
@@ -16,7 +16,9 @@ extern SymbolTable symbolTable;
 extern Identifier identifier;
 extern vector<QtNode> QtList;
 
-class BranchStatement {
+class ConstructStatements;
+
+class IfStatement {
 public:
     using LexicalToken = std::pair<std::string, int>;
     bool analysis();
@@ -29,5 +31,22 @@ private:
     bool funcE();
 };
 
+class WhileStatement{
+public:
+    using LexicalToken = std::pair<std::string, int>;
+    bool analysis();
+private:
+    Token logicExp;
+    bool funcT();
+    bool funcF();
+};
 
-#endif //LETCOMPILEFLY_BRANCHSTATEMENT_H
+class ConstructStatements{
+public:
+    using LexicalToken = std::pair<std::string, int>;
+    bool generateSingle();
+};
+
+
+
+#endif //LETCOMPILEFLY_BRANCHLOOPSTATEMENT_H
