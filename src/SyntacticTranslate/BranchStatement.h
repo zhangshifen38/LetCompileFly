@@ -10,6 +10,7 @@
 #include "LexicalAnalysis/Identifier.h"
 #include "Quaternary.h"
 #include "LogicExpression.h"
+#include "AssignExpression.h"
 
 extern SymbolTable symbolTable;
 extern Identifier identifier;

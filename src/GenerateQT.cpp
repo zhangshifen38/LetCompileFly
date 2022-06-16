@@ -28,6 +28,14 @@ void GenerateQT::run() {
                 break;
             }
         }
+        //如果是逻辑表达式
+        else if(symbolTable.isKeyWord(identifier.getCurrentWord())==12){
+            BranchStatement branchStatement;
+            if(!branchStatement.analysis()){
+                ok= false;
+                break;
+            }
+        }
     }
     if(ok){
         symbolTable.printMain();

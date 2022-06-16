@@ -14,7 +14,7 @@ bool BranchStatement::analysis() {
     }
     Token emp("_",3, false);
     QtList.emplace_back(QtNode(IE,emp,emp,emp));
-    return false;
+    return true;
 }
 
 bool BranchStatement::funcS() {
@@ -50,9 +50,40 @@ bool BranchStatement::funcT() {
 }
 
 bool BranchStatement::funcF() {
-    return false;
+    bool multiStatements;
+    if(symbolTable.isDelimiter(identifier.getCurrentWord())==15){       //左花括号{
+        multiStatements= true;
+        identifier.nextW();
+    } else{
+        multiStatements= false;
+    }
+    do{
+        if(symbolTable.isKeyWord(identifier.getCurrentWord())==12){     //判断if
+            BranchStatement branchStatement;
+            if(!branchStatement.analysis()){
+                return false;
+            }
+        }else if(!symbolTable.isKeyWord((identifier.getCurrentWord()))){
+            AssignExpression assignExpression;
+            if(!assignExpression.analysis()){
+                return false;
+            }
+        }
+    }while(multiStatements&&symbolTable.isDelimiter(identifier.getCurrentWord())!=16);  //右花括号}
+    if(multiStatements){
+        identifier.nextW();
+    }
+    return true;
 }
 
 bool BranchStatement::funcE() {
-    return false;
+    if(symbolTable.isKeyWord(identifier.getCurrentWord())==14){             //关键字else
+        Token tk("_",3, false);
+        QtList.emplace_back(EL,tk,tk,tk);
+        identifier.nextW();
+        if(!funcF()){
+            return false;
+        }
+    }
+    return true;
 }

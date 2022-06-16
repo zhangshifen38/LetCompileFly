@@ -12,6 +12,7 @@ bool CompareExpression::analysis() {
     this->waitToGenerate.push(arithmeticExpression.getResult());
     QTOperation operation= isCompareSymbol(identifier.getCurrentWord());
     while (operation!=EMPTY){
+        identifier.nextW();
         if(!arithmeticExpression.analysis()){
             return false;
         }
@@ -20,6 +21,7 @@ bool CompareExpression::analysis() {
         Token ar(symbolTable.allocTemporaryVariable(),3, true);
         QtList.emplace_back(QtNode(operation,a1,arithmeticExpression.getResult(),ar));
         this->waitToGenerate.push(ar);
+        operation= isCompareSymbol(identifier.getCurrentWord());
     }
     return true;
 }

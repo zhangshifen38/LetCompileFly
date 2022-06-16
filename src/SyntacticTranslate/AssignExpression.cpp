@@ -21,13 +21,13 @@ bool AssignExpression::analysis() {
             break;
         }
     }
-    //连续赋值语句判断完毕，进入算术表达式判断
-    ArithmeticExpression arithmeticExpression;
-    if(!arithmeticExpression.analysis()){
+    //连续赋值语句判断完毕，进入表达式判断，规则为：逻辑->比较->算术
+    LogicExpression logicExpression;
+    if(!logicExpression.analysis()){
         return false;
     }
     //获得算术表达式的计算结果
-    this->waitForAssign.push(arithmeticExpression.getResult());
+    this->waitForAssign.push(logicExpression.getResult());
     if(symbolTable.isDelimiter(identifier.getCurrentWord()) == 13){      //分号13
         identifier.nextW();
         //生成赋值表达式四元式
