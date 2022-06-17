@@ -59,7 +59,7 @@ bool AcSort(const ActiveNode &ob1,const ActiveNode &ob2)
 }
 bool AcEqual(const ActiveNode &ob1,const ActiveNode &ob2)
 {
-    return (ob1.content==ob2.content)&&(ob1.active==ob2.active);
+    return ob1.content==ob2.content;
 }
 void storeCode(string operation, string dest, string source,string address=" ")
 {
@@ -805,16 +805,23 @@ void objectCodeGeneration(int dstart, int dend)
             Sem.push(CodeList.size());
             if(temp.operation==JL)
                 storeCode("JNB","","","S");
-            if(temp.operation==JLE)
+            else if(temp.operation==JLE)
                 storeCode("JNBE","","","S");
-            if(temp.operation==JG)
+            else if(temp.operation==JG)
                 storeCode("JNA","","","S");
-            if(temp.operation==JGE)
+            else if(temp.operation==JGE)
                 storeCode("JNAE","","","S");
-            if(temp.operation==JE)
+            else if(temp.operation==JE)
                 storeCode("JNE","","","S");
-            if(temp.operation==JNE)
+            else if(temp.operation==JNE)
                 storeCode("JE","","","S");
+            else
+            {
+                Sem.pop();
+                Sem.push(CodeList.size()+1);
+                storeCode("SUB",ObjQtList[i].firstargument,",0");
+                storeCode("JNA","","","S");
+            }
         }
         else if (ObjQtList[i].operation == EL)
         {
@@ -844,20 +851,29 @@ void objectCodeGeneration(int dstart, int dend)
         }
         else if (ObjQtList[i].operation == DO)//填we的下一条地址
         {
-            Sem.push(CodeList.size()); //将当前代码序号入栈
             ObjQtNode temp = ObjQtList[i-1];
-            if(temp.operation==JL)
-                storeCode("JNB","","","S");
-            if(temp.operation==JLE)
-                storeCode("JNBE","","","S");
-            if(temp.operation==JG)
+            if(temp.operation==WH)
+            {
+                Sem.push(CodeList.size()+1);
+                storeCode("SUB",ObjQtList[i].firstargument,",0");
                 storeCode("JNA","","","S");
-            if(temp.operation==JGE)
-                storeCode("JNAE","","","S");
-            if(temp.operation==JE)
-                storeCode("JNE","","","S");
-            if(temp.operation==JNE)
-                storeCode("JE","","","S");
+            }
+            else
+            {
+                Sem.push(CodeList.size());
+                if(temp.operation==JL)
+                    storeCode("JNB","","","S");
+                if(temp.operation==JLE)
+                    storeCode("JNBE","","","S");
+                if(temp.operation==JG)
+                    storeCode("JNA","","","S");
+                if(temp.operation==JGE)
+                    storeCode("JNAE","","","S");
+                if(temp.operation==JE)
+                    storeCode("JNE","","","S");
+                if(temp.operation==JNE)
+                    storeCode("JE","","","S");
+            }
         }
         else if (ObjQtList[i].operation == WE)
         {
