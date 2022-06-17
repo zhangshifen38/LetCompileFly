@@ -43,6 +43,7 @@ bool AssignExpression::analysis() {
         while(!this->waitForAssign.empty()){
             Token tk=this->waitForAssign.top();
             this->waitForAssign.pop();
+            tk.type=2;
             if(tk.type==-1){
                 Token ttk=Token(symbolTable.allocTemporaryVariable(),3, true);
                 QtList.emplace_back(QtNode(GADR,tk,this->waitForAssign.top(),ttk));
