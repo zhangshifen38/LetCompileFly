@@ -10,6 +10,8 @@ Identifier::Identifier() {
     tmp = "";
     todo = false;
     index = 0;
+    row=0;
+    coloum=0;
 }
 
 void Identifier::reset() {
@@ -20,10 +22,9 @@ void Identifier::reset() {
 }
 
 void Identifier::addSentence() {
-    string st;
-    std::getline(sourceCode, st);
-    st += '\0';         //手动添加一个代表终结的符号。
-    buffer.push(std::move(st));
+    std::getline(sourceCode, tmp);
+    tmp += '\0';         //手动添加一个代表终结的符号。
+    row+=1;
 }
 
 void Identifier::nextW() {
@@ -33,17 +34,13 @@ void Identifier::nextW() {
     }
     string ret = "";
     at.reset();
-    while(1) {
+    while(true) {
         if (!hasNext()) {
             this->currentWord = make_pair(ret, 0);
             return;             //没有要识别的单词了，返回结束标记0
         }
         if (!todo) {
-            if (buffer.empty()) {
-                addSentence();
-            }
-            tmp = buffer.front();
-            buffer.pop();
+            addSentence();
             todo = true;
             index = 0;
         }
@@ -64,11 +61,12 @@ void Identifier::nextW() {
         todo = false;
     }
     this->currentWord = make_pair(ret, at.getState());
+    coloum=index+1;
     return;   //将取得的单词与状态码送回
 }
 
 bool Identifier::hasNext() {
-    if (!todo && buffer.empty() && sourceCode.eof() && pushStack.empty()) {
+    if (!todo && sourceCode.eof() && pushStack.empty()) {
         return false;
     } else {
         return true;
@@ -137,4 +135,12 @@ long long Identifier::transIntDirectly(string st) {
         }
     }
     return ret;
+}
+
+int Identifier::getRow() const {
+    return row;
+}
+
+int Identifier::getColoum() const {
+    return coloum;
 }

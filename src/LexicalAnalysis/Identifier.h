@@ -36,6 +36,12 @@ private:
     ifstream sourceCode;                //源文件流
     pair<string ,int> currentWord;      //当前的符号
     stack<pair<string ,int>> pushStack; //下推栈，可用于反悔分析
+    int row,coloum;                     //当前识别到的行与列
+public:
+    int getRow() const;
+
+    int getColoum() const;
+
 };
 
 
