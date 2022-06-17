@@ -13,7 +13,7 @@ using  namespace  std;
 enum QTOperation{
     EMPTY,              //空
     ADD,SUB,MUL,DIV,MOD,    //算术表达式
-    AND,OR,XOR,NOT,     //逻辑运算表达式
+    AND,OR,XOR,NOT,NEG,     //逻辑运算表达式
     JNE,JE,JG,JGE,JL,JLE,//不等于，等于，大于，大于等于，小于，小于等于
     IF,EL,IE,           //条件表达式
     WH,DO,WE,           //循环表达式
