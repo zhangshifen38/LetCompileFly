@@ -18,6 +18,6 @@ int main() {
     Tools tools;
     tools.PrintQT(QtList,file);
     tools.BlocksDAG();
-//    runObjectCode();
+    runObjectCode();
     return 0;
 }

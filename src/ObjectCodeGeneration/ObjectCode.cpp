@@ -217,6 +217,15 @@ void sendDivision(int dstart, int dend)
                 }
             }
         }
+        else
+        {
+            if(ObjQtList[i].operation==GVAL)
+                acnode.content = ObjQtList[i].result;
+                acnode.active = -2;
+                AcTable.push_back(acnode);
+                AcList.push_back(acnode);
+        }
+
     }
     sort(AcTable.begin(),AcTable.end(), AcSort);
     AcTable.erase(unique(AcTable.begin(),AcTable.end(), AcEqual),AcTable.cend());
@@ -245,10 +254,7 @@ void doubleOb(enum QTOperation operation, struct Register * reg, int i)
     struct Register * tempreg = nullptr;
     if (reg->content == ObjQtList[i].firstargument)//如果查找到的当前的寄存器中有数值的
     {
-        if(reg->acnumber==-2)//如果当前是非活跃的值
-        {
-            storeCode("MOV", reg->name, ","+ObjQtList[i].firstargument);
-        }
+        if(reg->acnumber==-2);//如果当前是非活跃的值;
         else
         {
             tempreg = reReturn(i," ");
@@ -260,31 +266,17 @@ void doubleOb(enum QTOperation operation, struct Register * reg, int i)
             }
             else
             {
-//                if(tempreg->content[0]!='t')
-                    storeCode("MOV", pre->content,","+pre->name);
-//                else
-//                {
-//                    countnumber++;
-//                    MemorgNode temp;
-//                    temp.name = pre->content;
-//                    temp.count = countnumber;
-//                    storeCode("MOV", "[SI+"+ to_string(countnumber)+"]",","+pre->name);
-//                    MemorgList.push_back(temp);
-//                }
+                storeCode("MOV", pre->content,","+pre->name);
             }
-            storeCode("MOV", reg->name, ","+ObjQtList[i].firstargument);
         }
     }
-    else if ((operation == ADD) || (operation == MUL) || (operation == AND) || (operation == OR) || (operation == JNE) || (operation == JE))//双目可交换运算符
+    else if ((operation == ADD)  || (operation == AND) || (operation == OR) || (operation == JNE) || (operation == JE))//双目可交换运算符
     {
         swapQt(i);
         reg = reReturn(i,ObjQtList[i].firstargument);
         if(reg->content==ObjQtList[i].firstargument)
         {
-            if(reg->acnumber==-2)//如果当前是非活跃的值
-            {
-                storeCode("MOV", reg->name, ","+ObjQtList[i].firstargument);
-            }
+            if(reg->acnumber==-2);//如果当前是非活跃的值
             else
             {
                 tempreg = reReturn(i," ");
@@ -296,18 +288,8 @@ void doubleOb(enum QTOperation operation, struct Register * reg, int i)
                 }
                 else
                 {
-//                    if(tempreg->content[0]!='t')
                         storeCode("MOV", reg->content,","+reg->name);
-//                    else {
-//                        countnumber++;
-//                        MemorgNode temp;
-//                        temp.name = reg->content;
-//                        temp.count = countnumber;
-//                        storeCode("MOV", "[SI+"+ to_string(countnumber)+"]",","+reg->name);
-//                        MemorgList.push_back(temp);
-//                    }
                 }
-                storeCode("MOV", reg->name, ","+ObjQtList[i].firstargument);
             }
         }
         else if (reg->content == " ")//当前寄存器为空
@@ -322,16 +304,7 @@ void doubleOb(enum QTOperation operation, struct Register * reg, int i)
             }
             else
             {
-//                if(tempreg->content[0]!='t')
-                    storeCode("MOV", reg->content,","+reg->name);
-//                else {
-//                    countnumber++;
-//                    MemorgNode temp;
-//                    temp.name = reg->content;
-//                    temp.count = countnumber;
-//                    storeCode("MOV", "[SI+"+ to_string(countnumber)+"]",","+reg->name);
-//                    MemorgList.push_back(temp);
-//                }
+                storeCode("MOV", reg->content,","+reg->name);
                 storeCode("MOV", reg->name, ","+ObjQtList[i].firstargument);
             }
         }
@@ -348,16 +321,7 @@ void doubleOb(enum QTOperation operation, struct Register * reg, int i)
         }
         else
         {
-//            if(tempreg->content[0]!='t')
-                storeCode("MOV", reg->content,","+reg->name);
-//            else {
-//                countnumber++;
-//                MemorgNode temp;
-//                temp.name = reg->content;
-//                temp.count = countnumber;
-//                storeCode("MOV", "[SI+" + to_string(countnumber) + "]", ","+reg->name);
-//                MemorgList.push_back(temp);
-//            }
+            storeCode("MOV", reg->content,","+reg->name);
             storeCode("MOV", reg->name, ","+ObjQtList[i].firstargument);
         }
     }
@@ -427,7 +391,24 @@ void objectCodeGeneration(int dstart, int dend)
         {
             if(pre->name=="AX"&&pre->content!=" ")
             {
-                storeCode("MUL","","BYTE PTR "+ObjQtList[i].secondargument);
+                if(('a'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='z')||('A'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='Z'))
+                {
+                    struct Register * tempreg;
+                    tempreg = reReturn(i,ObjQtList[i].secondargument);
+                    if(tempreg->content==ObjQtList[i].secondargument)
+                        storeCode("MOV",ObjQtList[i].secondargument,tempreg->name);
+                    storeCode("MUL","","BYTE PTR "+ObjQtList[i].secondargument);
+                }
+                else {
+                    if(RegisterList[3].content==" ")
+                        storeCode("MOV","DX",","+ObjQtList[i].secondargument);
+                    else
+                    {
+                        storeCode("MOV",RegisterList[3].content,",DX");
+                        storeCode("MOV","DX",","+ObjQtList[i].secondargument);
+                    }
+                    storeCode("MUL","","DL");
+                }
             }
             else
             {
@@ -435,25 +416,46 @@ void objectCodeGeneration(int dstart, int dend)
                 {
                     storeCode("MOV","AX",","+ObjQtList[i].firstargument);
                     if(('a'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='z')||('A'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='Z'))
+                    {
+                        struct Register * tempreg;
+                        tempreg = reReturn(i,ObjQtList[i].secondargument);
+                        if(tempreg->content==ObjQtList[i].secondargument)
+                            storeCode("MOV",ObjQtList[i].secondargument,tempreg->name);
                         storeCode("MUL","","BYTE PTR "+ObjQtList[i].secondargument);
+                    }
                     else {
-                        if(RegisterList[5].content==" ")
-                        {
-                            storeCode("MOV","DI",ObjQtList[i].secondargument);
-                        }
+                        if(RegisterList[3].content==" ")
+                            storeCode("MOV","DX",","+ObjQtList[i].secondargument);
                         else
                         {
-                            storeCode("MOV",RegisterList[5].content,RegisterList[5].name);
-                            storeCode("MOV","DI",ObjQtList[i].secondargument);
+                            storeCode("MOV",RegisterList[3].content,",DX");
+                            storeCode("MOV","DX",","+ObjQtList[i].secondargument);
                         }
-                        storeCode("MUL","","DI");
+                        storeCode("MUL","","DL");
                     }
                 }
                 else
                 {
                     storeCode("MOV",RegisterList[0].content,",AX");
                     storeCode("MOV","AX",","+ObjQtList[i].firstargument);
-                    storeCode("MUL","","BYTE PTR "+ObjQtList[i].secondargument);
+                    if(('a'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='z')||('A'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='Z'))
+                    {
+                        struct Register * tempreg;
+                        tempreg = reReturn(i,ObjQtList[i].secondargument);
+                        if(tempreg->content==ObjQtList[i].secondargument)
+                            storeCode("MOV",ObjQtList[i].secondargument,tempreg->name);
+                        storeCode("MUL","","BYTE PTR "+ObjQtList[i].secondargument);
+                    }
+                    else {
+                        if(RegisterList[3].content==" ")
+                            storeCode("MOV","DX",","+ObjQtList[i].secondargument);
+                        else
+                        {
+                            storeCode("MOV",RegisterList[3].content,",DX");
+                            storeCode("MOV","DX",","+ObjQtList[i].secondargument);
+                        }
+                        storeCode("MUL","","DL");
+                    }
                 }
             }
             RegisterList[0].content = ObjQtList[i].result;
@@ -463,7 +465,24 @@ void objectCodeGeneration(int dstart, int dend)
         {
             if(pre->name=="AX"&&pre->content!=" ")
             {
-                storeCode("DIV","","BYTE PTR "+ObjQtList[i].secondargument);
+                if(('a'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='z')||('A'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='Z'))
+                {
+                    struct Register * tempreg;
+                    tempreg = reReturn(i,ObjQtList[i].secondargument);
+                    if(tempreg->content==ObjQtList[i].secondargument)
+                        storeCode("MOV",ObjQtList[i].secondargument,tempreg->name);
+                    storeCode("DIV","","BYTE PTR "+ObjQtList[i].secondargument);
+                }
+                else {
+                    if(RegisterList[3].content==" ")
+                        storeCode("MOV","DX",","+ObjQtList[i].secondargument);
+                    else
+                    {
+                        storeCode("MOV",RegisterList[3].content,",DX");
+                        storeCode("MOV","DX",","+ObjQtList[i].secondargument);
+                    }
+                    storeCode("DIV","","DL");
+                }
             }
             else
             {
@@ -471,27 +490,48 @@ void objectCodeGeneration(int dstart, int dend)
                 {
                     storeCode("MOV","AX",","+ObjQtList[i].firstargument);
                     if(('a'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='z')||('A'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='Z'))
+                    {
+                        struct Register * tempreg;
+                        tempreg = reReturn(i,ObjQtList[i].secondargument);
+                        if(tempreg->content==ObjQtList[i].secondargument)
+                            storeCode("MOV",ObjQtList[i].secondargument,tempreg->name);
                         storeCode("DIV","","BYTE PTR "+ObjQtList[i].secondargument);
+                    }
                     else
                     {
-                        if(RegisterList[5].content==" ")
-                        {
-                            storeCode("MOV","DI",ObjQtList[i].secondargument);
-                        }
+                        if(RegisterList[3].content==" ")
+                            storeCode("MOV","DX",","+ObjQtList[i].secondargument);
                         else
                         {
-                            storeCode("MOV",RegisterList[5].content,RegisterList[5].name);
-                            storeCode("MOV","DI",ObjQtList[i].secondargument);
+                            storeCode("MOV",RegisterList[3].content,",DX");
+                            storeCode("MOV","DX",","+ObjQtList[i].secondargument);
                         }
-                        storeCode("MUL","","DI");
+                        storeCode("DIV","","DL");
                     }
-
                 }
                 else
                 {
                     storeCode("MOV",RegisterList[0].content,",AX");
                     storeCode("MOV","AX",","+ObjQtList[i].firstargument);
-                    storeCode("DIV","","BYTE PTR "+ObjQtList[i].secondargument);
+                    if(('a'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='z')||('A'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='Z'))
+                    {
+                        struct Register * tempreg;
+                        tempreg = reReturn(i,ObjQtList[i].secondargument);
+                        if(tempreg->content==ObjQtList[i].secondargument)
+                            storeCode("MOV",ObjQtList[i].secondargument,tempreg->name);
+                        storeCode("DIV","","BYTE PTR "+ObjQtList[i].secondargument);
+                    }
+                    else
+                    {
+                        if(RegisterList[3].content==" ")
+                            storeCode("MOV","DX",","+ObjQtList[i].secondargument);
+                        else
+                        {
+                            storeCode("MOV",RegisterList[3].content,",DX");
+                            storeCode("MOV","DX",","+ObjQtList[i].secondargument);
+                        }
+                        storeCode("DIV","","DL");
+                    }
                 }
             }
             storeCode("XOR","AH",",AH");
@@ -502,7 +542,24 @@ void objectCodeGeneration(int dstart, int dend)
         {
             if(pre->name=="AX"&&pre->content!=" ")
             {
-                storeCode("DIV","","BYTE PTR "+ObjQtList[i].secondargument);
+                if(('a'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='z')||('A'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='Z'))
+                {
+                    struct Register * tempreg;
+                    tempreg = reReturn(i,ObjQtList[i].secondargument);
+                    if(tempreg->content==ObjQtList[i].secondargument)
+                        storeCode("MOV",ObjQtList[i].secondargument,tempreg->name);
+                        storeCode("DIV","","BYTE PTR "+ObjQtList[i].secondargument);
+                }
+                else {
+                    if(RegisterList[3].content==" ")
+                        storeCode("MOV","DX",","+ObjQtList[i].secondargument);
+                    else
+                    {
+                        storeCode("MOV",RegisterList[3].content,",DX");
+                        storeCode("MOV","DX",","+ObjQtList[i].secondargument);
+                    }
+                    storeCode("DIV","","DL");
+                }
             }
             else
             {
@@ -510,26 +567,48 @@ void objectCodeGeneration(int dstart, int dend)
                 {
                     storeCode("MOV","AX",","+ObjQtList[i].firstargument);
                     if(('a'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='z')||('A'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='Z'))
+                    {
+                        struct Register * tempreg;
+                        tempreg = reReturn(i,ObjQtList[i].secondargument);
+                        if(tempreg->content==ObjQtList[i].secondargument)
+                            storeCode("MOV",ObjQtList[i].secondargument,tempreg->name);
                         storeCode("DIV","","BYTE PTR "+ObjQtList[i].secondargument);
+                    }
                     else
                     {
-                        if(RegisterList[5].content==" ")
-                        {
-                            storeCode("MOV","DI",ObjQtList[i].secondargument);
-                        }
+                        if(RegisterList[3].content==" ")
+                            storeCode("MOV","DX",","+ObjQtList[i].secondargument);
                         else
                         {
-                            storeCode("MOV",RegisterList[5].content,RegisterList[5].name);
-                            storeCode("MOV","DI",ObjQtList[i].secondargument);
+                            storeCode("MOV",RegisterList[3].content,",DX");
+                            storeCode("MOV","DX",","+ObjQtList[i].secondargument);
                         }
-                        storeCode("MUL","","DI");
+                        storeCode("DIV","","DL");
                     }
                 }
                 else
                 {
-                    storeCode("MOV",pre->content,",AX");
+                    storeCode("MOV",RegisterList[0].content,",AX");
                     storeCode("MOV","AX",","+ObjQtList[i].firstargument);
-                    storeCode("DIV","","BYTE PTR "+ObjQtList[i].secondargument);
+                    if(('a'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='z')||('A'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='Z'))
+                    {
+                        struct Register * tempreg;
+                        tempreg = reReturn(i,ObjQtList[i].secondargument);
+                        if(tempreg->content==ObjQtList[i].secondargument)
+                            storeCode("MOV",ObjQtList[i].secondargument,tempreg->name);
+                        storeCode("DIV","","BYTE PTR "+ObjQtList[i].secondargument);
+                    }
+                    else
+                    {
+                        if(RegisterList[3].content==" ")
+                            storeCode("MOV","DX",","+ObjQtList[i].secondargument);
+                        else
+                        {
+                            storeCode("MOV",RegisterList[3].content,",DX");
+                            storeCode("MOV","DX",","+ObjQtList[i].secondargument);
+                        }
+                        storeCode("DIV","","DL");
+                    }
                 }
             }
             storeCode("MOV","AH",",AL");
@@ -608,6 +687,65 @@ void objectCodeGeneration(int dstart, int dend)
                 storeCode("SUB",pre->name,","+reg->name);
             else
                 storeCode("SUB",pre->name,","+ObjQtList[i].secondargument);
+        }
+        else if(ObjQtList[i].operation==GVAL)
+        {
+            struct Register * tempreg;
+            if('0'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='9')
+            {
+                storeCode("LEA","DI",","+ObjQtList[i].firstargument+"+"+ObjQtList[i].secondargument);
+            }
+            else
+            {
+                storeCode("LEA","DI",","+ObjQtList[i].firstargument);
+                tempreg = reReturn(i,ObjQtList[i].secondargument);
+                if(tempreg->content==ObjQtList[i].secondargument)
+                {
+                    storeCode("ADD","DI",","+ tempreg->name);
+                }
+                else
+                {
+                    storeCode("ADD","DI",","+ ObjQtList[i].secondargument);
+                }
+            }
+            tempreg= reReturn(i,ObjQtList[i].result);
+            if(tempreg->content==ObjQtList[i].result)
+                storeCode("MOV",tempreg->name,",[DI]");
+            else
+            {
+                storeCode("MOV","DI",",[DI]");
+                storeCode("MOV",ObjQtList[i].result,",DI");
+            }
+        }
+        else if(ObjQtList[i].operation==GADR)
+        {
+            struct Register * tempreg;
+            if('0'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='9')
+            {
+                storeCode("LEA","DI",","+ObjQtList[i].firstargument+"+"+ObjQtList[i].secondargument);
+            }
+            else
+            {
+                storeCode("LEA","DI",","+ObjQtList[i].firstargument);
+                tempreg = reReturn(i,ObjQtList[i].secondargument);
+                if(tempreg->content==ObjQtList[i].secondargument)
+                {
+                    storeCode("ADD","DI",","+ tempreg->name);
+                }
+                else
+                {
+                    storeCode("ADD","DI",","+ ObjQtList[i].secondargument);
+                }
+            }
+            i=i+1;
+            tempreg= reReturn(i,ObjQtList[i].firstargument);
+            if(tempreg->content==ObjQtList[i].firstargument)
+                storeCode("MOV","[DI]",","+tempreg->name);
+            else
+            {
+                storeCode("MOV","DI",",[DI]");
+                storeCode("MOV",ObjQtList[i].result,",DI");
+            }
         }
         else if (ObjQtList[i].operation == ASG)
         {
@@ -722,23 +860,45 @@ void objectCodeGeneration(int dstart, int dend)
         }
         else if (ObjQtList[i].operation == GVAL)
         {
-            struct Register * reg;
-            reg = reReturn(i,ObjQtList[i].result);
-            storeCode("LEA","SP",","+ObjQtList[i].firstargument+"+"+ObjQtList[i].secondargument);
-            if(reg->content==ObjQtList[i].result)
-                storeCode("MOV",reg->name,",WORD PTR [SP]");
-            storeCode("MOV",ObjQtList[i].result,",WORD PTR [SP]");
+            struct Register * tempreg;
+            tempreg = reReturn(i,ObjQtList[i].result);
+            if('0'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='9')
+                storeCode("LEA","DI",","+ObjQtList[i].firstargument+ObjQtList[i].secondargument);
+            else
+            {
+                struct Register * reg;
+                reg = reReturn(i,ObjQtList[i].secondargument);
+                storeCode("LEA","DI",","+ObjQtList[i].firstargument);
+                if(reg->content==ObjQtList[i].secondargument)
+                    storeCode("ADD","DI",","+reg->name);
+                else
+                    storeCode("ADD","DI",","+ObjQtList[i].secondargument);
+            }
+            if(tempreg->content==ObjQtList[i].result)
+                storeCode("MOV",tempreg->name,",WORD PTR [DI]");
+            storeCode("MOV",ObjQtList[i].result,",WORD PTR [DI]");
         }
         else if (ObjQtList[i].operation == GADR)
         {
             struct Register * tempreg;
-            storeCode("LEA","SP",","+ObjQtList[i].firstargument+"+"+ObjQtList[i].secondargument);
+            if('0'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='9')
+                storeCode("LEA","DI",","+ObjQtList[i].firstargument+ObjQtList[i].secondargument);
+            else
+            {
+                struct Register * reg;
+                reg = reReturn(i,ObjQtList[i].secondargument);
+                storeCode("LEA","DI",","+ObjQtList[i].firstargument);
+                if(reg->content==ObjQtList[i].secondargument)
+                    storeCode("ADD","DI",","+reg->name);
+                else
+                    storeCode("ADD","DI",","+ObjQtList[i].secondargument);
+            }
             i++;
             tempreg = reReturn(i,ObjQtList[i].firstargument);
             if(tempreg->content==ObjQtList[i].firstargument)
-                storeCode("MOV","[SP]",","+reg->name);
+                storeCode("MOV","[DI]",","+reg->name);
             else
-                storeCode("MOV","[SP]",","+ObjQtList[i].firstargument);
+                storeCode("MOV","[DI]",","+ObjQtList[i].firstargument);
         }
         else if (ObjQtList[i].operation == FUNC) {
             storeCode(ObjQtList[i].result," PROC","");
@@ -874,5 +1034,7 @@ void runObjectCode()
     datafile<<"MOV AX,4C00H"<<endl<<"INT 21H"<<endl;
     datafile<<"CSEG ENDS"<<endl<<"END START";
     datafile.close();
+    vector<ObjQtNode>().swap(ObjQtList);
+    vector<ObjectstoreCode>().swap(CodeList);
 //    system("start ../src/ObjectCodeGeneration/Code.ASM");
 }
