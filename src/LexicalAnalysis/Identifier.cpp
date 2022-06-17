@@ -116,3 +116,25 @@ string Identifier::transInt(string st) {
 void Identifier::feedBack(pair<string, int> fb) {
     this->pushStack.push(fb);
 }
+
+long long Identifier::transIntDirectly(string st) {
+    long long ret = 0;
+    int base = 10;
+    for (char ch: st) {
+        if (ch == 'x' || ch == 'X') {
+            base = 16;    //读到X说明是16进制数
+            //由于16进制数为0X开头，因此函数先读入0再读入X
+            //在读入0时以10为基的计算不影响最终结果
+        } else if (isupper(ch)) {    //十六进制数A-E转换
+            ret *= base;
+            ret += (ch - 'A' + 10);
+        } else if (islower(ch)) {
+            ret *= base;
+            ret += (ch - 'a' + 10);
+        } else {                    //数字转换
+            ret *= base;
+            ret += (ch - '0');
+        }
+    }
+    return ret;
+}
