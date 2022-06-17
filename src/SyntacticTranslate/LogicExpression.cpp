@@ -55,12 +55,16 @@ bool LogicExpression::funcT() {
 }
 
 bool LogicExpression::funcF() {
+    CompareExpression compareExpression;
+    if(this->hasPrev){
+        hasPrev= false;
+        compareExpression.setPrev(offset,vname);
+    }
     bool opNot=false;
     if(symbolTable.isDelimiter(identifier.getCurrentWord())==20){           //逻辑非!
         opNot= true;
         identifier.nextW();
     }
-    CompareExpression compareExpression;
     if(!compareExpression.analysis()){
         return false;
     }
@@ -78,5 +82,15 @@ Token LogicExpression::getResult() {
     Token tk=this->waitToGenerate.top();
     this->waitToGenerate.pop();
     return tk;
+}
+
+void LogicExpression::setPrev(Token tk, string vname) {
+    this->vname=vname;
+    this->offset=tk;
+    this->hasPrev= true;
+}
+
+LogicExpression::LogicExpression() {
+    this->hasPrev= false;
 }
 

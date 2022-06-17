@@ -17,14 +17,33 @@ extern vector<QtNode> QtList;
 class ArithmeticExpression {
 public:
     using LexicalToken = std::pair<std::string, int>;
+    ArithmeticExpression();
     bool analysis();
     Token getResult();
-
+    void setPrev(Token tk,string n);
 private:
     stack<Token> waitForAssign;
+    bool hasPrev;
+    Token offset;
+    string vname;
+
     bool funcE();
     bool funcT();
     bool funcF();
+};
+
+class TypeVariable {
+public:
+    using LexicalToken = std::pair<std::string, int>;
+    bool analysis();
+    int getType();
+    Token getOffset();
+private:
+    int curType;
+    Token offset;
+    string vname;
+public:
+    string getVname() const;
 };
 
 

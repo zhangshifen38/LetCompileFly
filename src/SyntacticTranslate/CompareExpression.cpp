@@ -6,6 +6,10 @@
 
 bool CompareExpression::analysis() {
     ArithmeticExpression arithmeticExpression;
+    if(hasPrev){
+        arithmeticExpression.setPrev(this->offset, this->vname);
+        this->hasPrev= false;
+    }
     if(!arithmeticExpression.analysis()){
         return false;
     }
@@ -50,4 +54,14 @@ Token CompareExpression::getResult() {
     Token tk=this->waitToGenerate.top();
     this->waitToGenerate.pop();
     return tk;
+}
+
+void CompareExpression::setPrev(Token tk, string n) {
+    this->offset=tk;
+    this->vname=n;
+    this->hasPrev= true;
+}
+
+CompareExpression::CompareExpression() {
+    this->hasPrev= false;
 }

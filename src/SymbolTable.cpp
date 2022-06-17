@@ -176,6 +176,33 @@ size_t SymbolTable::addArrayType(int basicTypeID,long long length) {
     return TYPEL.size()-1;
 }
 
+size_t SymbolTable::getVarType(SymbolTable::LexicalToken token) {
+    for(auto& item:SYNBL){
+        if(item.name!=token.first){
+            continue;
+        }
+        if(item.category!=V){
+            return 0;
+        }else{
+            return item.type;
+        }
+    }
+    return 0;
+}
+ int SymbolTable::getArrayUnitType(int type) {
+    if(TYPEL[type].typeValue!=A){
+        return 0;
+    }
+    return AINFL[TYPEL[type].typePointer].typePointer;
+}
+
+size_t SymbolTable::getTypeSize(int t) {
+    if(TYPEL[t].typeValue==A){
+        return AINFL[TYPEL[t].typePointer].typeLength;
+    }
+    return TYPEL[t].typePointer;
+}
+
 
 
 
