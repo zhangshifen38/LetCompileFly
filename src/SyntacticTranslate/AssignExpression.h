@@ -21,7 +21,7 @@ public:
     bool analysis();
 private:
     stack<Token> waitForAssign;
-
+    Token result;
 };
 
 

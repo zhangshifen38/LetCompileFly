@@ -5,36 +5,54 @@
 #include "AssignExpression.h"
 
 bool AssignExpression::analysis() {
-    LexicalToken token;
+    LogicExpression logicExpression;
     //判断连续赋值形如a=b=c=d+e+f
     while(true) {
-        token = identifier.getCurrentWord();
-        if(symbolTable.isDelimiter(token)==3){
+        if(symbolTable.isDelimiter(identifier.getCurrentWord())==3){
             break;  //左括号不属于赋值表达式部分，进入算术表达式
         }
-        identifier.nextW();
+        TypeVariable typeVariable;
+        if(!typeVariable.analysis()){
+            return false;
+        }
+        if(typeVariable.getType()==0||typeVariable.getType()>4){
+            return false;
+        }
         if (symbolTable.isDelimiter(identifier.getCurrentWord()) == 11) {      //等号’=‘
-            this->waitForAssign.push(Token(token.first,2, true));
+            if(typeVariable.getOffset().name=="0"){
+                this->waitForAssign.push(Token(typeVariable.getVname(),2, true));
+            }else{
+                this->waitForAssign.push(typeVariable.getOffset());
+                this->waitForAssign.push(Token(typeVariable.getVname(),-1, true));
+            }
             identifier.nextW();
         }else{
-            identifier.feedBack(token);
+            logicExpression.setPrev(typeVariable.getOffset(),typeVariable.getVname());
             break;
         }
     }
     //连续赋值语句判断完毕，进入表达式判断，规则为：逻辑->比较->算术
-    LogicExpression logicExpression;
     if(!logicExpression.analysis()){
         return false;
     }
     //获得算术表达式的计算结果
-    this->waitForAssign.push(logicExpression.getResult());
+    this->result=logicExpression.getResult();
     if(symbolTable.isDelimiter(identifier.getCurrentWord()) == 13){      //分号13
         identifier.nextW();
         //生成赋值表达式四元式
-        while(this->waitForAssign.size()>1){
-            Token a=this->waitForAssign.top();
+        while(!this->waitForAssign.empty()){
+            Token tk=this->waitForAssign.top();
             this->waitForAssign.pop();
-            QtList.emplace_back(QtNode(ASG,a,Token("_",0, false),this->waitForAssign.top()));
+            if(tk.type==-1){
+                Token ttk=Token(symbolTable.allocTemporaryVariable(),3, true);
+                QtList.emplace_back(QtNode(GADR,tk,this->waitForAssign.top(),ttk));
+                QtList.emplace_back(QtNode(ASG,this->result,
+                                           Token("_",0, false),ttk));
+                this->waitForAssign.pop();
+            }else {
+                QtList.emplace_back(QtNode(ASG, this->result,
+                                           Token("_", 0, false), tk));
+            }
         }
         return true;
     }else{

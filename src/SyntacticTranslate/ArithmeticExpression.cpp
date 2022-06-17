@@ -86,6 +86,18 @@ bool ArithmeticExpression::funcT() {
 }
 
 bool ArithmeticExpression::funcF() {
+    if(hasPrev){
+        hasPrev= false;
+        if(offset.name=="0"){
+            this->waitForAssign.push(Token(vname,2, true));
+        }else{
+            Token tk(symbolTable.allocTemporaryVariable(),3, true);
+            QtList.emplace_back(QtNode(GVAL,Token(vname,2, true),
+                                       offset,tk));
+            this->waitForAssign.push(tk);
+        }
+        return true;
+    }
     //检测到整数
     if(identifier.getCurrentWord().second==-2){
         string sint=identifier.transInt(identifier.getCurrentWord().first);
@@ -101,8 +113,24 @@ bool ArithmeticExpression::funcF() {
     }
     //检测到用户定义标识符
     if(identifier.getCurrentWord().second==-1&&symbolTable.isUserIdentifier(identifier.getCurrentWord())!=NAT){
-        this->waitForAssign.push(Token(identifier.getCurrentWord().first,2, true));
-        identifier.nextW();
+//        this->waitForAssign.push(Token(identifier.getCurrentWord().first,2, true));
+//        identifier.nextW();
+        TypeVariable typeVariable;
+        if(!typeVariable.analysis()){
+            return false;
+        }
+        if(typeVariable.getType()>4||typeVariable.getType()==0){
+            //报错：不支持的类型
+            return false;
+        }
+        if(typeVariable.getOffset().name=="0"){
+            this->waitForAssign.push(Token(typeVariable.getVname(),2, true));
+        }else{
+            Token tk(symbolTable.allocTemporaryVariable(),3, true);
+            QtList.emplace_back(QtNode(GVAL,Token(typeVariable.getVname(),2, true),
+                                       typeVariable.getOffset(),tk));
+            this->waitForAssign.push(tk);
+        }
         return true;
     }
     //检测到左括号
@@ -128,4 +156,72 @@ Token ArithmeticExpression::getResult() {
     Token tk=this->waitForAssign.top();
     this->waitForAssign.pop();
     return tk;
+}
+
+void ArithmeticExpression::setPrev(Token tk, string n) {
+    this->hasPrev= true;
+    this->offset=tk;
+    this->vname=n;
+}
+
+ArithmeticExpression::ArithmeticExpression() {
+    this->hasPrev= false;
+}
+
+
+bool TypeVariable::analysis() {
+    if(symbolTable.isUserIdentifier(identifier.getCurrentWord())==NAT){
+        return false;
+    }
+    this->vname=identifier.getCurrentWord().first;
+    int curTypePointer=symbolTable.getVarType(identifier.getCurrentWord());
+    int len=symbolTable.getTypeSize(symbolTable.getArrayUnitType(curTypePointer));
+    string slen;
+    stringstream sio;
+    sio<<len;
+    sio>>slen;
+    Token tk(slen,1, true);
+    Token prev("0",1, true);
+    identifier.nextW();
+    while(true){
+        if(symbolTable.isDelimiter(identifier.getCurrentWord())==23){       //中括号
+            identifier.nextW();
+            ArithmeticExpression arithmeticExpression;
+            if(!arithmeticExpression.analysis()){
+                return false;
+            }
+            Token ttk=Token(symbolTable.allocTemporaryVariable(),3, true);
+            QtList.emplace_back(QtNode(MUL,tk,arithmeticExpression.getResult(),ttk));
+            Token tttk=Token(symbolTable.allocTemporaryVariable(),3, true);
+            QtList.emplace_back(QtNode(ADD,prev,ttk,tttk));
+            prev=tttk;
+            if(symbolTable.isDelimiter(identifier.getCurrentWord())!=24){  //右中括号
+                return false;
+            }
+            curTypePointer=symbolTable.getArrayUnitType(curTypePointer);
+            len=symbolTable.getTypeSize(symbolTable.getArrayUnitType(curTypePointer));
+            sio.clear();
+            sio<<len;
+            sio>>slen;
+            tk.Set(slen,1, true);
+            identifier.nextW();
+        }else{
+            break;
+        }
+    }
+    this->curType=curTypePointer;
+    this->offset=prev;
+    return true;
+}
+
+int TypeVariable::getType() {
+    return this->curType;
+}
+
+Token TypeVariable::getOffset() {
+    return this->offset;
+}
+
+string TypeVariable::getVname() const {
+    return vname;
 }
