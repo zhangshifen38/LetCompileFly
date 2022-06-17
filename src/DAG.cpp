@@ -69,9 +69,9 @@ int DAG::SearchOne(QTOperation op, string B) {
 int DAG::JudgeQT(QTOperation op) {
     if(op==ASG)//A=B
         return 0;
-    else if(op==ADD ||op==SUB ||op==MUL ||op==DIV ||op==AND ||op==OR ||op==XOR ||op==JG ||op==JL ||op==JGE ||op==JLE ||op==JE ||op==JNE || op == GVAL || op == MOD)//A=B op C
+    else if(op==ADD ||op==SUB ||op==MUL ||op==DIV ||op==AND ||op==OR ||op==XOR ||op==JG ||op==JL ||op==JGE ||op==JLE ||op==JE ||op==JNE || op == GVAL ||op==GADR|| op == MOD)//A=B op C
         return 1;
-    else if(op == NOT)//A=opB
+    else if(op == NOT||op == NEG)//A=opB
         return 2;
     else return 3;//其他特殊四元式(转向四元式)
 }
@@ -168,6 +168,7 @@ void DAG::DeleteMark(int NodeNum, string mark) {
 
 void DAG::CreateDAG(vector<QtNode> Block) {
     FindGoto(Block);//该基本块内转向语句的位置
+    int GADRsym=0;
     int SymGoto=0;
     NodeList.clear();//DAG置空
     vector<QtNode>::iterator  itQT;
@@ -201,13 +202,23 @@ void DAG::CreateDAG(vector<QtNode> Block) {
         switch (judgeQT) {
             case 0://赋值四元式A=B
             {
+
                 if(tmp.firstargument.type!=1)//变量赋值表达式A=B
                 {
-                    Attach(numB,tmp.result);//把A附加到B上
-                    if(SearchNodeByName(tmp.result.name)!=-1)//A已经定义过
+                    if(GADRsym==1)
                     {
-                        DeleteMark(numB,tmp.result.name);//删除旧定义
+                            GADRqt.push_back(tmp);
+                            GADRsym=0;
                     }
+                    else
+                    {
+                        Attach(numB,tmp.result);//把A附加到B上
+                        if(SearchNodeByName(tmp.result.name)!=-1)//A已经定义过
+                        {
+                            DeleteMark(numB,tmp.result.name);//删除旧定义
+                        }
+                    }
+
                 }
                 else{//常数赋值表达式A=C
                     int FindC= SearchNodeByName(tmp.firstargument.name);//查找常数C是否已经定义过
@@ -277,6 +288,7 @@ void DAG::CreateDAG(vector<QtNode> Block) {
                 }
                 else//A=BopC，包括了两个操作数都不是常数，其中有一个是常数的情况
                 {
+                    if(tmp.operation==GADR) GADRsym=1;
                     int Find= SearchTwo(tmp.operation,tmp.firstargument.name,tmp.secondargument.name);
                     if(Find!=-1)//存在公共表达式
                     {
@@ -338,6 +350,7 @@ void DAG::CreateQT(vector<QtNode> &QTlist) {
     QTlist.clear();
     vector<DAGnode>::iterator  it;
     QtNode tmp;
+    int countGADR=0;
     if(Goto==1)//特殊四元式在开头
     {
         QTlist.push_back(SpecialQTbegin);
@@ -359,7 +372,7 @@ void DAG::CreateQT(vector<QtNode> &QTlist) {
         }
         else if(it->op==EMPTY)//叶节点
         {
-            for(int i=1;i<66;i++)//遍历所有标记，如果是非临时变量则生成Ai=B
+            for(int i=1;i<66;i++)//遍历所有标记，如果Ai是非临时变量或者数组变量的临时变量则生成Ai=A
             {
                 if(it->mark[i].type==2){
                     tmp.clear();
@@ -378,7 +391,7 @@ void DAG::CreateQT(vector<QtNode> &QTlist) {
                 tmp.result=it->mark[0];
                 QTlist.push_back(tmp);
                 tmp.clear();
-                for(int i=1;i<66;i++)//遍历所有副标记，如果Ai是非临时变量则生成Ai=A
+                for(int i=1;i<66;i++)//遍历所有副标记，如果Ai是非临时变量或者数组变量的临时变量则生成Ai=A
                 {
                     if(it->mark[i].type==2)
                     {
@@ -397,8 +410,13 @@ void DAG::CreateQT(vector<QtNode> &QTlist) {
                 tmp.secondargument=NodeList[it->right].mark[0];
                 tmp.result=it->mark[0];
                 QTlist.push_back(tmp);
+                if(tmp.operation==GADR)
+                {
+                    QTlist.push_back(GADRqt[countGADR]);
+                    countGADR++;
+                }
                 tmp.clear();
-                for(int i=1;i<66;i++)//遍历所有副标记，如果Ai是非临时变量则生成Ai=A
+                for(int i=1;i<66;i++)//遍历所有副标记，如果Ai是非临时变量或者数组变量的临时变量则生成Ai=A
                 {
                     if(it->mark[i].type==2)
                     {
@@ -439,6 +457,7 @@ void DAG::clear() {
     SpecialQTend.clear();
     FUNCname.clear();
     CALLname.clear();
+    GADRqt.clear();
 //    WHnextL.clear();
 //    WHnextR.clear();
 //    WHnextOP=EMPTY;

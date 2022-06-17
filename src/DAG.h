@@ -41,6 +41,7 @@ public:
     void clear();
 private:
     vector<DAGnode> NodeList;
+    vector<QtNode> GADRqt;//存放特殊的GADR四元式的下一条紧跟四元式
     int Goto;//0表示转向语句在末尾，1表示转向语句既在末尾但还有其他特殊语句在其他位置
 //    QtNode SpecialQTWH; //特殊四元式WH
     string FUNCname;

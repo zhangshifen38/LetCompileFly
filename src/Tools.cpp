@@ -208,8 +208,12 @@ void Tools::PrintQT(vector<QtNode> QTlist,ofstream &file) {
             file<<"==";
         if(it->operation==JNE)
             file<<"!=";
+        if(it->operation==NOT)
+            file<<"NOT";
         if(it->operation == GVAL)
-            file<<"[]";
+            file<<"GVAL";
+        if(it->operation==GADR)
+            file<<"GADR";
         if(it->operation==WH)
             file<<"wh";
         if(it->operation==DO)
