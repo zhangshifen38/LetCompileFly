@@ -18,10 +18,15 @@ extern vector<QtNode> QtList;
 class LogicExpression {
 public:
     using LexicalToken = std::pair<std::string, int>;
+    LogicExpression();
     bool analysis();
     Token getResult();
+    void setPrev(Token tk,string vname);
 private:
     stack<Token> waitToGenerate;
+    bool hasPrev;
+    Token offset;
+    string vname;
     bool funcE();
     bool funcT();
     bool funcF();
