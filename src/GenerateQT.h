@@ -10,6 +10,8 @@
 #include "SyntacticTranslate/AssignExpression.h"
 #include "Quaternary.h"
 #include "SyntacticTranslate/BranchLoopStatement.h"
+#include "SyntacticTranslate/ProcedureDeclare.h"
+#include "SyntacticTranslate/DefinitionGenerate.h"
 
 extern SymbolTable symbolTable;
 extern Identifier identifier;
@@ -20,6 +22,8 @@ using namespace std;
 class GenerateQT {
 public:
     static void run();
+private:
+    static bool isDefinition();
 };
 
 

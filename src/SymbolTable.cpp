@@ -224,6 +224,15 @@ void SymbolTable::addProcedure(SymbolTable::LexicalToken token) {
     this->SYNBL.emplace_back(MainTable(token.first,0,F,ST_NIL));
 }
 
+Category SymbolTable::getNameCategory(string name) {
+    for(auto &item:SYNBL){
+        if(item.category!=D&&item.name==name){
+            return item.category;
+        }
+    }
+    return NAC;
+}
+
 
 
 
