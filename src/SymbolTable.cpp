@@ -25,10 +25,10 @@ FunctionInfoTable::FunctionInfoTable(size_t offset, size_t paramNumber, int entr
                                                                                                 param(param) {}
 SymbolTable::SymbolTable() {
     TYPEL.emplace_back(TypeTable(NAT, ST_NIL));
-    TYPEL.emplace_back(TypeTable(I, ST_NIL));
-    TYPEL.emplace_back(TypeTable(CH, ST_NIL));
-    TYPEL.emplace_back(TypeTable(R, ST_NIL));
-    TYPEL.emplace_back(TypeTable(B, ST_NIL));
+    TYPEL.emplace_back(TypeTable(I, 2));
+    TYPEL.emplace_back(TypeTable(CH, 1));
+    TYPEL.emplace_back(TypeTable(R, 4));
+    TYPEL.emplace_back(TypeTable(B, 1));
 }
 
 size_t SymbolTable::isKeyWord(SymbolTable::LexicalToken token) {
@@ -49,39 +49,28 @@ size_t SymbolTable::isDelimiter(SymbolTable::LexicalToken token) {
     }
     return 0;
 }
-Type SymbolTable::getType(SymbolTable::LexicalToken token) {
+int SymbolTable::getType(SymbolTable::LexicalToken token) {
     size_t num= isKeyWord(token);
     if(num==0){
-        return NAT;
+        return 0;
     }
     switch (num) {
         case 1:
-            return I;
+            return 1;
         case 4:
-            return R;
+            return 3;
         case 16:
-            return CH;
+            return 2;
         case 17:
-            return B;
+            return 4;
     }
-    return NAT;
+    return 0;
 }
-bool SymbolTable::addVariable(string name, Type type) {
+bool SymbolTable::addVariable(string name, int typeID) {
     for(auto& i:SYNBL){
         if(i.name==name){
             return false;
         }
-    }
-    int typeID=0;
-    switch (type) {
-        case B:
-            ++typeID;
-        case R:
-            ++typeID;
-        case CH:
-            ++typeID;
-        case I:
-            ++typeID;
     }
     SYNBL.emplace_back(MainTable(name, typeID, V, ST_NIL));   //还没构造活动记录，地址暂时填NIL
     return true;
@@ -141,7 +130,9 @@ const map<string, size_t> SymbolTable::DELIMITERL {
         {"!=",      19},
         {"!",       20},
         {"&&",      21},
-        {"||",      22}
+        {"||",      22},
+        {"[",       23},
+        {"]",       24}
 };
 
 string SymbolTable::allocTemporaryVariable() {
@@ -152,6 +143,37 @@ string SymbolTable::allocTemporaryVariable() {
     tmpNum="t"+tmpNum;
     TEMPL.push_back(tmpNum);
     return tmpNum;
+}
+
+size_t SymbolTable::findArrayType(int basicTypeID, long long int length) {
+    size_t id=0;
+    for(size_t i=1;i<TYPEL.size();++i){
+        auto& item=TYPEL[i];
+        if(item.typeValue!=A){
+            continue;
+        }
+        auto &arrayInfo=AINFL[item.typePointer];
+        if(arrayInfo.typePointer==basicTypeID && arrayInfo.upperBound==length){
+            id=i;
+            break;
+        }
+    }
+    return id;
+}
+
+size_t SymbolTable::addArrayType(int basicTypeID,long long length) {
+    size_t space;
+    //基本类型
+    if(basicTypeID<=4){
+        space=TYPEL[basicTypeID].typePointer;
+    }else if(TYPEL[basicTypeID].typeValue==A){      //数组类型
+        space=AINFL[TYPEL[basicTypeID].typePointer].typeLength;
+    }else{
+        space=ST_NIL;           //不加会给出警告。Make them happy.
+    }
+    this->AINFL.emplace_back(length,basicTypeID,length*space);
+    this->TYPEL.emplace_back(TypeTable(A,AINFL.size()-1));
+    return TYPEL.size()-1;
 }
 
 

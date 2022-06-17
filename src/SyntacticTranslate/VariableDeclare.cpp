@@ -35,13 +35,8 @@ bool VariableDeclare::analysis() {
         reportingError.clerical_error("the colon is missing from the defined variable statement!",0);
         return false;
     }
-    this->type=symbolTable.getType(identifier.getCurrentWord());
-    if(this->type==NAT){
-        //报错：未知的类型
-        reportingError.clerical_error("unknown type!",0);
+    if(!generateType()){
         return false;
-    } else{
-        identifier.nextW();
     }
     if(symbolTable.isDelimiter(identifier.getCurrentWord()) != 13){          //分号编号13
         //报错：未出现的分号
@@ -54,7 +49,7 @@ bool VariableDeclare::analysis() {
 
 bool VariableDeclare::generateIdentifier() {
     while(!this->varID.empty()){
-        if(!symbolTable.addVariable(varID.front(),this->type)){
+        if(!symbolTable.addVariable(varID.front(),this->typeID)){
             while (!this->varID.empty()){
                 this->varID.pop();
             }
@@ -62,5 +57,56 @@ bool VariableDeclare::generateIdentifier() {
         }
         this->varID.pop();
     }
+    return true;
+}
+
+bool VariableDeclare::generateType() {
+    int basicType=symbolTable.getType(identifier.getCurrentWord());
+    if(basicType==0){
+        //报错：未知的类型
+        reportingError.clerical_error("unknown type!",0);
+        return false;
+    }else{
+        identifier.nextW();
+    }
+    while (symbolTable.isDelimiter(identifier.getCurrentWord())==23){   //左中括号[
+        identifier.nextW();
+        //检测数组维数是否为正整数
+        if(identifier.getCurrentWord().second!=-2){
+            //报错：数组维数非正整数
+            reportingError.clerical_error("Illegal array dimension!",0);
+            return false;
+        }
+        this->arrayDimension.push(identifier.transIntDirectly(identifier.getCurrentWord().first));
+        identifier.nextW();
+        if(symbolTable.isDelimiter(identifier.getCurrentWord())!=24){   //右中括号]
+            //报错：缺少]
+            reportingError.clerical_error("Leak of \']\' in declaring array!",0);
+            return false;
+        }
+        identifier.nextW();
+    }
+    bool unknownType= false;
+    //维数信息空：说明非数组类型
+    if(this->arrayDimension.empty()){
+        this->typeID=basicType;
+        return true;
+    }
+    int id;
+    while (!this->arrayDimension.empty()){
+        if(!unknownType){
+            id=symbolTable.findArrayType(basicType,this->arrayDimension.top());
+            if(id==0){
+                unknownType= true;
+            }else{
+                basicType=id;
+                this->arrayDimension.pop();
+                continue;
+            }
+        }
+        basicType=symbolTable.addArrayType(basicType,this->arrayDimension.top());
+        this->arrayDimension.pop();
+    }
+    this->typeID=basicType;
     return true;
 }

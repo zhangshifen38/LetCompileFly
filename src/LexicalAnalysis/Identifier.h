@@ -25,7 +25,8 @@ public:
     bool hasNext();						//判断字符串是否有待识别的部分
     pair<string ,int> getCurrentWord(); //获取当前待识别的符号
     void feedBack(pair<string,int> fb); //送回语法成分
-    string transInt(string st);         //将整数转换为十进制表示
+    string transInt(string st);         //将整数转换为十进制表示的字符串
+    long long transIntDirectly(string st);  //将整数字符串翻译成long long型数字
 private:
     AutomatonLA at;						//识别器自动机
     queue<string> buffer;				//待识别的字符串暂存队列
