@@ -21,6 +21,7 @@ vector<ActiveNode>AcList;
 int countnumber;
 vector<MemorgNode>MemorgList;
 stack<int>Mem;
+stack<string>Functionname;
 //符号表变量
 SymbolTable symbolTable;
 

@@ -69,7 +69,7 @@ int DAG::SearchOne(QTOperation op, string B) {
 int DAG::JudgeQT(QTOperation op) {
     if(op==ASG)//A=B
         return 0;
-    else if(op==ADD||op==SUB||op==MUL||op==DIV||op==AND||op==OR||op==XOR||op==JG||op==JL||op==JGE||op==JLE||op==JE||op==JNE||op==SBRAC||op==MOD)//A=B op C
+    else if(op==ADD ||op==SUB ||op==MUL ||op==DIV ||op==AND ||op==OR ||op==XOR ||op==JG ||op==JL ||op==JGE ||op==JLE ||op==JE ||op==JNE || op == GVAL || op == MOD)//A=B op C
         return 1;
     else if(op == NOT)//A=opB
         return 2;

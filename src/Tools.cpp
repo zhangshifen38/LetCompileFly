@@ -208,7 +208,7 @@ void Tools::PrintQT(vector<QtNode> QTlist,ofstream &file) {
             file<<"==";
         if(it->operation==JNE)
             file<<"!=";
-        if(it->operation==SBRAC)
+        if(it->operation == GVAL)
             file<<"[]";
         if(it->operation==WH)
             file<<"wh";
@@ -266,7 +266,7 @@ void Tools::ReadFromFile(int count) {
         if(qt=="wh")tmpQ.operation=WH;
         if(qt=="do")tmpQ.operation=DO;
         if(qt=="we")tmpQ.operation=WE;
-        if(qt=="[]")tmpQ.operation=SBRAC;
+        if(qt=="[]")tmpQ.operation=GVAL;
         if(qt==">")tmpQ.operation=JG;
         if(qt=="<")tmpQ.operation=JL;
         if(qt==">=")tmpQ.operation=JGE;

@@ -94,13 +94,13 @@ public:
         }
         std::cout<<std::endl;
     }
-    void printArgInfo(){
+    void printArgInfo()
+    {
         for(auto &item:AINFL){
             std::cout<<item.upperBound<<' '<<item.typeLength<<' '<<item.typePointer<<std::endl;
         }
         std::cout<<std::endl;
     }
-private:
     vector<MainTable> SYNBL;            //符号表主表
     vector<TypeTable> TYPEL;            //类型表
     vector<ArrayInfoTable> AINFL;       //数组表
