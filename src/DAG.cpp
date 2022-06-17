@@ -234,7 +234,7 @@ void DAG::CreateDAG(vector<QtNode> Block) {
             case 1://双目赋值四元式
             case 2://单目赋值四元式
             {
-                if(tmp.firstargument.type==1&&tmp.secondargument.type==1)//A=C1 op C2
+                if(tmp.firstargument.type==1&&tmp.secondargument.type==1&&tmp.operation!=JG&&tmp.operation!=JL&&tmp.operation!=JGE&&tmp.operation!=JLE&&tmp.operation!=JE&&tmp.operation!=JNE)//A=C1 op C2
                 {
                     string CalRes= Calculate(tmp.firstargument.name,tmp.secondargument.name,tmp.operation);
                     //保存计算结果
@@ -254,6 +254,7 @@ void DAG::CreateDAG(vector<QtNode> Block) {
                     }
                     if(SearchNodeByName(tmp.result.name)!=-1)//A定义过
                     {
+//                        cout<<tmp.result.name;
                         DeleteMark(FindC,tmp.result.name);
                     }
                 }

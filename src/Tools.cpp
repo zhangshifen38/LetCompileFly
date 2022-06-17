@@ -136,10 +136,10 @@ vector<QtNode> Tools::BlocksDAG() {
 //    vector<pair<int,int>> DivBlocks;//存放所有基本块的入口和出口
     DAG OneBlockDAG;
     GetBlocks(QtList,BlocksInOut);
-    for(vector<pair<int,int>>::iterator it=BlocksInOut.begin();it!=BlocksInOut.end();it++)
-    {
-        cout<<it->first<<" "<<it->second<<endl;
-    }
+//    for(vector<pair<int,int>>::iterator it=BlocksInOut.begin();it!=BlocksInOut.end();it++)
+//    {
+//        cout<<it->first<<" "<<it->second<<endl;
+//    }
     vector<QtNode> after;
     vector<QtNode>::iterator QTit=QtList.begin();
     int countQT=0;
@@ -169,10 +169,10 @@ vector<QtNode> Tools::BlocksDAG() {
     {
         QtList.push_back(*it);
     }//更新四元式集合
-    for(vector<pair<int,int>>::iterator it=BlocksInOut.begin();it!=BlocksInOut.end();it++)
-    {
-        cout<<it->first<<" "<<it->second<<endl;
-    }
+//    for(vector<pair<int,int>>::iterator it=BlocksInOut.begin();it!=BlocksInOut.end();it++)
+//    {
+//        cout<<it->first<<" "<<it->second<<endl;
+//    }
     return after;
 }
 
