@@ -12,16 +12,16 @@ extern ReportingError reportingError;
 int main() {
     //std::cout << "Hello, World!" << std::endl;
     //main函数用来测试功能
-//    GenerateQT::run();
+    GenerateQT::run();
     ofstream file;
     file.open("../QTdata/QT2.txt");
     Tools tools;
-    tools.ReadFromFile(47);//用于后端测试，从QT.txt中读取四元式放入QTlist
+//    tools.ReadFromFile(79);//用于后端测试，从QT.txt中读取count条四元式放入QTlist
     tools.PrintQT(QtList,file);
     tools.BlocksDAG();
 //    runObjectCode();
 
-    GenerateQT::run();
+//    GenerateQT::run();
 //    ofstream file;
 //    file.open("../QTdata/QT2.txt");
 //    Tools tools;

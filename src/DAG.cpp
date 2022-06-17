@@ -69,7 +69,7 @@ int DAG::SearchOne(QTOperation op, string B) {
 int DAG::JudgeQT(QTOperation op) {
     if(op==ASG)//A=B
         return 0;
-    else if(op==ADD||op==SUB||op==MUL||op==DIV||op==AND||op==OR||op==XOR||op==JG||op==JL||op==JGE||op==JLE||op==SBRAC)//A=B op C
+    else if(op==ADD||op==SUB||op==MUL||op==DIV||op==AND||op==OR||op==XOR||op==JG||op==JL||op==JGE||op==JLE||op==JE||op==JNE||op==SBRAC||op==MOD)//A=B op C
         return 1;
     else if(op == NOT)//A=opB
         return 2;
@@ -113,6 +113,33 @@ string DAG::Calculate(string C1, string C2, QTOperation op) {
             break;
         case DIV:
             tmpC=stod(C1,0)/stod(C2,0);//将string字符串转换为double型后相除计算
+            break;
+        case MOD:
+            tmpC=int(stod(C1,0))%int(stod(C2,0));//将string字符串转换为double型后再转换成int型后取余计算
+            break;
+        case AND:
+            tmpC=stod(C1,0)&&stod(C2,0);//将string字符串转换为double型后相与计算
+            break;
+        case OR:
+            tmpC=stod(C1,0)||stod(C2,0);//将string字符串转换为double型后相或计算
+            break;
+        case JG:
+            tmpC=stod(C1,0)>stod(C2,0);//将string字符串转换为double型后计算
+            break;
+        case JL:
+            tmpC=stod(C1,0)<stod(C2,0);//将string字符串转换为double型后计算
+            break;
+        case JGE:
+            tmpC=stod(C1,0)>=stod(C2,0);//将string字符串转换为double型后计算
+            break;
+        case JLE:
+            tmpC=stod(C1,0)<=stod(C2,0);//将string字符串转换为double型后计算
+            break;
+        case JNE:
+            tmpC=stod(C1,0)!=stod(C2,0);//将string字符串转换为double型后计算
+            break;
+        case JE:
+            tmpC=stod(C1,0)==stod(C2,0);//将string字符串转换为double型后计算
             break;
     }
     string tmpS;
