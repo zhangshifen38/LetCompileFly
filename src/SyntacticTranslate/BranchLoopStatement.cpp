@@ -34,6 +34,7 @@ bool IfStatement::funcS() {
 
 bool IfStatement::funcT() {
     if(symbolTable.isDelimiter(identifier.getCurrentWord())!=3){        //若不是左括号（
+        //报错：缺少条件判断
         return false;
     }
     identifier.nextW();
@@ -43,6 +44,7 @@ bool IfStatement::funcT() {
     }
     this->logicExp=logicExpression.getResult();
     if(symbolTable.isDelimiter((identifier.getCurrentWord()))!=4){      //若不是右括号）
+        //报错：括号不匹配
         return false;
     }
     identifier.nextW();
@@ -101,6 +103,7 @@ bool WhileStatement::analysis() {
 
 bool WhileStatement::funcT() {
     if(symbolTable.isDelimiter(identifier.getCurrentWord())!=3){        //若不是左括号（
+        //报错：缺少条件判断
         return false;
     }
     identifier.nextW();
@@ -110,6 +113,7 @@ bool WhileStatement::funcT() {
     }
     this->logicExp=logicExpression.getResult();
     if(symbolTable.isDelimiter((identifier.getCurrentWord()))!=4){      //若不是右括号）
+        //报错：括号不匹配
         return false;
     }
     identifier.nextW();

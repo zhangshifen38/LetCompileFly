@@ -16,6 +16,7 @@ bool AssignExpression::analysis() {
             return false;
         }
         if(typeVariable.getType()==0||typeVariable.getType()>4){
+            //报错：数组/结构体不支持算术运算
             return false;
         }
         if (symbolTable.isDelimiter(identifier.getCurrentWord()) == 11) {      //等号’=‘
@@ -57,6 +58,7 @@ bool AssignExpression::analysis() {
         }
         return true;
     }else{
+        //报错：缺少行末分号
         return false;
     }
 }

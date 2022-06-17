@@ -113,14 +113,12 @@ bool ArithmeticExpression::funcF() {
     }
     //检测到用户定义标识符
     if(identifier.getCurrentWord().second==-1&&symbolTable.isUserIdentifier(identifier.getCurrentWord())!=NAT){
-//        this->waitForAssign.push(Token(identifier.getCurrentWord().first,2, true));
-//        identifier.nextW();
         TypeVariable typeVariable;
         if(!typeVariable.analysis()){
             return false;
         }
         if(typeVariable.getType()>4||typeVariable.getType()==0){
-            //报错：不支持的类型
+            //报错：数组/结构体无法直接参与运算
             return false;
         }
         if(typeVariable.getOffset().name=="0"){
@@ -171,6 +169,7 @@ ArithmeticExpression::ArithmeticExpression() {
 
 bool TypeVariable::analysis() {
     if(symbolTable.isUserIdentifier(identifier.getCurrentWord())==NAT){
+        //报错：变量未定义
         return false;
     }
     this->vname=identifier.getCurrentWord().first;
@@ -196,6 +195,7 @@ bool TypeVariable::analysis() {
             QtList.emplace_back(QtNode(ADD,prev,ttk,tttk));
             prev=tttk;
             if(symbolTable.isDelimiter(identifier.getCurrentWord())!=24){  //右中括号
+                //报错：缺少']'
                 return false;
             }
             curTypePointer=symbolTable.getArrayUnitType(curTypePointer);
