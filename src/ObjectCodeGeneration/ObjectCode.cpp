@@ -10,6 +10,7 @@ extern stack<int>Sem;//语义栈(登记待返填的目标地址)
 extern vector<QtNode>QtList;
 extern vector<ActiveNode>AcList;
 extern vector<MemorgNode>MemorgList;
+extern stack<int>Mem;
 void dataReading()
 {
     for(int i=0;i<QtList.size();i++)
@@ -677,12 +678,12 @@ void objectCodeGeneration(int dstart, int dend)
         {
             countnumber++;
             storeCode("S"+ to_string(countnumber)+":","","");
+            Mem.push(countnumber);
         }
         else if (ObjQtList[i].operation == DO)//填we的下一条地址
         {
             Sem.push(CodeList.size()); //将当前代码序号入栈
-            ObjQtNode temp = ObjQtList.back();
-            Sem.push(CodeList.size());
+            ObjQtNode temp = ObjQtList[i-1];
             if(temp.operation==JL)
                 storeCode("JNB","","","S");
             if(temp.operation==JLE)
@@ -699,12 +700,14 @@ void objectCodeGeneration(int dstart, int dend)
         else if (ObjQtList[i].operation == WE)
         {
             int backnumber;
-            string tempstr;
-            tempstr = to_string(backnumber);
-            storeCode("JMP", " ", "","S"+ to_string(countnumber));//等ie返填;
+            int tempnumber;
+            tempnumber = Mem.top();
+            Mem.pop();
+            storeCode("JMP", " ", "S"+ to_string(tempnumber));
             countnumber++;
             backnumber =Sem.top();
             Sem.pop();
+            CodeList[backnumber].source = "S"+ to_string(countnumber);
             storeCode("S"+ to_string(countnumber)+":","","");
         }
         else if (ObjQtList[i].operation == FUNC) {

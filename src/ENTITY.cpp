@@ -20,6 +20,7 @@ stack<int>Sem;//语义栈(登记待返填的目标地址)
 vector<ActiveNode>AcList;
 int countnumber;
 vector<MemorgNode>MemorgList;
+stack<int>Mem;
 //符号表变量
 SymbolTable symbolTable;
 
