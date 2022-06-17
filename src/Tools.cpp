@@ -18,17 +18,23 @@ void Tools::GetBlocks(vector<QtNode> &QTlist,vector<pair<int,int>> &BlocksInOut)
             it->block=1;
             tmp.first=countQT;
         }
-        else if(it->operation==FUNC)//该句是函数段开始，则该句是入口，上一句是出口
-        {
-            tmp.second=countQT-1;
-            pre->block=countBlock;//设置上句
-            countBlock++;
-            BlocksInOut.push_back(tmp);//一个基本块划分完毕
-            tmp.first=countQT;
-            it->block=countBlock;
-        }
+//        else if(it->operation==FUNC)//该句是函数段开始，则该句是入口，上一句是出口
+//        {
+//            tmp.second=countQT-1;
+//            pre->block=countBlock;//设置上句
+//            countBlock++;
+//            BlocksInOut.push_back(tmp);//一个基本块划分完毕
+//            tmp.first=countQT;
+//            it->block=countBlock;
+//        }
         else if(it->operation==RET)//当前语句是RET语句，则下一句是基本块的入口（该句是基本块出口）
         {
+            if(preIn==1)//最后一句既是出口也是入口的情况
+            {
+                tmp.first=countQT;
+                it->block=countBlock;
+                preIn=0;
+            }
             tmp.second=countQT;
             it->block=countBlock;
             countBlock++;
@@ -136,10 +142,10 @@ vector<QtNode> Tools::BlocksDAG() {
 //    vector<pair<int,int>> DivBlocks;//存放所有基本块的入口和出口
     DAG OneBlockDAG;
     GetBlocks(QtList,BlocksInOut);
-//    for(vector<pair<int,int>>::iterator it=BlocksInOut.begin();it!=BlocksInOut.end();it++)
-//    {
-//        cout<<it->first<<" "<<it->second<<endl;
-//    }
+    for(vector<pair<int,int>>::iterator it=BlocksInOut.begin();it!=BlocksInOut.end();it++)
+    {
+        cout<<it->first<<" "<<it->second<<endl;
+    }
     vector<QtNode> after;
     vector<QtNode>::iterator QTit=QtList.begin();
     int countQT=0;
@@ -226,6 +232,10 @@ void Tools::PrintQT(vector<QtNode> QTlist,ofstream &file) {
             file<<"RET";
         if(it->operation==CALL)
             file<<"CALL";
+        if(it->operation==AND)
+            file<<"&&";
+        if(it->operation==OR)
+            file<<"||";
         file<<"\t";
         if(it->firstargument.name=="")
             file<<"_";

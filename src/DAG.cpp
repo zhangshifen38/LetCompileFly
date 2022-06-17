@@ -310,19 +310,16 @@ void DAG::CreateDAG(vector<QtNode> Block) {
                 break;
             case 3://其他特殊四元式
             {
-                if(Goto==1)//特殊四元式既在开头又在结尾
-                {
-                    if(SymGoto==0)
-                    {
-                        SpecialQTbegin=tmp;
-                        SymGoto=1;
-                    }
-                    else SpecialQTend=tmp;
-                }
-                if(Goto==0)//特殊四元式在结尾
-                {
-                    SpecialQTend=tmp;//保存特殊四元式
-                }
+//                if(Goto==1)//特殊四元式既在开头又在结尾
+//                {
+//                    if(SymGoto==0)
+//                    {
+//                        SpecialQTbegin=tmp;
+//                        SymGoto=1;
+//                    }
+//                    else SpecialQTend=tmp;
+//                }
+
                 if(tmp.operation==WH)//特殊四元式WH
                 {
                     int WHnum=CreateNode();
@@ -330,11 +327,21 @@ void DAG::CreateDAG(vector<QtNode> Block) {
 //                    SpecialQTWH=tmp;//保存WH
 //                    SpecialQTWHsym=1;
                 }
-                if(tmp.operation==CALL)//特殊四元式CALL
+                else if(tmp.operation==CALL)//特殊四元式CALL
                 {
                     int CALLnum=CreateNode();
                     NodeList[CALLnum].op=CALL;
                     CALLname=tmp.result.name;
+                }
+                else if(tmp.operation==FUNC)//特殊四元式FUNC
+                {
+                    int FUNCnum=CreateNode();
+                    NodeList[FUNCnum].op=FUNC;
+                    FUNCname=tmp.result.name;
+                }
+                else if(Goto==0)//特殊四元式在结尾
+                {
+                    SpecialQTend=tmp;//保存特殊四元式
                 }
             }
                 break;
@@ -351,10 +358,10 @@ void DAG::CreateQT(vector<QtNode> &QTlist) {
     vector<DAGnode>::iterator  it;
     QtNode tmp;
     int countGADR=0;
-    if(Goto==1)//特殊四元式在开头
-    {
-        QTlist.push_back(SpecialQTbegin);
-    }
+//    if(Goto==1)//特殊四元式在开头
+//    {
+//        QTlist.push_back(SpecialQTbegin);
+//    }
 
     for(it=NodeList.begin();it!=NodeList.end();it++){
         if(it->op==WH)//特殊四元式WH
@@ -368,6 +375,13 @@ void DAG::CreateQT(vector<QtNode> &QTlist) {
             tmp.clear();
             tmp.operation=CALL;
             tmp.result.name=CALLname;
+            QTlist.push_back(tmp);
+        }
+        else if(it->op==FUNC)//特殊四元式FUNC
+        {
+            tmp.clear();
+            tmp.operation=FUNC;
+            tmp.result.name=FUNCname;
             QTlist.push_back(tmp);
         }
         else if(it->op==EMPTY)//叶节点
@@ -430,30 +444,28 @@ void DAG::CreateQT(vector<QtNode> &QTlist) {
             }
         }
     }
-    if(Goto==0||Goto==1)//特殊四元式在末尾
-    {
+    //特殊四元式在末尾
         QTlist.push_back(SpecialQTend);
         for(vector<QtNode>::iterator it=QTlist.begin();it!=QTlist.end();it++)
         {
             it->block=SpecialQTend.block;//给所有四元式赋基本块编号
         }
-    }
+
 }
 
 
 void DAG::FindGoto(vector<QtNode> QTlist) {
-    if(QTlist[QTlist.size()-1].operation==IF||QTlist[QTlist.size()-1].operation==EL||QTlist[QTlist.size()-1].operation==IE||QTlist[QTlist.size()-1].operation==DO||QTlist[QTlist.size()-1].operation==WE)
+    if(QTlist[QTlist.size()-1].operation==IF||QTlist[QTlist.size()-1].operation==EL||QTlist[QTlist.size()-1].operation==IE||QTlist[QTlist.size()-1].operation==DO||QTlist[QTlist.size()-1].operation==WE||QTlist[QTlist.size()-1].operation==RET)
     {
         Goto=0;
     }
-    if(QTlist[0].operation==FUNC) Goto=1;
 }
 
 void DAG::clear() {
     NodeList.clear();
     Goto=-1;
 //    SpecialQTWH.clear();
-    SpecialQTbegin.clear();
+//    SpecialQTbegin.clear();
     SpecialQTend.clear();
     FUNCname.clear();
     CALLname.clear();

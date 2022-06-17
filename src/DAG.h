@@ -46,7 +46,7 @@ private:
 //    QtNode SpecialQTWH; //特殊四元式WH
     string FUNCname;
     string CALLname;
-    QtNode SpecialQTbegin;//在开头的特殊语句FUNC
+//    QtNode SpecialQTbegin;//在开头的特殊语句FUNC
     QtNode SpecialQTend;  //在结尾的转向四元式
 //    QTOperation WHnextOP;//标记WH语句的下一条语句的操作符
 //    string  WHnextL;//标记WH语句的下一条语句的第一个操作数
