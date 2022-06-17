@@ -3,51 +3,27 @@ FUNC	_	_	testFunc
 =	t1	_	a
 -	b	a	t2
 =	t2	_	b
-*	a	b	t3
-=	t3	_	a
 RET	_	_	_
-
-FUNC	_	_	complexFunc
-==	a	0	t4
-if	t4	_	_
-
-CALL	_	_	testFunc
-el	_	_	_
-
-RET	_	_	_
-
-ie	_	_	_
-
--	a	2	t5
-=	t5	_	d
-RET	_	_	_
-
 FUNC	_	_	main
--	f	g	t6
-=	t6	_	e
-*	c	d	t7
-=	t7	_	a
+-	f	g	t3
+=	t3	_	e
+*	c	d	t4
+=	t4	_	a
 wh	_	_	_
-!=	b	8	t8
-do	t8	_	_
-
+!=	b	8	t5
+do	t5	_	_
 CALL	_	_	testFunc
 we	_	_	_
-
->	e	0	t9
-if	t9	_	_
-
-CALL	_	_	complexFunc
-&&	a	b	t10
-=	t10	_	b
+>	e	0	t6
+if	t6	_	_
+&&	a	b	t7
+=	t7	_	b
 RET	_	_	_
-
 el	_	_	_
-
 wh	_	_	_
-do	2	_	_
-
-<	d	9	t11
+>	d	3	t8
+do	t8	_	_
+<	d	9	t9
 we	_	_	_
 ie	_	_	_
 RET	_	_	_

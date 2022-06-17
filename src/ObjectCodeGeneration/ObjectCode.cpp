@@ -916,76 +916,46 @@ void objectCodeGeneration(int dstart, int dend)
         }
         else if (ObjQtList[i].operation == FUNC) {
             storeCode(ObjQtList[i].result," PROC","");
-            storeCode("PUSH","AX","");
-            storeCode("PUSH","BX","");
-            storeCode("PUSH","CX","");
-            storeCode("PUSH","DX","");
+            if(ObjQtList[i].result!="main")
+            {
+                storeCode("PUSH","AX","");
+                storeCode("PUSH","BX","");
+                storeCode("PUSH","CX","");
+                storeCode("PUSH","DX","");
+            }
             initial();
             Functionname.push(ObjQtList[i].result);
         }
         else if (ObjQtList[i].operation == CALL) {
             storeCode("CALL",ObjQtList[i].result,"");
-
-//            CODE("CALL", NewQt[i].fourth, " ");//call f
-//            PFINFLNode* PFINFLP = PFINFLHead->next;
-//
-//            int i = 1;
-//            while (SYNBLHead[i] == NULL || SYNBLHead[i]->next == NULL)
-//            {
-//                if (NewQt[i].fourth == PFINFLP->content) {
-//                    break;
-//                }
-//                i++;
-//            }//找到该函数的符号表
-//            SYNBLp2 = SYNBLHead[i]->next;
-//            while (SYNBLp2 != NULL && SYNBLp2->next != NULL)
-//            {
-//                CODE("POP", "R", " ");
-//                CODE("ST", "R", SYNBLp2->content);//ST R,a 取值到地址
-//                SYNBLp2 = SYNBLp2->next;
-//            }
-//            CODE("POP", "R", " ");
-//            i++;
-//            cout << endl;
-//        }
-//        else if (NewQt[i].first == "re") {
-//            if (RDL != " ") { CODE("ST", "R", RDL); }
-//            RDL = " ";
-//            CODE("LD", "R", NewQt[i].third);//LD R,a
-//            CODE("PUSH", "R", " ");//PUSH R
-//            CODE("RET", " ", " ");//RET
-//        }
         }
         else if (ObjQtList[i].operation == RET) {
             string funcname;
-            struct Register * reg= nullptr;
-            reg = reReturn(i,ObjQtList[i].firstargument);
             funcname = Functionname.top();
-            Functionname.pop();
-            if(reg->content==ObjQtList[i].firstargument);
-            else if(reg->content==" ")
-            {
-                storeCode("MOV",reg->name,","+ObjQtList[i].firstargument);
-            }
-            else
-            {
-                if(reg->acnumber==-2)
-                    storeCode("MOV",reg->name,","+ObjQtList[i].firstargument);
-                else
-                {
-                    storeCode("MOV",reg->content,","+reg->name);
-                    storeCode("MOV",reg->name,","+ObjQtList[i].firstargument);
+            if(funcname!="main") {
+//                struct Register *reg = nullptr;
+//                reg = reReturn(i, ObjQtList[i].firstargument);
+//                Functionname.pop();
+//                if (reg->content == ObjQtList[i].firstargument);
+//                else if (reg->content == " ") {
+//                    storeCode("MOV", reg->name, "," + ObjQtList[i].firstargument);
+//                } else {
+//                    if (reg->acnumber == -2)
+//                        storeCode("MOV", reg->name, "," + ObjQtList[i].firstargument);
+//                    else {
+//                        storeCode("MOV", reg->content, "," + reg->name);
+//                        storeCode("MOV", reg->name, "," + ObjQtList[i].firstargument);
+//                    }
+//                }
+//                reg->content = ObjQtList[i].firstargument;
+//                reg->content = ObjQtList[i].firstac;
+                for (int i = 3; i >= 0; i--) {
+//                    if (RegisterList[i].name != reg->name)
+                        storeCode("POP", RegisterList[i].name, "");
                 }
+                storeCode("RET", "", "");
+                storeCode(funcname, "ENDP", "");
             }
-            reg->content = ObjQtList[i].firstargument;
-            reg->content = ObjQtList[i].firstac;
-            for(int i = 3;i>=0;i--)
-            {
-                if(RegisterList[i].name!=reg->name)
-                    storeCode("POP",RegisterList[i].name,"");
-            }
-            storeCode("RET","","");
-            storeCode(funcname,"ENDP","");
         }
     }
 }
@@ -1033,17 +1003,18 @@ void runObjectCode()
     datafile<<"SSEG ENDS"<<endl;
     datafile<<"CSEG SEGMENT"<<endl;
     datafile<<"ASSUME DS:DSEG,CS:CSEG,SS:SSEG"<<endl;
-    datafile<<"START:"<<" MOV AX,DSEG"<<endl<<"MOV DS,AX"<<endl<<"MOV AX,SSEG"<<endl<<"MOV SS,AX"<<endl;
-    datafile<<"LEA SI,SKTOP"<<endl;
+//    datafile<<"START:"<<" MOV AX,DSEG"<<endl<<"MOV DS,AX"<<endl<<"MOV AX,SSEG"<<endl<<"MOV SS,AX"<<endl;
+//    datafile<<"LEA SI,SKTOP"<<endl;
     for(int i=0;i<CodeList.size();i++) {
-        //为了便于函数的处理
-//        if(CodeList[i].operation=="main")
-//        {
-//            datafile<<"START:"<<" MOV AX,DSEG"<<endl<<"MOV DS,AX"<<endl<<"MOV AX,SSEG"<<endl<<"MOV SS,AX"<<endl;
-//            datafile<<"LEA SI,SKTOP"<<endl;
-//        }
-//        else
+        if(CodeList[i].operation=="main")
+        {
+            datafile<<"START:"<<" MOV AX,DSEG"<<endl<<"MOV DS,AX"<<endl<<"MOV AX,SSEG"<<endl<<"MOV SS,AX"<<endl;
+            datafile<<"LEA SI,SKTOP"<<endl;
+        }
+        else
+        {
             datafile<<CodeList[i].operation<<" "<<CodeList[i].dest<<CodeList[i].source<<endl;
+        }
     }
     datafile<<"MOV AX,4C00H"<<endl<<"INT 21H"<<endl;
     datafile<<"CSEG ENDS"<<endl<<"END START";
