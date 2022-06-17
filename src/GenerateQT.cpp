@@ -11,39 +11,17 @@ void GenerateQT::run() {
     identifier.nextW();
     bool ok= true;
     while(identifier.hasNext()) {
-        //如果是定义变量关键字（var，关键字表编号15）
-        if (symbolTable.isKeyWord(identifier.getCurrentWord()) == 15) {
-            VariableDeclare variableDeclare;
-            if (!variableDeclare.analysis()) {
+        if(isDefinition()){
+            DefinitionGenerate definitionGenerate;
+            if(!definitionGenerate.analysis()){
                 ok= false;
                 break;
             }
         }
-        //如果是用户定义标识符或者左括号
-        else if((identifier.getCurrentWord().second==-1&&!symbolTable.isKeyWord(identifier.getCurrentWord()))
-                ||(symbolTable.isDelimiter(identifier.getCurrentWord())==3)){
-            AssignExpression expressionAssign;
-            if(!expressionAssign.analysis()){
-                ok= false;
-                break;
-            }
-        }
-        //如果是逻辑表达式
-        else if(symbolTable.isKeyWord(identifier.getCurrentWord())==12){
-            IfStatement branchStatement;
-            if(!branchStatement.analysis()){
-                ok= false;
-                break;
-            }
-        }
-        //如果是循环表达式
-        else if(symbolTable.isKeyWord(identifier.getCurrentWord())==5){
-            WhileStatement whileStatement;
-            if(!whileStatement.analysis()){
-                ok= false;
-                break;
-            }
-        }
+    }
+    if(symbolTable.getNameCategory("main")!=F){
+        //报错：没有主函数
+        ok= false;
     }
     if(ok){
         symbolTable.printMain();
@@ -56,4 +34,9 @@ void GenerateQT::run() {
         cout<<"Error!"<<endl;
     }
 
+}
+
+bool GenerateQT::isDefinition() {
+    int num=symbolTable.isKeyWord(identifier.getCurrentWord());
+    return num==15||num==18;
 }

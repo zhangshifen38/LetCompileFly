@@ -151,7 +151,7 @@ bool ConstructStatements::generateSingle() {
         if(!branchStatement.analysis()){
             return false;
         }
-    }else if(!symbolTable.isKeyWord((identifier.getCurrentWord()))){        //判断用户定义标识符
+    }else if(symbolTable.getNameCategory(identifier.getCurrentWord().first)==V){        //判断用户定义变量
         AssignExpression assignExpression;
         if(!assignExpression.analysis()){
             return false;
@@ -164,7 +164,25 @@ bool ConstructStatements::generateSingle() {
             //报错：缺少分号
             return false;
         }
-    } else{
+        identifier.nextW();
+    } else if(symbolTable.getNameCategory(identifier.getCurrentWord().first)==F) {   //函数调用
+        Token emp("_",0, false);
+        QtList.emplace_back(QtNode(CALL,emp,emp,
+                                   Token(identifier.getCurrentWord().first,0, true)));
+        identifier.nextW();
+        if(symbolTable.isDelimiter(identifier.getCurrentWord())!=3){        //(
+            return false;
+        }
+        identifier.nextW();
+        if(symbolTable.isDelimiter(identifier.getCurrentWord())!=4){        //)
+            return false;
+        }
+        identifier.nextW();
+        if(symbolTable.isDelimiter(identifier.getCurrentWord())!=13){        //;
+            return false;
+        }
+        identifier.nextW();
+    }else{
         //报错：不合法的语句
         return false;
     }

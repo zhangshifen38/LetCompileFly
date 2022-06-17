@@ -15,7 +15,7 @@
 using std::string,std::map,std::vector,std::pair;
 
 enum Category{
-    F,C,T,D,V,VN,VF
+    NAC,F,C,T,D,V,VN,VF
     //函数、常量、类型、域名、变量、换名形参、赋值形参
 };
 enum Type{
@@ -85,7 +85,7 @@ public:
     string allocTemporaryVariable();                //申请一个临时变量
     size_t findArrayType(int basicTypeID,long long length);   //根据基础元素的类型与长度查询是否存在数组定义，存在返回ID，不存在返回0
     size_t addArrayType(int basicTypeID,long long length);      //填写数组表,返回数组表指针
-    Category getNameCategory();
+    Category getNameCategory(string name);          //判断用户定义标识符所属的类别
     bool isLegalIdentifier(LexicalToken token);     //判断是否合法标识符（是否在已有标识符表与关键字表出现过）
     void addProcedure(LexicalToken token);          //在符号表中注册一个过程
     void printMain(){

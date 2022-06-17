@@ -30,6 +30,7 @@ bool ProcedureDeclare::analysis() {
         //报错：缺少左括号
         return false;
     }
+    identifier.nextW();
     ConstructStatements constructStatements;
     do{
        if(!constructStatements.generateSingle()){
