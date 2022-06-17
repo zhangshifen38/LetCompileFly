@@ -9,7 +9,7 @@
 #include "SymbolTable.h"
 #include "LexicalAnalysis/Identifier.h"
 #include "Quaternary.h"
-#include "ArithmeticExpression.h"
+#include "LogicExpression.h"
 
 extern SymbolTable symbolTable;
 extern Identifier identifier;

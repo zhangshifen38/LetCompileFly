@@ -9,6 +9,7 @@
 #include "SyntacticTranslate/VariableDeclare.h"
 #include "SyntacticTranslate/AssignExpression.h"
 #include "Quaternary.h"
+#include "SyntacticTranslate/BranchLoopStatement.h"
 
 extern SymbolTable symbolTable;
 extern Identifier identifier;

@@ -6,6 +6,8 @@
 #include "SymbolTable.h"
 #include "LexicalAnalysis/Identifier.h"
 #include "ObjectCodeGeneration/ObjectCode.h"
+#include "SyntacticTranslate/ReportingError.h"
+
 //全局变量全部放在这里
 
 vector<QtNode> QtList;
@@ -20,4 +22,7 @@ SymbolTable symbolTable;
 
 Identifier identifier;
 
+
+//错误信息报告类
+ReportingError reportingError;
 

@@ -3,18 +3,12 @@
 //
 
 #include "ArithmeticExpression.h"
+#include "ReportingError.h"
+
+extern ReportingError reportingError;
 
 bool ArithmeticExpression::analysis() {
-    if(!funcE()){       //连续赋值语句判断完毕，进入算术表达式判断
-        return false;
-    }else{
-        if(symbolTable.isDelimiter(identifier.getCurrentWord()) == 13){      //分号13
-            identifier.nextW();
-            return true;
-        }else{
-            return false;
-        }
-    }
+    return funcE();
 }
 
 bool ArithmeticExpression::funcE() {
@@ -119,15 +113,19 @@ bool ArithmeticExpression::funcF() {
         }
         if(symbolTable.isDelimiter(identifier.getCurrentWord())!=4){    //右括号编号4
             //报错：需要右括号
+            reportingError.clerical_error("need a close bracket!",0);
             return false;
         }
         identifier.nextW();
         return true;
     }
     //报错：需要一个变量
+    reportingError.clerical_error("need a variable!",0);
     return false;
 }
 
 Token ArithmeticExpression::getResult() {
-    return this->waitForAssign.top();
+    Token tk=this->waitForAssign.top();
+    this->waitForAssign.pop();
+    return tk;
 }

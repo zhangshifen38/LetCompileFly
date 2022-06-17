@@ -453,10 +453,10 @@ void objectCodeGeneration(int dstart, int dend)
         {
             singleOb(ObjQtList[i].operation,pre,i);
         }
-        else if (ObjQtList[i].operation == NEG)
+        else if (ObjQtList[i].operation == NOT)
         {
             singleOb(ObjQtList[i].operation,pre,i);
-            storeCode("NEG",pre->name,"");
+            storeCode("NOT",pre->name,"");
         }
         else if (ObjQtList[i].operation == IF)
         {

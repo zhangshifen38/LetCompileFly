@@ -71,7 +71,7 @@ int DAG::JudgeQT(QTOperation op) {
         return 0;
     else if(op==ADD||op==SUB||op==MUL||op==DIV||op==AND||op==OR||op==XOR||op==JG||op==JL||op==JGE||op==JLE||op==SBRAC)//A=B op C
         return 1;
-    else if(op==NEG)//A=opB
+    else if(op == NOT)//A=opB
         return 2;
     else return 3;//其他特殊四元式(转向四元式)
 }

@@ -19,6 +19,7 @@ public:
     using LexicalToken = std::pair<std::string, int>;
     bool analysis();
     Token getResult();
+
 private:
     stack<Token> waitForAssign;
     bool funcE();

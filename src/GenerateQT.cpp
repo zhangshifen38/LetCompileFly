@@ -28,6 +28,22 @@ void GenerateQT::run() {
                 break;
             }
         }
+        //如果是逻辑表达式
+        else if(symbolTable.isKeyWord(identifier.getCurrentWord())==12){
+            IfStatement branchStatement;
+            if(!branchStatement.analysis()){
+                ok= false;
+                break;
+            }
+        }
+        //如果是循环表达式
+        else if(symbolTable.isKeyWord(identifier.getCurrentWord())==5){
+            WhileStatement whileStatement;
+            if(!whileStatement.analysis()){
+                ok= false;
+                break;
+            }
+        }
     }
     if(ok){
         symbolTable.printMain();
