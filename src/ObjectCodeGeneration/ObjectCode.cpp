@@ -11,6 +11,8 @@ extern vector<QtNode>QtList;
 extern vector<ActiveNode>AcList;
 extern vector<MemorgNode>MemorgList;
 extern stack<int>Mem;
+extern stack<string>Functionname;
+extern SymbolTable symbolTable;
 void dataReading()
 {
     for(int i=0;i<QtList.size();i++)
@@ -159,57 +161,60 @@ void sendDivision(int dstart, int dend)
     int m;
     for (i = dstart; i < dend; i++)
     {
-        if ((ObjQtList[i].operation == IF)||(ObjQtList[i].operation == EL) || (ObjQtList[i].operation == IE) || (ObjQtList[i].operation == WH) || (ObjQtList[i].operation == WE)|| (ObjQtList[i].operation == FUNC)|| (ObjQtList[i].operation == RET)|| (ObjQtList[i].operation == END)|| (ObjQtList[i].operation == CALL))
-            continue;
-        else
+        if(ObjQtList[i].operation!=GVAL&&ObjQtList[i].operation!=GADR)
         {
-            string temp = ObjQtList[i].firstargument;
-            if('0'<=temp[0]&&temp[0]<='9');
-            else if(temp[0]=='t')
+            if ((ObjQtList[i].operation == IF)||(ObjQtList[i].operation == EL) || (ObjQtList[i].operation == IE) || (ObjQtList[i].operation == WH) || (ObjQtList[i].operation == WE)|| (ObjQtList[i].operation == FUNC)|| (ObjQtList[i].operation == RET)|| (ObjQtList[i].operation == END)|| (ObjQtList[i].operation == CALL))
+                continue;
+            else
             {
-                acnode.content = temp;
-                acnode.active = -2;
-                AcTable.push_back(acnode);
-                AcList.push_back(acnode);
-            }
-            else if(('a'<=temp[0]&&temp[0]<='z') || ('A'<=temp[0]&&temp[0]<='Z'))
-            {
-                acnode.content = temp;
-                acnode.active = -1;
-                AcTable.push_back(acnode);
-                AcList.push_back(acnode);
-            }
-            temp = ObjQtList[i].secondargument;
-            if('0'<=temp[0]&&temp[0]<='9');
-            else if(temp[0]=='t')
-            {
-                acnode.content = temp;
-                acnode.active = -2;
-                AcTable.push_back(acnode);
-                AcList.push_back(acnode);
-            }
-            else if(('a'<=temp[0]&&temp[0]<='z') || ('A'<=temp[0]&&temp[0]<='Z'))
-            {
-                acnode.content = temp;
-                acnode.active = -1;
-                AcTable.push_back(acnode);
-                AcList.push_back(acnode);
-            }
-            temp = ObjQtList[i].result;
-            if('0'<=temp[0]&&temp[0]<='9');
-            else if(temp[0]=='t')
-            {
-                acnode.content = temp;
-                acnode.active = -2;
-                AcTable.push_back(acnode);
-                AcList.push_back(acnode);
-            }
-            else if(('a'<=temp[0]&&temp[0]<='z') || ('A'<=temp[0]&&temp[0]<='Z'))
-            {
-                acnode.content = temp;
-                acnode.active = -1;
-                AcTable.push_back(acnode);
-                AcList.push_back(acnode);
+                string temp = ObjQtList[i].firstargument;
+                if('0'<=temp[0]&&temp[0]<='9');
+                else if(temp[0]=='t')
+                {
+                    acnode.content = temp;
+                    acnode.active = -2;
+                    AcTable.push_back(acnode);
+                    AcList.push_back(acnode);
+                }
+                else if(('a'<=temp[0]&&temp[0]<='z') || ('A'<=temp[0]&&temp[0]<='Z'))
+                {
+                    acnode.content = temp;
+                    acnode.active = -1;
+                    AcTable.push_back(acnode);
+                    AcList.push_back(acnode);
+                }
+                temp = ObjQtList[i].secondargument;
+                if('0'<=temp[0]&&temp[0]<='9');
+                else if(temp[0]=='t')
+                {
+                    acnode.content = temp;
+                    acnode.active = -2;
+                    AcTable.push_back(acnode);
+                    AcList.push_back(acnode);
+                }
+                else if(('a'<=temp[0]&&temp[0]<='z') || ('A'<=temp[0]&&temp[0]<='Z'))
+                {
+                    acnode.content = temp;
+                    acnode.active = -1;
+                    AcTable.push_back(acnode);
+                    AcList.push_back(acnode);
+                }
+                temp = ObjQtList[i].result;
+                if('0'<=temp[0]&&temp[0]<='9');
+                else if(temp[0]=='t')
+                {
+                    acnode.content = temp;
+                    acnode.active = -2;
+                    AcTable.push_back(acnode);
+                    AcList.push_back(acnode);
+                }
+                else if(('a'<=temp[0]&&temp[0]<='z') || ('A'<=temp[0]&&temp[0]<='Z'))
+                {
+                    acnode.content = temp;
+                    acnode.active = -1;
+                    AcTable.push_back(acnode);
+                    AcList.push_back(acnode);
+                }
             }
         }
     }
@@ -715,10 +720,38 @@ void objectCodeGeneration(int dstart, int dend)
             CodeList[backnumber].source = "S"+ to_string(countnumber);
             storeCode("S"+ to_string(countnumber)+":","","");
         }
+        else if (ObjQtList[i].operation == GVAL)
+        {
+            struct Register * reg;
+            reg = reReturn(i,ObjQtList[i].result);
+            storeCode("LEA","SP",","+ObjQtList[i].firstargument+"+"+ObjQtList[i].secondargument);
+            if(reg->content==ObjQtList[i].result)
+                storeCode("MOV",reg->name,",WORD PTR [SP]");
+            storeCode("MOV",ObjQtList[i].result,",WORD PTR [SP]");
+        }
+        else if (ObjQtList[i].operation == GADR)
+        {
+            struct Register * tempreg;
+            storeCode("LEA","SP",","+ObjQtList[i].firstargument+"+"+ObjQtList[i].secondargument);
+            i++;
+            tempreg = reReturn(i,ObjQtList[i].firstargument);
+            if(tempreg->content==ObjQtList[i].firstargument)
+                storeCode("MOV","[SP]",","+reg->name);
+            else
+                storeCode("MOV","[SP]",","+ObjQtList[i].firstargument);
+        }
         else if (ObjQtList[i].operation == FUNC) {
-            storeCode(ObjQtList[i].result,"PROC","");
+            storeCode(ObjQtList[i].result," PROC","");
+            storeCode("PUSH","AX","");
+            storeCode("PUSH","BX","");
+            storeCode("PUSH","CX","");
+            storeCode("PUSH","DX","");
+            initial();
+            Functionname.push(ObjQtList[i].result);
         }
         else if (ObjQtList[i].operation == CALL) {
+            storeCode("CALL",ObjQtList[i].result,"");
+
 //            CODE("CALL", NewQt[i].fourth, " ");//call f
 //            PFINFLNode* PFINFLP = PFINFLHead->next;
 //
@@ -749,8 +782,36 @@ void objectCodeGeneration(int dstart, int dend)
 //            CODE("RET", " ", " ");//RET
 //        }
         }
-        else if (ObjQtList[i].operation == END) {
-            storeCode("END","","");
+        else if (ObjQtList[i].operation == RET) {
+            string funcname;
+            struct Register * reg= nullptr;
+            reg = reReturn(i,ObjQtList[i].firstargument);
+            funcname = Functionname.top();
+            Functionname.pop();
+            if(reg->content==ObjQtList[i].firstargument);
+            else if(reg->content==" ")
+            {
+                storeCode("MOV",reg->name,","+ObjQtList[i].firstargument);
+            }
+            else
+            {
+                if(reg->acnumber==-2)
+                    storeCode("MOV",reg->name,","+ObjQtList[i].firstargument);
+                else
+                {
+                    storeCode("MOV",reg->content,","+reg->name);
+                    storeCode("MOV",reg->name,","+ObjQtList[i].firstargument);
+                }
+            }
+            reg->content = ObjQtList[i].firstargument;
+            reg->content = ObjQtList[i].firstac;
+            for(int i = 3;i>=0;i--)
+            {
+                if(RegisterList[i].name!=reg->name)
+                    storeCode("POP",RegisterList[i].name,"");
+            }
+            storeCode("RET","","");
+            storeCode(funcname,"ENDP","");
         }
     }
 }
@@ -771,7 +832,20 @@ void runObjectCode()
     datafile<<"DSEG SEGMENT"<<endl;
     for(int i=0;i<AcList.size();i++)
     {
-        datafile<<" "<<AcList[i].content<<" "<<"DW"<<" "<<"00H"<<endl;
+        datafile<<AcList[i].content<<" "<<"DW"<<" "<<"00H"<<endl;
+    }
+    for(int i=0;i<=symbolTable.SYNBL.size();i++)
+    {
+        string name;
+        int arrynumber;
+        int count;
+        name = symbolTable.SYNBL[i].name;
+        if(symbolTable.TYPEL[symbolTable.SYNBL[i].type].typeValue==A)
+        {
+            arrynumber=symbolTable.TYPEL[symbolTable.SYNBL[i].type].typePointer;
+            count = symbolTable.AINFL[arrynumber].typeLength;
+            datafile<<name<<"  "<<"DB  "<<to_string(count)<<" DUP(0)"<<endl;
+        }
     }
     datafile<<"DSEG ENDS"<<endl;
     datafile<<"SSEG SEGMENT"<<endl;
@@ -782,7 +856,14 @@ void runObjectCode()
     datafile<<"START:"<<" MOV AX,DSEG"<<endl<<"MOV DS,AX"<<endl<<"MOV AX,SSEG"<<endl<<"MOV SS,AX"<<endl;
     datafile<<"LEA SI,SKTOP"<<endl;
     for(int i=0;i<CodeList.size();i++) {
-        datafile<<CodeList[i].operation<<" "<<CodeList[i].dest<<" "<<CodeList[i].source<<endl;
+        //为了便于函数的处理
+//        if(CodeList[i].operation=="main")
+//        {
+//            datafile<<"START:"<<" MOV AX,DSEG"<<endl<<"MOV DS,AX"<<endl<<"MOV AX,SSEG"<<endl<<"MOV SS,AX"<<endl;
+//            datafile<<"LEA SI,SKTOP"<<endl;
+//        }
+//        else
+            datafile<<CodeList[i].operation<<" "<<CodeList[i].dest<<CodeList[i].source<<endl;
     }
     datafile<<"MOV AX,4C00H"<<endl<<"INT 21H"<<endl;
     datafile<<"CSEG ENDS"<<endl<<"END START";

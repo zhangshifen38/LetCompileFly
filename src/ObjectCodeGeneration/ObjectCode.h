@@ -6,6 +6,7 @@
 #define LETCOMPILEFLY_OBJECTCODE_H
 #include<bits/stdc++.h>
 #include "Quaternary.h"
+#include "SymbolTable.h"
 using namespace std;
 struct ActiveNode
 {
