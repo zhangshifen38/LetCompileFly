@@ -4,10 +4,8 @@
 
 #include "GenerateQT.h"
 
-void GenerateQT::run() {
-    string codePath;
-    cin >> codePath;
-    identifier.openSourceFile(codePath);
+bool GenerateQT::run(string path) {
+    identifier.openSourceFile(path);
     identifier.nextW();
     bool ok= true;
     while(identifier.hasNext()) {
@@ -20,20 +18,21 @@ void GenerateQT::run() {
         }
     }
     if(symbolTable.getNameCategory("main")!=F){
-        //报错：没有主函数
+        if(!identifier.hasNext()){
+            reportingError.clerical_error("Leak of procedure named \"main\".",
+                                          identifier.getRow(),identifier.getColoum());
+        }
         ok= false;
     }
     if(ok){
-        symbolTable.printMain();
-        symbolTable.printType();
-        symbolTable.printArgInfo();
         for(auto& i:QtList){
             cout<<i.operation<<' '<<i.firstargument.name<<' '<<i.secondargument.name<<' '<<i.result.name<<endl;
         }
     }else{
-        cout<<"Error!"<<endl;
+        reportingError.out_error();
     }
-
+    identifier.closeSourseFile();
+    return ok;
 }
 
 bool GenerateQT::isDefinition() {

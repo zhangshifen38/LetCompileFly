@@ -35,6 +35,8 @@ bool IfStatement::funcS() {
 bool IfStatement::funcT() {
     if(symbolTable.isDelimiter(identifier.getCurrentWord())!=3){        //若不是左括号（
         //报错：缺少条件判断
+        reportingError.clerical_error("Leak of logic expression.",
+                                      identifier.getRow(),identifier.getColoum());
         return false;
     }
     identifier.nextW();
@@ -45,6 +47,8 @@ bool IfStatement::funcT() {
     this->logicExp=logicExpression.getResult();
     if(symbolTable.isDelimiter((identifier.getCurrentWord()))!=4){      //若不是右括号）
         //报错：括号不匹配
+        reportingError.clerical_error("Leak of \')\' in the end of expression.",
+                                      identifier.getRow(),identifier.getColoum());
         return false;
     }
     identifier.nextW();
@@ -62,6 +66,11 @@ bool IfStatement::funcF() {
     ConstructStatements constructStatements;
     do{
         if(!constructStatements.generateSingle()){
+            return false;
+        }
+        if(!identifier.hasNext()){
+            reportingError.clerical_error("Leak of \'}\' in the end of procedure body.",
+                                          identifier.getRow(),identifier.getColoum());
             return false;
         }
     }while(multiStatements&&symbolTable.isDelimiter(identifier.getCurrentWord())!=16);  //右花括号}
@@ -104,6 +113,8 @@ bool WhileStatement::analysis() {
 bool WhileStatement::funcT() {
     if(symbolTable.isDelimiter(identifier.getCurrentWord())!=3){        //若不是左括号（
         //报错：缺少条件判断
+        reportingError.clerical_error("Leak of logic expression.",
+                                      identifier.getRow(),identifier.getColoum());
         return false;
     }
     identifier.nextW();
@@ -114,6 +125,8 @@ bool WhileStatement::funcT() {
     this->logicExp=logicExpression.getResult();
     if(symbolTable.isDelimiter((identifier.getCurrentWord()))!=4){      //若不是右括号）
         //报错：括号不匹配
+        reportingError.clerical_error("Leak of \')\' in the end of expression.",
+                                      identifier.getRow(),identifier.getColoum());
         return false;
     }
     identifier.nextW();
@@ -162,6 +175,8 @@ bool ConstructStatements::generateSingle() {
         identifier.nextW();
         if(symbolTable.isDelimiter(identifier.getCurrentWord())!=13){   // 分号
             //报错：缺少分号
+            reportingError.clerical_error("Leak of \';\' in the end of statement.",
+                                          identifier.getRow(),identifier.getColoum());
             return false;
         }
         identifier.nextW();
@@ -183,7 +198,8 @@ bool ConstructStatements::generateSingle() {
         }
         identifier.nextW();
     }else{
-        //报错：不合法的语句
+        reportingError.clerical_error("Illegal statement.",
+                                      identifier.getRow(),identifier.getColoum());
         return false;
     }
     return true;

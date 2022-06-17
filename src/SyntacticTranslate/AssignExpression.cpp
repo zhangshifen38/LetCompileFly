@@ -12,14 +12,28 @@ bool AssignExpression::analysis() {
             break;  //左括号不属于赋值表达式部分，进入算术表达式
         }
         TypeVariable typeVariable;
-        if(!typeVariable.analysis()){
-            return false;
-        }
-        if(typeVariable.getType()==0||typeVariable.getType()>4){
-            //报错：数组/结构体不支持算术运算
-            return false;
+        LexicalToken tk;
+        int category=identifier.getCurrentWord().second;;
+        if(category==-1) {
+            if (!typeVariable.analysis()) {
+                return false;
+            }
+            if (typeVariable.getType() == 0 || typeVariable.getType() > 4) {
+                //报错：数组/结构体不支持算术运算
+                reportingError.clerical_error("Array type can not participate in calculation directly.",
+                                              identifier.getRow(), identifier.getColoum());
+                return false;
+            }
+        }else{
+            tk=identifier.getCurrentWord();
+            identifier.nextW();
         }
         if (symbolTable.isDelimiter(identifier.getCurrentWord()) == 11) {      //等号’=‘
+            if(category!=-1){
+                //报错：只有变量可以被赋值
+                reportingError.clerical_error("Only variable can be assigned!",identifier.getRow(),identifier.getColoum());
+                return false;
+            }
             if(typeVariable.getOffset().name=="0"){
                 this->waitForAssign.push(Token(typeVariable.getVname(),2, true));
             }else{
@@ -28,7 +42,11 @@ bool AssignExpression::analysis() {
             }
             identifier.nextW();
         }else{
-            logicExpression.setPrev(typeVariable.getOffset(),typeVariable.getVname());
+            if(category==-1) {
+                logicExpression.setPrev(typeVariable.getOffset(), typeVariable.getVname());
+            }else{
+                identifier.feedBack(tk);
+            }
             break;
         }
     }
@@ -59,6 +77,8 @@ bool AssignExpression::analysis() {
         return true;
     }else{
         //报错：缺少行末分号
+        reportingError.clerical_error("Leak of \';\' in the end of statement.",
+                                      identifier.getRow(),identifier.getColoum());
         return false;
     }
 }

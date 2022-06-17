@@ -980,7 +980,7 @@ void acClear()
     sort(AcList.begin(),AcList.end(), AcSort);
     AcList.erase(unique(AcList.begin(),AcList.end(), AcEqual),AcList.cend());
 }
-void runObjectCode()
+void runObjectCode(string path)
 {
     countnumber = 0;
     dataReading();
@@ -988,13 +988,13 @@ void runObjectCode()
     qtDivision();
     acClear();
     ofstream datafile;
-    datafile.open("../src/ObjectCodeGeneration/Code.ASM");
+    datafile.open(path);
     datafile<<"DSEG SEGMENT"<<endl;
     for(int i=0;i<AcList.size();i++)
     {
         datafile<<AcList[i].content<<" "<<"DW"<<" "<<"00H"<<endl;
     }
-    for(int i=0;i<=symbolTable.SYNBL.size();i++)
+    for(int i=0;i<symbolTable.SYNBL.size();i++)
     {
         string name;
         int arrynumber;
@@ -1035,7 +1035,7 @@ void runObjectCode()
     datafile<<"MOV AX,4C00H"<<endl<<"INT 21H"<<endl;
     datafile<<"CSEG ENDS"<<endl<<"END START";
     datafile.close();
-    vector<ObjQtNode>().swap(ObjQtList);
-    vector<ObjectstoreCode>().swap(CodeList);
+//    vector<ObjQtNode>().swap(ObjQtList);
+//    vector<ObjectstoreCode>().swap(CodeList);
 //    system("start ../src/ObjectCodeGeneration/Code.ASM");
 }

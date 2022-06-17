@@ -4,8 +4,8 @@
 
 #include "ReportingError.h"
 
-void ReportingError::clerical_error(std::string error,int lineError ){
-    errorMessage = "Error" + std::to_string(lineError) + " : " + error;
+void ReportingError::clerical_error(std::string error,int row,int coloum ){
+    std::string errorMessage = "[Error] in line "+std::to_string(row)+", "+std::to_string(coloum)+": "+error;
     storageError.push_back(errorMessage);
 }
 

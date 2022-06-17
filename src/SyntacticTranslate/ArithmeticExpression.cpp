@@ -119,6 +119,8 @@ bool ArithmeticExpression::funcF() {
         }
         if(typeVariable.getType()>4||typeVariable.getType()==0){
             //报错：数组/结构体无法直接参与运算
+            reportingError.clerical_error("Array type can not participate in calculation directly.",
+                                          identifier.getRow(),identifier.getColoum());
             return false;
         }
         if(typeVariable.getOffset().name=="0"){
@@ -139,14 +141,14 @@ bool ArithmeticExpression::funcF() {
         }
         if(symbolTable.isDelimiter(identifier.getCurrentWord())!=4){    //右括号编号4
             //报错：需要右括号
-            reportingError.clerical_error("need a close bracket!",0);
+            reportingError.clerical_error("Missing \')\'",identifier.getRow(),identifier.getColoum());
             return false;
         }
         identifier.nextW();
         return true;
     }
     //报错：需要一个变量
-    reportingError.clerical_error("need a variable!",0);
+    reportingError.clerical_error("Need a legal variable",identifier.getRow(),identifier.getColoum());
     return false;
 }
 
@@ -168,8 +170,11 @@ ArithmeticExpression::ArithmeticExpression() {
 
 
 bool TypeVariable::analysis() {
+
     if(symbolTable.isUserIdentifier(identifier.getCurrentWord())==NAT){
         //报错：变量未定义
+        reportingError.clerical_error("Undefiened variable: "+identifier.getCurrentWord().first,
+                                      identifier.getRow(),identifier.getColoum());
         return false;
     }
     this->vname=identifier.getCurrentWord().first;
@@ -196,6 +201,7 @@ bool TypeVariable::analysis() {
             prev=tttk;
             if(symbolTable.isDelimiter(identifier.getCurrentWord())!=24){  //右中括号
                 //报错：缺少']'
+                reportingError.clerical_error("Missing \']\'.",identifier.getRow(),identifier.getColoum());
                 return false;
             }
             curTypePointer=symbolTable.getArrayUnitType(curTypePointer);

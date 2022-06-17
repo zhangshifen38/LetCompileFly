@@ -12,11 +12,10 @@ using namespace std;
 class ReportingError {
 public:
     //void receive_error();
-    void clerical_error(std::string error,int lineError);
+    void clerical_error(std::string error,int row,int coloum);
     void out_error();
 private:
     std::vector<std::string> storageError;
-    std::string errorMessage;
 };
 
 #endif //LETCOMPILEFLY_REPORTINGERROR_H

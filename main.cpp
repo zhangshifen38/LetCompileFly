@@ -10,14 +10,19 @@ using namespace  std;
 
 extern ReportingError reportingError;
 int main() {
-//    std::cout << "Hello, World!" << std::endl;
     //main函数用来测试功能
-    GenerateQT::run();
-    ofstream file;
-    file.open("../QTdata/QT2.txt");
-    Tools tools;
-    tools.PrintQT(QtList,file);
-    tools.BlocksDAG();
-    runObjectCode();
+    string path;
+    cout<<"Input the source file path: "<<flush;
+    cin>>path;
+    if(GenerateQT::run(path)) {
+        ofstream file;
+        file.open("../QTdata/QT2.txt");
+        Tools tools;
+        tools.PrintQT(QtList, file);
+        tools.BlocksDAG();
+        cout<<"Generate success!\n\nInput the final ASM file name: "<<flush;
+        cin>>path;
+        runObjectCode("../"+path+".ASM");
+    }
     return 0;
 }

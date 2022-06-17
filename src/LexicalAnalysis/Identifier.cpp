@@ -61,7 +61,7 @@ void Identifier::nextW() {
         todo = false;
     }
     this->currentWord = make_pair(ret, at.getState());
-    coloum=index+1;
+    coloum=index;
     return;   //将取得的单词与状态码送回
 }
 
@@ -75,6 +75,9 @@ bool Identifier::hasNext() {
 
 void Identifier::openSourceFile(string st) {
     this->sourceCode.open(st, std::ios::in);
+}
+void Identifier::closeSourseFile() {
+    this->sourceCode.close();
 }
 
 pair<string, int> Identifier::getCurrentWord() {

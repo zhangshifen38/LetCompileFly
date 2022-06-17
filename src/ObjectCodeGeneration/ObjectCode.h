@@ -55,5 +55,5 @@ void doubleOb(enum QTOperation operation, struct Register * reg,int i);
 struct Register * reReturn(int currentnumber,string content);
 bool AcSort(const ActiveNode &ob1,const ActiveNode &ob2);
 void dataReading();
-void runObjectCode();
+void runObjectCode(string path);
 #endif //LETCOMPILEFLY_OBJECTCODE_H

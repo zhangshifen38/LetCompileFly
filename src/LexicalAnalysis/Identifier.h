@@ -19,6 +19,7 @@ class Identifier {
 public:
     Identifier();						//构造函数
     void reset();						//重置状态
+    void closeSourseFile();             //关闭源文件
     void addSentence();		            //添加待识别的字符串
     void openSourceFile(string st);     //打开源文件
     void nextW();		                //利用自动机获取一个单词

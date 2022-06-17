@@ -18,21 +18,24 @@ bool VariableDeclare::analysis() {
                 this->varID.push(identifier.getCurrentWord().first);
             }else{
                 //报错：已定义的标识符
-                reportingError.clerical_error("the identifier has been defined!",0);
+                reportingError.clerical_error("Exist identifier: "+identifier.getCurrentWord().first+".",
+                                              identifier.getRow(),identifier.getColoum());
                 return false;
             }
             identifier.nextW();
         }
     }else{
         //报错：已定义的标识符
-        reportingError.clerical_error("the identifier has defined!",0);
+        reportingError.clerical_error("Exist identifier: "+identifier.getCurrentWord().first+".",
+                                      identifier.getRow(),identifier.getColoum());
         return false;
     }
     if(symbolTable.isDelimiter(identifier.getCurrentWord()) == 17){          //冒号编号17
         identifier.nextW();
     } else{
         //报错：定义变量语句缺少冒号
-        reportingError.clerical_error("the colon is missing from the defined variable statement!",0);
+        reportingError.clerical_error("Leak of \':\' in the end of variable definition.",
+                                      identifier.getRow(),identifier.getColoum());
         return false;
     }
     if(!generateType()){
@@ -40,7 +43,8 @@ bool VariableDeclare::analysis() {
     }
     if(symbolTable.isDelimiter(identifier.getCurrentWord()) != 13){          //分号编号13
         //报错：未出现的分号
-        reportingError.clerical_error("no semicolons appear!",0);
+        reportingError.clerical_error("Leak of \';\' in the end of statement.",
+                                      identifier.getRow(),identifier.getColoum());
         return false;
     }
     identifier.nextW();
@@ -64,7 +68,8 @@ bool VariableDeclare::generateType() {
     int basicType=symbolTable.getType(identifier.getCurrentWord());
     if(basicType==0){
         //报错：未知的类型
-        reportingError.clerical_error("unknown type!",0);
+        reportingError.clerical_error("Unknown type: "+identifier.getCurrentWord().first+".",
+                                      identifier.getRow(),identifier.getColoum());
         return false;
     }else{
         identifier.nextW();
@@ -74,14 +79,16 @@ bool VariableDeclare::generateType() {
         //检测数组维数是否为正整数
         if(identifier.getCurrentWord().second!=-2){
             //报错：数组维数非正整数
-            reportingError.clerical_error("Illegal array dimension!",0);
+            reportingError.clerical_error("Demension of array must be positive integer.",
+                                          identifier.getRow(),identifier.getColoum());
             return false;
         }
         this->arrayDimension.push(identifier.transIntDirectly(identifier.getCurrentWord().first));
         identifier.nextW();
         if(symbolTable.isDelimiter(identifier.getCurrentWord())!=24){   //右中括号]
             //报错：缺少]
-            reportingError.clerical_error("Leak of \']\' in declaring array!",0);
+            reportingError.clerical_error("Leak of \']\' in the end of array definition.",
+                                          identifier.getRow(),identifier.getColoum());
             return false;
         }
         identifier.nextW();

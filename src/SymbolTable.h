@@ -88,25 +88,7 @@ public:
     Category getNameCategory(string name);          //判断用户定义标识符所属的类别
     bool isLegalIdentifier(LexicalToken token);     //判断是否合法标识符（是否在已有标识符表与关键字表出现过）
     void addProcedure(LexicalToken token);          //在符号表中注册一个过程
-    void printMain(){
-        for(auto& i:SYNBL){
-            std::cout<<i.name<<' '<<i.type<<' '<<(i.category==V?"Var":"Others")<<' '<<i.address<<std::endl;
-        }
-        std::cout<<std::endl;
-    }   //调试用临时函数，待删除
-    void printType(){
-        for(auto &item:TYPEL){
-            std::cout<<item.typeValue<<' '<<item.typePointer<<std::endl;
-        }
-        std::cout<<std::endl;
-    }
-    void printArgInfo()
-    {
-        for(auto &item:AINFL){
-            std::cout<<item.upperBound<<' '<<item.typeLength<<' '<<item.typePointer<<std::endl;
-        }
-        std::cout<<std::endl;
-    }
+
     vector<MainTable> SYNBL;            //符号表主表
     vector<TypeTable> TYPEL;            //类型表
     vector<ArrayInfoTable> AINFL;       //数组表

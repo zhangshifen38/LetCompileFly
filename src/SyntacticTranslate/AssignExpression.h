@@ -10,10 +10,12 @@
 #include "LexicalAnalysis/Identifier.h"
 #include "Quaternary.h"
 #include "LogicExpression.h"
+#include "ReportingError.h"
 
 extern SymbolTable symbolTable;
 extern Identifier identifier;
 extern vector<QtNode> QtList;
+extern ReportingError reportingError;
 
 class AssignExpression {
 public:

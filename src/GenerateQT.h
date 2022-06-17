@@ -21,7 +21,7 @@ using namespace std;
 
 class GenerateQT {
 public:
-    static void run();
+    static bool run(string path);
 private:
     static bool isDefinition();
 };
