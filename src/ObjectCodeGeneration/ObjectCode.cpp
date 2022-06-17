@@ -373,8 +373,7 @@ void singleOb(enum QTOperation operation, struct Register * reg, int i)
             storeCode("MOV",reg->name,","+ObjQtList[i].firstargument);
         else
         {
-            countnumber++;//没有处理
-            storeCode("MOV", "[SI+"+ to_string(countnumber)+"]",","+reg->name);
+            storeCode("MOV", reg->content,","+reg->name);
             storeCode("MOV",reg->name,","+ObjQtList[i].firstargument);
         }
     }
@@ -637,6 +636,12 @@ void objectCodeGeneration(int dstart, int dend)
             singleOb(ObjQtList[i].operation,pre,i);
             storeCode("NOT",pre->name,"");
         }
+        else if (ObjQtList[i].operation == NEG)
+        {
+            singleOb(ObjQtList[i].operation,pre,i);
+            storeCode("NEG",pre->name,"");
+        }
+
         else if (ObjQtList[i].operation == IF)
         {
             ObjQtNode temp = ObjQtList[i-1];

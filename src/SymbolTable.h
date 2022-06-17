@@ -33,7 +33,7 @@ struct MainTable{           //符号表主表构造
 };
 struct TypeTable{           //类型表构造
     Type typeValue;         //类型码
-    int typePointer;        //类型指针
+    int typePointer;        //类型指针(若为基本类型，其值为占据字节数）
     TypeTable()=default;
     TypeTable(Type typeValue, int typePointer);
 };
@@ -76,15 +76,30 @@ public:
     SymbolTable();
     size_t isKeyWord(LexicalToken token);           //判断词法分析token是否为关键字
     size_t isDelimiter(LexicalToken token);         //判断token是否是界符
-    Type getType(LexicalToken token);               //获取关键字对应的类型代号，不是类型返回NAT
-    bool addVariable(string name,Type type);        //添加定义的变量，返回是否添加成功（不成功原因：同层次重名）
+    int getType(LexicalToken token);               //获取关键字对应的类型表指针，不是类型返回0
+    bool addVariable(string name,int typeID);        //添加定义的变量，返回是否添加成功（不成功原因：同层次重名）
     Type isUserIdentifier(LexicalToken token);      //判断是否是已有用户定义标识符，返回标识符的类型信息
     string allocTemporaryVariable();                //申请一个临时变量
+    size_t findArrayType(int basicTypeID,long long length);   //根据基础元素的类型与长度查询是否存在数组定义，存在返回ID，不存在返回0
+    size_t addArrayType(int basicTypeID,long long length);      //填写数组表
     void printMain(){
         for(auto& i:SYNBL){
             std::cout<<i.name<<' '<<i.type<<' '<<(i.category==V?"Var":"Others")<<' '<<i.address<<std::endl;
         }
+        std::cout<<std::endl;
     }   //调试用临时函数，待删除
+    void printType(){
+        for(auto &item:TYPEL){
+            std::cout<<item.typeValue<<' '<<item.typePointer<<std::endl;
+        }
+        std::cout<<std::endl;
+    }
+    void printArgInfo(){
+        for(auto &item:AINFL){
+            std::cout<<item.upperBound<<' '<<item.typeLength<<' '<<item.typePointer<<std::endl;
+        }
+        std::cout<<std::endl;
+    }
 private:
     vector<MainTable> SYNBL;            //符号表主表
     vector<TypeTable> TYPEL;            //类型表

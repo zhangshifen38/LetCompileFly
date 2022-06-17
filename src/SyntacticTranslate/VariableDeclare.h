@@ -8,6 +8,7 @@
 #include <utility>
 #include <string>
 #include <queue>
+#include <stack>
 #include "../SymbolTable.h"
 #include "../LexicalAnalysis/Identifier.h"
 
@@ -20,8 +21,10 @@ public:
     bool analysis();
 private:
     std::queue<std::string> varID;
-    Type type;
+    std::stack<long long> arrayDimension;
+    int typeID;
     bool generateIdentifier();
+    bool generateType();
 };
 //S -> var i{push(i)}[,i{push(i)}]:type;{GENT()}
 

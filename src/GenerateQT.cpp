@@ -47,6 +47,8 @@ void GenerateQT::run() {
     }
     if(ok){
         symbolTable.printMain();
+        symbolTable.printType();
+        symbolTable.printArgInfo();
         for(auto& i:QtList){
             cout<<i.operation<<' '<<i.firstargument.name<<' '<<i.secondargument.name<<' '<<i.result.name<<endl;
         }
