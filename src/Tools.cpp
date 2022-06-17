@@ -37,6 +37,12 @@ void Tools::GetBlocks(vector<QtNode> &QTlist,vector<pair<int,int>> &BlocksInOut)
         }
         else if(it->operation==IF)//当前语句是IF转向语句，则下一句是基本块的入口（该句是基本块出口）
         {
+            if(preIn==1)//最后一句既是出口也是入口的情况
+            {
+                tmp.first=countQT;
+                it->block=countBlock;
+                preIn=0;
+            }
             tmp.second=countQT;
             it->block=countBlock;
             countBlock++;
@@ -45,6 +51,12 @@ void Tools::GetBlocks(vector<QtNode> &QTlist,vector<pair<int,int>> &BlocksInOut)
         }
         else if(it->operation==EL)//当前语句是EL转向语句，则下一句或者跳转到的语句是基本块的入口（该句是基本块出口）
         {
+            if(preIn==1)//最后一句既是出口也是入口的情况
+            {
+                tmp.first=countQT;
+                it->block=countBlock;
+                preIn=0;
+            }
             tmp.second=countQT;
             it->block=countBlock;
             countBlock++;
@@ -53,6 +65,12 @@ void Tools::GetBlocks(vector<QtNode> &QTlist,vector<pair<int,int>> &BlocksInOut)
         }
         else if(it->operation==IE)//当前语句是IE转向语句，则下一句或者跳转到的语句是基本块的入口（该句是基本块出口）
         {
+            if(preIn==1)//最后一句既是出口也是入口的情况
+            {
+                tmp.first=countQT;
+                it->block=countBlock;
+                preIn=0;
+            }
             tmp.second=countQT;
             it->block=countBlock;
             countBlock++;
@@ -61,6 +79,12 @@ void Tools::GetBlocks(vector<QtNode> &QTlist,vector<pair<int,int>> &BlocksInOut)
         }
         else if(it->operation==DO)//当前语句是DO转向语句，则下一句或者跳转到的语句是基本块的入口（该句是基本块出口）
         {
+            if(preIn==1)//最后一句既是出口也是入口的情况
+            {
+                tmp.first=countQT;
+                it->block=countBlock;
+                preIn=0;
+            }
             tmp.second=countQT;
             it->block=countBlock;
             countBlock++;
@@ -69,6 +93,12 @@ void Tools::GetBlocks(vector<QtNode> &QTlist,vector<pair<int,int>> &BlocksInOut)
         }
         else if(it->operation==WE)//当前语句是WE转向语句，则下一句或者跳转到的语句是基本块的入口（该句是基本块出口）
         {
+            if(preIn==1)//最后一句既是出口也是入口的情况
+            {
+                tmp.first=countQT;
+                it->block=countBlock;
+                preIn=0;
+            }
             tmp.second=countQT;
             it->block=countBlock;
             countBlock++;
