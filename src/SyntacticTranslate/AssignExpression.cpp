@@ -44,9 +44,9 @@ bool AssignExpression::analysis() {
         while(!this->waitForAssign.empty()){
             Token tk=this->waitForAssign.top();
             this->waitForAssign.pop();
-            tk.type=2;
             if(tk.type==-1){
                 Token ttk=Token(symbolTable.allocTemporaryVariable(),3, true);
+                tk.type=2;
                 QtList.emplace_back(QtNode(GADR,tk,this->waitForAssign.top(),ttk));
                 QtList.emplace_back(QtNode(ASG,this->result,
                                            Token("_",0, false),ttk));

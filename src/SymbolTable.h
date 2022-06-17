@@ -85,6 +85,9 @@ public:
     string allocTemporaryVariable();                //申请一个临时变量
     size_t findArrayType(int basicTypeID,long long length);   //根据基础元素的类型与长度查询是否存在数组定义，存在返回ID，不存在返回0
     size_t addArrayType(int basicTypeID,long long length);      //填写数组表,返回数组表指针
+    Category getNameCategory();
+    bool isLegalIdentifier(LexicalToken token);     //判断是否合法标识符（是否在已有标识符表与关键字表出现过）
+    void addProcedure(LexicalToken token);          //在符号表中注册一个过程
     void printMain(){
         for(auto& i:SYNBL){
             std::cout<<i.name<<' '<<i.type<<' '<<(i.category==V?"Var":"Others")<<' '<<i.address<<std::endl;

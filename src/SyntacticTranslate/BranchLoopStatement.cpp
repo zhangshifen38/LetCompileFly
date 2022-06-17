@@ -156,7 +156,19 @@ bool ConstructStatements::generateSingle() {
         if(!assignExpression.analysis()){
             return false;
         }
+    } else if(symbolTable.isKeyWord(identifier.getCurrentWord())==11){     //return关键字
+        Token emp("_",0, false);
+        QtList.emplace_back(QtNode(RET,emp,emp,emp));
+        identifier.nextW();
+        if(symbolTable.isDelimiter(identifier.getCurrentWord())!=13){   // 分号
+            //报错：缺少分号
+            return false;
+        }
+    } else{
+        //报错：不合法的语句
+        return false;
     }
     return true;
 }
+
 

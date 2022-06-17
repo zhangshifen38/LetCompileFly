@@ -106,7 +106,9 @@ const map<string, size_t> SymbolTable::KEYWORDL {
         {"else",	14},
         {"var",     15},
         {"char",    16},
-        {"bool",    17}
+        {"bool",    17},
+        {"proc",    18},
+        {"func",    19}
 };
 const map<string, size_t> SymbolTable::DELIMITERL {
         {"-",		1},
@@ -201,6 +203,25 @@ size_t SymbolTable::getTypeSize(int t) {
         return AINFL[TYPEL[t].typePointer].typeLength;
     }
     return TYPEL[t].typePointer;
+}
+
+bool SymbolTable::isLegalIdentifier(SymbolTable::LexicalToken token) {
+    if(token.second!=-1){
+        return false;
+    }
+    if(isKeyWord(token)){
+        return false;
+    }
+    for(auto &item:SYNBL){
+        if(item.name==token.first&&item.category!=D){       //重名，且不是结构体成员名
+            return false;
+        }
+    }
+    return true;
+}
+
+void SymbolTable::addProcedure(SymbolTable::LexicalToken token) {
+    this->SYNBL.emplace_back(MainTable(token.first,0,F,ST_NIL));
 }
 
 

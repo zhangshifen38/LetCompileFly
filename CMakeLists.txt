@@ -43,4 +43,4 @@ add_executable(
         src/SyntacticTranslate/ArithmeticExpression.cpp
         src/SyntacticTranslate/ArithmeticExpression.h
         src/SyntacticTranslate/ReportingError.cpp
-        src/SyntacticTranslate/ReportingError.h)
+        src/SyntacticTranslate/ReportingError.h src/SyntacticTranslate/ProcedureDeclare.cpp src/SyntacticTranslate/ProcedureDeclare.h)
