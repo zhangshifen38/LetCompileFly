@@ -17,6 +17,9 @@ vector<ObjQtNode>ObjQtList;
 vector<ObjectstoreCode>CodeList;//存储目标代码
 vector<Register>RegisterList;
 stack<int>Sem;//语义栈(登记待返填的目标地址)
+vector<ActiveNode>AcList;
+int countnumber;
+vector<MemorgNode>MemorgList;
 //符号表变量
 SymbolTable symbolTable;
 

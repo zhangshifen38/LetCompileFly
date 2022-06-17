@@ -2,11 +2,14 @@
 // Created by jing'ying on 2022/6/16.
 //
 #include"ObjectCode.h"
+extern int countnumber;
 extern vector<ObjQtNode>ObjQtList;
 extern vector<ObjectstoreCode>CodeList;//存储目标代码
 extern vector<Register>RegisterList;
 extern stack<int>Sem;//语义栈(登记待返填的目标地址)
 extern vector<QtNode>QtList;
+extern vector<ActiveNode>AcList;
+extern vector<MemorgNode>MemorgList;
 void dataReading()
 {
     for(int i=0;i<QtList.size();i++)
@@ -22,7 +25,20 @@ void dataReading()
         ObjQtList.push_back(tempnode);
     }
 }
-
+int memorgSearch(string name)
+{
+    int temp;
+    vector<MemorgNode>:: iterator it;
+    for(it = MemorgList.begin();it!=MemorgList.end();it++)
+    {
+        if(name==it->name)
+        {
+            break;
+        }
+    }
+    temp = it->count;
+    return temp;
+}
 void swapQt(int i)
 {
     int tempac;
@@ -42,20 +58,22 @@ bool AcEqual(const ActiveNode &ob1,const ActiveNode &ob2)
 {
     return (ob1.content==ob2.content)&&(ob1.active==ob2.active);
 }
-void storeCode(string operation, string dest, string source)
+void storeCode(string operation, string dest, string source,string address=" ")
 {
     ObjectstoreCode temOb;
     temOb.id = CodeList.size();
     temOb.operation = operation;
     temOb.dest = dest;
     temOb.source = source;
+    temOb.address = address;
     CodeList.push_back(temOb);
 }
-void backfill(int pi, int pk)
+void backfill(int pi)
 {
-    string temdest;
-    temdest = to_string(pk);
-    CodeList[pi].source = temdest;
+    if(CodeList[pi].address[0]=='S')
+    {
+            CodeList[pi].source = "S"+ to_string(countnumber);
+    }
 }
 void initial ()
 {
@@ -69,6 +87,10 @@ void initial ()
     temp.name="CX";
     RegisterList.push_back(temp);
     temp.name="DX";
+    RegisterList.push_back(temp);
+    temp.name="SI";
+    RegisterList.push_back(temp);
+    temp.name="DI";
     RegisterList.push_back(temp);
 }
 struct Register * reReturn(int currentnumber,string content)
@@ -147,12 +169,14 @@ void sendDivision(int dstart, int dend)
                 acnode.content = temp;
                 acnode.active = -2;
                 AcTable.push_back(acnode);
+                AcList.push_back(acnode);
             }
-            else if(('a'<=temp[0]&&temp[0]<='z') || ('A'<=temp[0]<='Z'&&temp[0]))
+            else if(('a'<=temp[0]&&temp[0]<='z') || ('A'<=temp[0]&&temp[0]<='Z'))
             {
                 acnode.content = temp;
                 acnode.active = -1;
                 AcTable.push_back(acnode);
+                AcList.push_back(acnode);
             }
             temp = ObjQtList[i].secondargument;
             if('0'<=temp[0]&&temp[0]<='9');
@@ -161,12 +185,14 @@ void sendDivision(int dstart, int dend)
                 acnode.content = temp;
                 acnode.active = -2;
                 AcTable.push_back(acnode);
+                AcList.push_back(acnode);
             }
-            else if(('a'<=temp[0]&&temp[0]<='z') || ('A'<=temp[0]<='Z'&&temp[0]))
+            else if(('a'<=temp[0]&&temp[0]<='z') || ('A'<=temp[0]&&temp[0]<='Z'))
             {
                 acnode.content = temp;
                 acnode.active = -1;
                 AcTable.push_back(acnode);
+                AcList.push_back(acnode);
             }
             temp = ObjQtList[i].result;
             if('0'<=temp[0]&&temp[0]<='9');
@@ -175,12 +201,14 @@ void sendDivision(int dstart, int dend)
                 acnode.content = temp;
                 acnode.active = -2;
                 AcTable.push_back(acnode);
+                AcList.push_back(acnode);
             }
             else if(('a'<=temp[0]&&temp[0]<='z') || ('A'<=temp[0]&&temp[0]<='Z'))
             {
                 acnode.content = temp;
                 acnode.active = -1;
                 AcTable.push_back(acnode);
+                AcList.push_back(acnode);
             }
         }
     }
@@ -213,21 +241,32 @@ void doubleOb(enum QTOperation operation, struct Register * reg, int i)
     {
         if(reg->acnumber==-2)//如果当前是非活跃的值
         {
-            storeCode("MOV", reg->name, ObjQtList[i].firstargument);
+            storeCode("MOV", reg->name, ","+ObjQtList[i].firstargument);
         }
         else
         {
             tempreg = reReturn(i," ");
             if(tempreg->content==" ")
             {
-                storeCode("MOV", tempreg->name, pre->name);
+                storeCode("MOV", tempreg->name, ","+pre->name);
                 tempreg->content=pre->content;
                 tempreg->acnumber=pre->acnumber;
             }
             else
             {
-                storeCode("ST", pre->name,"");
+//                if(tempreg->content[0]!='t')
+                    storeCode("MOV", pre->content,","+pre->name);
+//                else
+//                {
+//                    countnumber++;
+//                    MemorgNode temp;
+//                    temp.name = pre->content;
+//                    temp.count = countnumber;
+//                    storeCode("MOV", "[SI+"+ to_string(countnumber)+"]",","+pre->name);
+//                    MemorgList.push_back(temp);
+//                }
             }
+            storeCode("MOV", reg->name, ","+ObjQtList[i].firstargument);
         }
     }
     else if ((operation == ADD) || (operation == MUL) || (operation == AND) || (operation == OR) || (operation == JNE) || (operation == JE))//双目可交换运算符
@@ -238,54 +277,82 @@ void doubleOb(enum QTOperation operation, struct Register * reg, int i)
         {
             if(reg->acnumber==-2)//如果当前是非活跃的值
             {
-                storeCode("MOV", reg->name, ObjQtList[i].firstargument);
+                storeCode("MOV", reg->name, ","+ObjQtList[i].firstargument);
             }
             else
             {
                 tempreg = reReturn(i," ");
                 if(tempreg->content==" ")
                 {
-                    storeCode("MOV", tempreg->name, pre->name);
+                    storeCode("MOV", tempreg->name,","+pre->name);
                     tempreg->content=pre->content;
                     tempreg->acnumber=pre->acnumber;
                 }
                 else
                 {
-                    storeCode("ST", pre->name,"");
+//                    if(tempreg->content[0]!='t')
+                        storeCode("MOV", reg->content,","+reg->name);
+//                    else {
+//                        countnumber++;
+//                        MemorgNode temp;
+//                        temp.name = reg->content;
+//                        temp.count = countnumber;
+//                        storeCode("MOV", "[SI+"+ to_string(countnumber)+"]",","+reg->name);
+//                        MemorgList.push_back(temp);
+//                    }
                 }
+                storeCode("MOV", reg->name, ","+ObjQtList[i].firstargument);
             }
         }
         else if (reg->content == " ")//当前寄存器为空
         {
-            storeCode("MOV",reg->name,ObjQtList[i].firstargument);
+            storeCode("MOV",reg->name,","+ObjQtList[i].firstargument);
         }
         else
         {
             if(reg->acnumber==-2)
             {
-                storeCode("MOV", reg->name, ObjQtList[i].firstargument);
+                    storeCode("MOV", reg->name, ","+ObjQtList[i].firstargument);
             }
             else
             {
-                storeCode("ST", reg->name,"");
-                storeCode("MOV", reg->name, ObjQtList[i].firstargument);
+//                if(tempreg->content[0]!='t')
+                    storeCode("MOV", reg->content,","+reg->name);
+//                else {
+//                    countnumber++;
+//                    MemorgNode temp;
+//                    temp.name = reg->content;
+//                    temp.count = countnumber;
+//                    storeCode("MOV", "[SI+"+ to_string(countnumber)+"]",","+reg->name);
+//                    MemorgList.push_back(temp);
+//                }
+                storeCode("MOV", reg->name, ","+ObjQtList[i].firstargument);
             }
         }
     }
     else if (reg->content == " ")//当前寄存器为空
     {
-        storeCode("MOV",reg->name,ObjQtList[i].firstargument);
+        storeCode("MOV",reg->name,","+ObjQtList[i].firstargument);
     }
     else
     {
         if(reg->acnumber==-2)
         {
-            storeCode("MOV", reg->name, ObjQtList[i].firstargument);
+            storeCode("MOV", reg->name, ","+ObjQtList[i].firstargument);
         }
         else
         {
-            storeCode("ST", reg->name,"");
-            storeCode("MOV", reg->name, ObjQtList[i].firstargument);
+//            if(tempreg->content[0]!='t')
+                storeCode("MOV", reg->content,","+reg->name);
+//            else {
+//                countnumber++;
+//                MemorgNode temp;
+//                temp.name = reg->content;
+//                temp.count = countnumber;
+//                storeCode("MOV", "[SI+" + to_string(countnumber) + "]", ","+reg->name);
+//                MemorgList.push_back(temp);
+//            }
+            storeCode("MOV", reg->name, ","+ObjQtList[i].firstargument);
         }
     }
     pre->content = ObjQtList[i].result;
@@ -297,16 +364,17 @@ void singleOb(enum QTOperation operation, struct Register * reg, int i)
     if (reg->content == ObjQtList[i].firstargument);//如果查找到的当前的寄存器中有数值的
     else if (reg->content == " ")//当前寄存器为空
     {
-        storeCode("MOV",reg->name,ObjQtList[i].firstargument);
+        storeCode("MOV",reg->name,","+ObjQtList[i].firstargument);
     }
     else
     {
         if(reg->acnumber == -2)
-            storeCode("MOV",reg->name,ObjQtList[i].firstargument);
+            storeCode("MOV",reg->name,","+ObjQtList[i].firstargument);
         else
         {
-            storeCode("ST",reg->name,"");
-            storeCode("MOV",reg->name,ObjQtList[i].firstargument);
+            countnumber++;//没有处理
+            storeCode("MOV", "[SI+"+ to_string(countnumber)+"]",","+reg->name);
+            storeCode("MOV",reg->name,","+ObjQtList[i].firstargument);
         }
     }
     if(ObjQtList[i].result[0]!='_')
@@ -337,121 +405,231 @@ void objectCodeGeneration(int dstart, int dend)
             doubleOb(ObjQtList[i].operation,pre,i);
             reg = reReturn(i,ObjQtList[i].secondargument);
             if(reg->content==ObjQtList[i].secondargument)
-                storeCode("ADD",pre->name,reg->name);
+                storeCode("ADD",pre->name,","+reg->name);
             else
-                storeCode("ADD",pre->name,ObjQtList[i].secondargument);
+                storeCode("ADD",pre->name,","+ObjQtList[i].secondargument);
         }
         else if ((ObjQtList[i].operation == SUB) && (ObjQtList[i].secondargument != "_"))//处理减法
         {
             doubleOb(ObjQtList[i].operation,pre,i);
             reg = reReturn(i,ObjQtList[i].secondargument);
             if(reg->content==ObjQtList[i].secondargument)
-                storeCode("SUB",pre->name,reg->name);
+                storeCode("SUB",pre->name,","+reg->name);
             else
-                storeCode("SUB",pre->name,ObjQtList[i].secondargument);
+                storeCode("SUB",pre->name,","+ObjQtList[i].secondargument);
         }
         else if (ObjQtList[i].operation == MUL)
         {
-            doubleOb(ObjQtList[i].operation,pre,i);
-            reg = reReturn(i,ObjQtList[i].secondargument);
-            if(reg->content==ObjQtList[i].secondargument)
-                storeCode("MUL",pre->name,reg->name);
+            if(pre->name=="AX"&&pre->content!=" ")
+            {
+                storeCode("MUL","","BYTE PTR "+ObjQtList[i].secondargument);
+            }
             else
-                storeCode("MUL",pre->name,ObjQtList[i].secondargument);
+            {
+                if(RegisterList[0].content==" ")
+                {
+                    storeCode("MOV","AX",","+ObjQtList[i].firstargument);
+                    if(('a'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='z')||('A'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='Z'))
+                        storeCode("MUL","","BYTE PTR "+ObjQtList[i].secondargument);
+                    else {
+                        if(RegisterList[5].content==" ")
+                        {
+                            storeCode("MOV","DI",ObjQtList[i].secondargument);
+                        }
+                        else
+                        {
+                            storeCode("MOV",RegisterList[5].content,RegisterList[5].name);
+                            storeCode("MOV","DI",ObjQtList[i].secondargument);
+                        }
+                        storeCode("MUL","","DI");
+                    }
+                }
+                else
+                {
+                    storeCode("MOV",RegisterList[0].content,",AX");
+                    storeCode("MOV","AX",","+ObjQtList[i].firstargument);
+                    storeCode("MUL","","BYTE PTR "+ObjQtList[i].secondargument);
+                }
+            }
+            RegisterList[0].content = ObjQtList[i].result;
+            RegisterList[0].acnumber = ObjQtList[i].resultac;
         }
         else if (ObjQtList[i].operation == DIV)
         {
-            doubleOb(ObjQtList[i].operation,pre,i);
-            reg = reReturn(i,ObjQtList[i].secondargument);
-            if(reg->content==ObjQtList[i].secondargument)
-                storeCode("DIV",pre->name,reg->name);
+            if(pre->name=="AX"&&pre->content!=" ")
+            {
+                storeCode("DIV","","BYTE PTR "+ObjQtList[i].secondargument);
+            }
             else
-                storeCode("DIV",pre->name,ObjQtList[i].secondargument);
+            {
+                if(RegisterList[0].content==" ")
+                {
+                    storeCode("MOV","AX",","+ObjQtList[i].firstargument);
+                    if(('a'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='z')||('A'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='Z'))
+                        storeCode("DIV","","BYTE PTR "+ObjQtList[i].secondargument);
+                    else
+                    {
+                        if(RegisterList[5].content==" ")
+                        {
+                            storeCode("MOV","DI",ObjQtList[i].secondargument);
+                        }
+                        else
+                        {
+                            storeCode("MOV",RegisterList[5].content,RegisterList[5].name);
+                            storeCode("MOV","DI",ObjQtList[i].secondargument);
+                        }
+                        storeCode("MUL","","DI");
+                    }
+
+                }
+                else
+                {
+                    storeCode("MOV",RegisterList[0].content,",AX");
+                    storeCode("MOV","AX",","+ObjQtList[i].firstargument);
+                    storeCode("DIV","","BYTE PTR "+ObjQtList[i].secondargument);
+                }
+            }
+            storeCode("XOR","AH",",AH");
+            RegisterList[0].content = ObjQtList[i].result;
+            RegisterList[0].acnumber = ObjQtList[i].resultac;
         }
         else if (ObjQtList[i].operation == MOD)
         {
-            doubleOb(ObjQtList[i].operation,pre,i);
-            reg = reReturn(i,ObjQtList[i].secondargument);
-            if(reg->content==ObjQtList[i].secondargument)
-                storeCode("MOD",pre->name,reg->name);
+            if(pre->name=="AX"&&pre->content!=" ")
+            {
+                storeCode("DIV","","BYTE PTR "+ObjQtList[i].secondargument);
+            }
             else
-                storeCode("MOD",pre->name,ObjQtList[i].secondargument);
+            {
+                if(RegisterList[0].content==" ")
+                {
+                    storeCode("MOV","AX",","+ObjQtList[i].firstargument);
+                    if(('a'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='z')||('A'<=ObjQtList[i].secondargument[0]&&ObjQtList[i].secondargument[0]<='Z'))
+                        storeCode("DIV","","BYTE PTR "+ObjQtList[i].secondargument);
+                    else
+                    {
+                        if(RegisterList[5].content==" ")
+                        {
+                            storeCode("MOV","DI",ObjQtList[i].secondargument);
+                        }
+                        else
+                        {
+                            storeCode("MOV",RegisterList[5].content,RegisterList[5].name);
+                            storeCode("MOV","DI",ObjQtList[i].secondargument);
+                        }
+                        storeCode("MUL","","DI");
+                    }
+                }
+                else
+                {
+                    storeCode("MOV",pre->content,",AX");
+                    storeCode("MOV","AX",","+ObjQtList[i].firstargument);
+                    storeCode("DIV","","BYTE PTR "+ObjQtList[i].secondargument);
+                }
+            }
+            storeCode("MOV","AH",",AL");
+            storeCode("XOR","AH",",AH");
+            RegisterList[0].content = ObjQtList[i].result;
+            RegisterList[0].acnumber = ObjQtList[i].resultac;
         }
         else if (ObjQtList[i].operation == AND)
         {
             doubleOb(ObjQtList[i].operation,pre,i);
             reg = reReturn(i,ObjQtList[i].secondargument);
             if(reg->content==ObjQtList[i].secondargument)
-                storeCode("AND",pre->name,reg->name);
+                storeCode("AND",pre->name,","+reg->name);
             else
-                storeCode("AND",pre->name,ObjQtList[i].secondargument);
+                storeCode("AND",pre->name,","+ObjQtList[i].secondargument);
         }
         else if (ObjQtList[i].operation == OR)
         {
             doubleOb(ObjQtList[i].operation,pre,i);
             reg = reReturn(i,ObjQtList[i].secondargument);
             if(reg->content==ObjQtList[i].secondargument)
-                storeCode("OR",pre->name,reg->name);
+                storeCode("OR",pre->name,","+reg->name);
             else
-                storeCode("OR",pre->name,ObjQtList[i].secondargument);
+                storeCode("OR",pre->name,","+ObjQtList[i].secondargument);
         }
         else if (ObjQtList[i].operation == JGE)
         {
             doubleOb(ObjQtList[i].operation,pre,i);
             reg = reReturn(i,ObjQtList[i].secondargument);
             if(reg->content==ObjQtList[i].secondargument)
-                storeCode("JGE",pre->name,reg->name);
+                storeCode("SUB",pre->name,","+reg->name);
             else
-                storeCode("JGE",pre->name,ObjQtList[i].secondargument);
+                storeCode("SUB",pre->name,","+ObjQtList[i].secondargument);
         }
         else if (ObjQtList[i].operation == JG)
         {
             doubleOb(ObjQtList[i].operation,pre,i);
             reg = reReturn(i,ObjQtList[i].secondargument);
             if(reg->content==ObjQtList[i].secondargument)
-                storeCode("JG",pre->name,reg->name);
+                storeCode("SUB",pre->name,","+reg->name);
             else
-                storeCode("JG",pre->name,ObjQtList[i].secondargument);
+                storeCode("SUB",pre->name,","+ObjQtList[i].secondargument);
         }
         else if (ObjQtList[i].operation == JLE)
         {
             doubleOb(ObjQtList[i].operation,pre,i);
             reg = reReturn(i,ObjQtList[i].secondargument);
             if(reg->content==ObjQtList[i].secondargument)
-                storeCode("JLE",pre->name,reg->name);
+                storeCode("SUB",pre->name,","+reg->name);
             else
-                storeCode("JLE",pre->name,ObjQtList[i].secondargument);
+                storeCode("SUB",pre->name,","+ObjQtList[i].secondargument);
         }
         else if (ObjQtList[i].operation == JL)
         {
             doubleOb(ObjQtList[i].operation,pre,i);
             reg = reReturn(i,ObjQtList[i].secondargument);
             if(reg->content==ObjQtList[i].secondargument)
-                storeCode("JL",pre->name,reg->name);
+                storeCode("SUB",pre->name,","+reg->name);
             else
-                storeCode("JL",pre->name,ObjQtList[i].secondargument);
+                storeCode("SUB",pre->name,","+ObjQtList[i].secondargument);
         }
         else if (ObjQtList[i].operation == JNE)
         {
             doubleOb(ObjQtList[i].operation,pre,i);
             reg = reReturn(i,ObjQtList[i].secondargument);
             if(reg->content==ObjQtList[i].secondargument)
-                storeCode("JNE",pre->name,reg->name);
+                storeCode("SUB",pre->name,","+reg->name);
             else
-                storeCode("JNE",pre->name,ObjQtList[i].secondargument);
+                storeCode("SUB",pre->name,","+ObjQtList[i].secondargument);
         }
         else if (ObjQtList[i].operation == JE)
         {
             doubleOb(ObjQtList[i].operation,pre,i);
             reg = reReturn(i,ObjQtList[i].secondargument);
             if(reg->content==ObjQtList[i].secondargument)
-                storeCode("JE",pre->name,reg->name);
+                storeCode("SUB",pre->name,","+reg->name);
             else
-                storeCode("JE",pre->name,ObjQtList[i].secondargument);
+                storeCode("SUB",pre->name,","+ObjQtList[i].secondargument);
         }
         else if (ObjQtList[i].operation == ASG)
         {
-            singleOb(ObjQtList[i].operation,pre,i);
+            struct Register * temp= nullptr;
+            temp = reReturn(i,ObjQtList[i].firstargument);
+            if(temp->content == ObjQtList[i].firstargument)
+            {
+                storeCode("MOV",ObjQtList[i].result,","+temp->name);
+            }
+            else
+            {
+                if((('a'<=ObjQtList[i].result[0]&&ObjQtList[i].result[0]<='z')||('A'<=ObjQtList[i].result[0]&&ObjQtList[i].result[0]<='Z'))&&(('a'<=ObjQtList[i].firstargument[0]&&ObjQtList[i].result[0]<='z')||('A'<=ObjQtList[i].firstargument[0]&&ObjQtList[i].result[0]<='Z')))
+                {
+                    if(RegisterList[4].content!=" ")
+                    {
+                        storeCode("MOV",RegisterList[4].content,","+RegisterList[4].name);
+                    }
+                    storeCode("MOV",RegisterList[4].name,","+ObjQtList[i].firstargument);
+                    storeCode("MOV",ObjQtList[i].result,","+RegisterList[4].name);
+                }
+                else {
+                    storeCode("MOV",ObjQtList[i].result,","+ObjQtList[i].firstargument);
+                }
+            }
+            temp = reReturn(i,ObjQtList[i].result);
+            if(temp->content == ObjQtList[i].result)
+                storeCode("MOV",temp->name,","+ObjQtList[i].firstargument);
         }
         else if (ObjQtList[i].operation == NOT)
         {
@@ -460,48 +638,74 @@ void objectCodeGeneration(int dstart, int dend)
         }
         else if (ObjQtList[i].operation == IF)
         {
-            singleOb(ObjQtList[i].operation,pre,i);
+            ObjQtNode temp = ObjQtList[i-1];
             Sem.push(CodeList.size());
-            storeCode("FJ",pre->name,"");
+            if(temp.operation==JL)
+                storeCode("JNB","","","S");
+            if(temp.operation==JLE)
+                storeCode("JNBE","","","S");
+            if(temp.operation==JG)
+                storeCode("JNA","","","S");
+            if(temp.operation==JGE)
+                storeCode("JNAE","","","S");
+            if(temp.operation==JE)
+                storeCode("JNE","","","S");
+            if(temp.operation==JNE)
+                storeCode("JE","","","S");
         }
         else if (ObjQtList[i].operation == EL)
         {
             int backnumber;
             backnumber = Sem.top();//获得待返填if地址
             Sem.pop();
-            backfill(backnumber, CodeList.size() + 1);//将当前代码下一条序号返填
+            countnumber++;
+            backfill(backnumber);//将当前代码下一条序号返填
             Sem.push(CodeList.size()); //将当前代码序号入栈
-            storeCode("JMP", " ", "");//等ie返填
+            storeCode("JMP", " ", "","S");//等ie返填
+            storeCode("S"+ to_string(countnumber)+":","","");
         }
         else if (ObjQtList[i].operation == IE)
         {
             int backnumber;
             backnumber = Sem.top();//获得待返填if地址
             Sem.pop();
-            backfill(backnumber, CodeList.size());
+            countnumber++;
+            storeCode("S"+ to_string(countnumber)+":","","");
+            backfill(backnumber);
         }
-
         else if (ObjQtList[i].operation == WH)
         {
-            Sem.push(CodeList.size());//将wh首句地址压栈
+            countnumber++;
+            storeCode("S"+ to_string(countnumber)+":","","");
         }
         else if (ObjQtList[i].operation == DO)//填we的下一条地址
         {
-            singleOb(ObjQtList[i].operation,pre,i);
             Sem.push(CodeList.size()); //将当前代码序号入栈
-            storeCode("FNJ", pre->name, "");
+            ObjQtNode temp = ObjQtList.back();
+            Sem.push(CodeList.size());
+            if(temp.operation==JL)
+                storeCode("JNB","","","S");
+            if(temp.operation==JLE)
+                storeCode("JNBE","","","S");
+            if(temp.operation==JG)
+                storeCode("JNA","","","S");
+            if(temp.operation==JGE)
+                storeCode("JNAE","","","S");
+            if(temp.operation==JE)
+                storeCode("JNE","","","S");
+            if(temp.operation==JNE)
+                storeCode("JE","","","S");
         }
         else if (ObjQtList[i].operation == WE)
         {
             int backnumber;
             string tempstr;
-            backnumber = Sem.top();
-            Sem.pop();
-            backfill(backnumber,CodeList.size()+1);
-            backnumber = Sem.top();
-            Sem.pop();
             tempstr = to_string(backnumber);
-            storeCode("JMP"," ",tempstr);
+            storeCode("JMP", " ", "","S"+ to_string(countnumber));//等ie返填;
+            countnumber++;
+            backnumber =Sem.top();
+            Sem.pop();
+            storeCode("S"+ to_string(countnumber)+":","","");
         }
         else if (ObjQtList[i].operation == FUNC) {
             storeCode(ObjQtList[i].result,"PROC","");
@@ -542,13 +746,38 @@ void objectCodeGeneration(int dstart, int dend)
         }
     }
 }
+void acClear()
+{
+    sort(AcList.begin(),AcList.end(), AcSort);
+    AcList.erase(unique(AcList.begin(),AcList.end(), AcEqual),AcList.cend());
+}
 void runObjectCode()
 {
+    countnumber = 0;
     dataReading();
     initial();
     qtDivision();
-    for(int i=0;i<CodeList.size();i++)
+    acClear();
+    ofstream datafile;
+    datafile.open("../src/ObjectCodeGeneration/Code.ASM");
+    datafile<<"DSEG SEGMENT"<<endl;
+    for(int i=0;i<AcList.size();i++)
     {
-        cout<<CodeList[i].id<<":"<<CodeList[i].operation<<" "<<CodeList[i].dest<<" "<<CodeList[i].source<<endl;
+        datafile<<" "<<AcList[i].content<<" "<<"DW"<<" "<<"00H"<<endl;
     }
+    datafile<<"DSEG ENDS"<<endl;
+    datafile<<"SSEG SEGMENT"<<endl;
+    datafile<<"SKTOP DW 200 DUP(0)"<<endl;
+    datafile<<"SSEG ENDS"<<endl;
+    datafile<<"CSEG SEGMENT"<<endl;
+    datafile<<"ASSUME DS:DSEG,CS:CSEG,SS:SSEG"<<endl;
+    datafile<<"START:"<<" MOV AX,DSEG"<<endl<<"MOV DS,AX"<<endl<<"MOV AX,SSEG"<<endl<<"MOV SS,AX"<<endl;
+    datafile<<"LEA SI,SKTOP"<<endl;
+    for(int i=0;i<CodeList.size();i++) {
+        datafile<<CodeList[i].operation<<" "<<CodeList[i].dest<<" "<<CodeList[i].source<<endl;
+    }
+    datafile<<"MOV AX,4C00H"<<endl<<"INT 21H"<<endl;
+    datafile<<"CSEG ENDS"<<endl<<"END START";
+    datafile.close();
+//    system("start ../src/ObjectCodeGeneration/Code.ASM");
 }

@@ -29,6 +29,7 @@ struct ObjectstoreCode//目标代码
     string operation;//操作指令
     string dest;//目的操作数
     string source;//源操作数
+    string address;
 };
 struct Register//寄存器
 {
@@ -36,8 +37,13 @@ struct Register//寄存器
     string content;//内容
     int acnumber;//活跃信息
 };
+struct MemorgNode//内存表
+{
+    string name;
+    int count;
+};
 void swapQt(int i);
-void storeCode(string operation, string dest, string source);
+void storeCode(string operation, string dest, string source,string address);
 void backfill(int pi, int pk);
 void initial ();
 void qtDivision();
