@@ -743,8 +743,22 @@ void objectCodeGeneration(int dstart, int dend)
                 storeCode("MOV","[DI]",","+tempreg->name);
             else
             {
-                storeCode("MOV","DI",",[DI]");
-                storeCode("MOV",ObjQtList[i].result,",DI");
+                tempreg = reReturn(i," ");
+                if(tempreg->content==" ")
+                {
+                    storeCode("MOV",tempreg->name,","+ObjQtList[i].firstargument);
+                }
+                else
+                {
+                    if(tempreg->acnumber==-2)
+                        storeCode("MOV",tempreg->name,","+ObjQtList[i].firstargument);
+                    else
+                    {
+                        storeCode("MOV",tempreg->content,","+tempreg->name);
+                        storeCode("MOV",tempreg->name,","+ObjQtList[i].firstargument);
+                    }
+                }
+                storeCode("MOV","[DI]",","+tempreg->name);
             }
         }
         else if (ObjQtList[i].operation == ASG)
