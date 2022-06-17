@@ -846,6 +846,12 @@ void runObjectCode()
             count = symbolTable.AINFL[arrynumber].typeLength;
             datafile<<name<<"  "<<"DB  "<<to_string(count)<<" DUP(0)"<<endl;
         }
+        if(symbolTable.TYPEL[symbolTable.SYNBL[i].type].typeValue==ST)
+        {
+            arrynumber=symbolTable.TYPEL[symbolTable.SYNBL[i].type].typePointer;
+            count = symbolTable.RINFL[arrynumber].offset;
+            datafile<<name<<"  "<<"DB  "<<to_string(count)<<" DUP(0)"<<endl;
+        }
     }
     datafile<<"DSEG ENDS"<<endl;
     datafile<<"SSEG SEGMENT"<<endl;
