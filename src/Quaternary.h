@@ -20,7 +20,7 @@ enum QTOperation{
     ASG,                //赋值表达式(assignment)
     FUNC,CALL,           //函数与函数调用表达式
     RET,END,            //函数返回与结束标志(可合为一)
-    SBRAC               //[]
+    GVAL,GADR               //根据变量首地址以及偏移量取值或者取地址
     //有需要的话这里还可以继续添加
 };
 
