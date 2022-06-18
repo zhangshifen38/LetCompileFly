@@ -19,7 +19,7 @@ int main() {
         file.open("../QTdata/QT2.txt");
         Tools tools;
         tools.PrintQT(QtList, file);
-        tools.BlocksDAG();
+//        tools.BlocksDAG();
         cout<<"Generate success!\n\nInput the final ASM file name: "<<flush;
         cin>>path;
         runObjectCode("../"+path+".ASM");
