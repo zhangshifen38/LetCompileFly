@@ -97,6 +97,20 @@ void Tools::GetBlocks(vector<QtNode> &QTlist,vector<pair<int,int>> &BlocksInOut)
             BlocksInOut.push_back(tmp);//一个基本块划分完毕
             preIn=1;
         }
+        else if(it->operation==WH)//当前语句是WH转向语句，则下一句或者跳转到的语句是基本块的入口（该句是基本块出口）
+        {
+            if(preIn==1)//最后一句既是出口也是入口的情况
+            {
+                tmp.first=countQT;
+                it->block=countBlock;
+                preIn=0;
+            }
+            tmp.second=countQT;
+            it->block=countBlock;
+            countBlock++;
+            BlocksInOut.push_back(tmp);//一个基本块划分完毕
+            preIn=1;
+        }
         else if(it->operation==WE)//当前语句是WE转向语句，则下一句或者跳转到的语句是基本块的入口（该句是基本块出口）
         {
             if(preIn==1)//最后一句既是出口也是入口的情况

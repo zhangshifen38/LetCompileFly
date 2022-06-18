@@ -6,7 +6,7 @@ FUNC	_	_	main
 CALL	_	_	init
 =	0	_	i
 wh	_	_	_
-<	0	10	t1
+<	i	10	t1
 do	t1	_	_
 *	2	i	t2
 +	0	t2	t3

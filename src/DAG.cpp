@@ -320,14 +320,14 @@ void DAG::CreateDAG(vector<QtNode> Block) {
 //                    else SpecialQTend=tmp;
 //                }
 
-                if(tmp.operation==WH)//特殊四元式WH
-                {
-                    int WHnum=CreateNode();
-                    NodeList[WHnum].op=WH;
+//                if(tmp.operation==WH)//特殊四元式WH
+//                {
+//                    int WHnum=CreateNode();
+//                    NodeList[WHnum].op=WH;
 //                    SpecialQTWH=tmp;//保存WH
-//                    SpecialQTWHsym=1;
-                }
-                else if(tmp.operation==CALL)//特殊四元式CALL
+//                   SpecialQTWHsym=1;
+//                }
+                if(tmp.operation==CALL)//特殊四元式CALL
                 {
                     int CALLnum=CreateNode();
                     NodeList[CALLnum].op=CALL;
@@ -364,13 +364,13 @@ void DAG::CreateQT(vector<QtNode> &QTlist) {
 //    }
 
     for(it=NodeList.begin();it!=NodeList.end();it++){
-        if(it->op==WH)//特殊四元式WH
-        {
-            tmp.clear();
-            tmp.operation=WH;
-            QTlist.push_back(tmp);
-        }
-        else if(it->op==CALL)//特殊四元式CALL
+//        if(it->op==WH)//特殊四元式WH
+//        {
+//            tmp.clear();
+//            tmp.operation=WH;
+//            QTlist.push_back(tmp);
+//        }
+        if(it->op==CALL)//特殊四元式CALL
         {
             tmp.clear();
             tmp.operation=CALL;
@@ -455,7 +455,7 @@ void DAG::CreateQT(vector<QtNode> &QTlist) {
 
 
 void DAG::FindGoto(vector<QtNode> QTlist) {
-    if(QTlist[QTlist.size()-1].operation==IF||QTlist[QTlist.size()-1].operation==EL||QTlist[QTlist.size()-1].operation==IE||QTlist[QTlist.size()-1].operation==DO||QTlist[QTlist.size()-1].operation==WE||QTlist[QTlist.size()-1].operation==RET)
+    if(QTlist[QTlist.size()-1].operation==IF||QTlist[QTlist.size()-1].operation==EL||QTlist[QTlist.size()-1].operation==IE||QTlist[QTlist.size()-1].operation==DO||QTlist[QTlist.size()-1].operation==WH||QTlist[QTlist.size()-1].operation==WE||QTlist[QTlist.size()-1].operation==RET)
     {
         Goto=0;
     }

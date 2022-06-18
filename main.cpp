@@ -20,9 +20,9 @@ int main() {
         Tools tools;
         tools.PrintQT(QtList, file);
         tools.BlocksDAG();
-        cout<<"Generate success!\n\nInput the final ASM file name: "<<flush;
-        cin>>path;
-        runObjectCode("../"+path+".ASM");
+//        cout<<"Generate success!\n\nInput the final ASM file name: "<<flush;
+//        cin>>path;
+//        runObjectCode("../"+path+".ASM");
     }
     return 0;
 }
