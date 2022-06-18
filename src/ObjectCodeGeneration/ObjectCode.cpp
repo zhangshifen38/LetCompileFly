@@ -771,7 +771,7 @@ void objectCodeGeneration(int dstart, int dend)
             }
             else
             {
-                if((('a'<=ObjQtList[i].result[0]&&ObjQtList[i].result[0]<='z')||('A'<=ObjQtList[i].result[0]&&ObjQtList[i].result[0]<='Z'))&&(('a'<=ObjQtList[i].firstargument[0]&&ObjQtList[i].result[0]<='z')||('A'<=ObjQtList[i].firstargument[0]&&ObjQtList[i].result[0]<='Z')))
+                if((('a'<=ObjQtList[i].result[0]&&ObjQtList[i].result[0]<='z')||('A'<=ObjQtList[i].result[0]&&ObjQtList[i].result[0]<='Z'))&&(('a'<=ObjQtList[i].firstargument[0]&&ObjQtList[i].firstargument[0]<='z')||('A'<=ObjQtList[i].firstargument[0]&&ObjQtList[i].firstargument[0]<='Z')))
                 {
                     if(RegisterList[4].content!=" ")
                     {
@@ -781,7 +781,15 @@ void objectCodeGeneration(int dstart, int dend)
                     storeCode("MOV",ObjQtList[i].result,","+RegisterList[4].name);
                 }
                 else {
-                    storeCode("MOV",ObjQtList[i].result,","+ObjQtList[i].firstargument);
+                    if('0'<=ObjQtList[i].firstargument[0]&&ObjQtList[i].firstargument[0]<='9')
+                    {
+                        temp = reReturn(i,ObjQtList[i].result);
+                        if(temp->content==ObjQtList[i].result)
+                            storeCode("MOV",temp->name,","+ObjQtList[i].firstargument);
+                        else{
+                            storeCode("MOV",ObjQtList[i].result,","+ObjQtList[i].firstargument);
+                        }
+                    }
                 }
             }
             temp = reReturn(i,ObjQtList[i].result);
