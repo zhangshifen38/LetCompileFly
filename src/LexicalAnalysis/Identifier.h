@@ -21,7 +21,7 @@ public:
     void reset();						//重置状态
     void closeSourseFile();             //关闭源文件
     void addSentence();		            //添加待识别的字符串
-    void openSourceFile(string st);     //打开源文件
+    bool openSourceFile(string st);     //打开源文件
     void nextW();		                //利用自动机获取一个单词
     bool hasNext();						//判断字符串是否有待识别的部分
     pair<string ,int> getCurrentWord(); //获取当前待识别的符号

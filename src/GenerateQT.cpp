@@ -4,10 +4,10 @@
 
 #include "GenerateQT.h"
 
-bool GenerateQT::run(string path) {
-    identifier.openSourceFile(path);
-    identifier.nextW();
+bool GenerateQT::run() {
     bool ok= true;
+
+    identifier.nextW();
     while(identifier.hasNext()) {
         if(isDefinition()){
             DefinitionGenerate definitionGenerate;
@@ -24,14 +24,9 @@ bool GenerateQT::run(string path) {
         }
         ok= false;
     }
-    if(ok){
-        for(auto& i:QtList){
-            cout<<i.operation<<' '<<i.firstargument.name<<' '<<i.secondargument.name<<' '<<i.result.name<<endl;
-        }
-    }else{
+    if(!ok){
         reportingError.out_error();
     }
-    identifier.closeSourseFile();
     return ok;
 }
 

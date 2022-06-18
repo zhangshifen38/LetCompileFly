@@ -108,7 +108,9 @@ const map<string, size_t> SymbolTable::KEYWORDL {
         {"char",    16},
         {"bool",    17},
         {"proc",    18},
-        {"func",    19}
+        {"func",    19},
+        {"true",    20},
+        {"false",   21}
 };
 const map<string, size_t> SymbolTable::DELIMITERL {
         {"-",		1},

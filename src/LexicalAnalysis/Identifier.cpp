@@ -73,8 +73,9 @@ bool Identifier::hasNext() {
     }
 }
 
-void Identifier::openSourceFile(string st) {
+bool Identifier::openSourceFile(string st) {
     this->sourceCode.open(st, std::ios::in);
+    return this->sourceCode.is_open();
 }
 void Identifier::closeSourseFile() {
     this->sourceCode.close();
