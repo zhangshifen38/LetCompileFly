@@ -1055,7 +1055,7 @@ void runObjectCode(string path)
                 datafile<<"FUNCSEG"+ to_string(segmentnumber)<<" "<<"ENDS"<<endl;
             datafile<<"CSEG SEGMENT"<<endl;
             datafile<<"ASSUME DS:DSEG,CS:CSEG,SS:SSEG"<<endl;
-            datafile<<"START:"<<" MOV AX,DSEG"<<endl<<"MOV DS,AX"<<endl<<"MOV AX,SSEG"<<endl<<"MOV SS,AX"<<endl;
+            datafile<<"START:"<<endl<<" MOV AX,DSEG"<<endl<<"MOV DS,AX"<<endl<<"MOV AX,SSEG"<<endl<<"MOV SS,AX"<<endl;
             datafile<<"LEA SI,SKTOP"<<endl;
         }
         else
