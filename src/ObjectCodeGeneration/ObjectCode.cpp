@@ -939,7 +939,7 @@ void objectCodeGeneration(int dstart, int dend)
                 storeCode("MOV","[DI]",","+ObjQtList[i].firstargument);
         }
         else if (ObjQtList[i].operation == FUNC) {
-            storeCode(ObjQtList[i].result," PROC","");
+            storeCode(ObjQtList[i].result,"PROC","");
             if(ObjQtList[i].result!="main")
             {
                 storeCode("PUSH","AX","");
@@ -990,6 +990,9 @@ void acClear()
 }
 void runObjectCode(string path)
 {
+    int segmentnumber = 0;
+    int functionnumber = 0;
+    int flag= 0;
     countnumber = 0;
     dataReading();
     initial();
@@ -1025,13 +1028,33 @@ void runObjectCode(string path)
     datafile<<"SSEG SEGMENT"<<endl;
     datafile<<"SKTOP DW 200 DUP(0)"<<endl;
     datafile<<"SSEG ENDS"<<endl;
-    datafile<<"CSEG SEGMENT"<<endl;
-    datafile<<"ASSUME DS:DSEG,CS:CSEG,SS:SSEG"<<endl;
 //    datafile<<"START:"<<" MOV AX,DSEG"<<endl<<"MOV DS,AX"<<endl<<"MOV AX,SSEG"<<endl<<"MOV SS,AX"<<endl;
 //    datafile<<"LEA SI,SKTOP"<<endl;
     for(int i=0;i<CodeList.size();i++) {
-        if(CodeList[i].operation=="main")
+        if(CodeList[i].dest=="PROC"&&CodeList[i].operation!="main") {
+            if(functionnumber==0) {
+                segmentnumber++;
+                datafile<<"FUNCSEG"+ to_string(segmentnumber)<<" "<<"SEGMENT"<<endl;
+            }
+            datafile<<CodeList[i].operation<<" "<<CodeList[i].dest<<CodeList[i].source<<" "<<"FAR"<<endl;
+        }
+        else if(CodeList[i].dest=="ENDP"&&flag==0)
         {
+            functionnumber++;
+            datafile<<CodeList[i].operation<<" "<<CodeList[i].dest<<CodeList[i].source<<endl;
+            if(functionnumber==2)
+            {
+                datafile<<"FUNCSEG"+ to_string(segmentnumber)<<" "<<"ENDS"<<endl;
+                functionnumber=0;
+            }
+        }
+        else if(CodeList[i].operation=="main")
+        {
+            flag=1;
+            if(functionnumber!=0)
+                datafile<<"FUNCSEG"+ to_string(segmentnumber)<<" "<<"ENDS"<<endl;
+            datafile<<"CSEG SEGMENT"<<endl;
+            datafile<<"ASSUME DS:DSEG,CS:CSEG,SS:SSEG"<<endl;
             datafile<<"START:"<<" MOV AX,DSEG"<<endl<<"MOV DS,AX"<<endl<<"MOV AX,SSEG"<<endl<<"MOV SS,AX"<<endl;
             datafile<<"LEA SI,SKTOP"<<endl;
         }
