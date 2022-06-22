@@ -59,7 +59,7 @@ public:
     char operator()(const char ch) const{
         if (isdigit(ch)) {
             return '0';
-        } else if ((ch >= 'a' && ch <= 'e') || (ch >= 'A' && ch <= 'E')) {
+        } else if ((ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F')) {
             return 'a';
         } else {
             return ch;
@@ -83,7 +83,7 @@ const array<TransFunc, 27> AutomatonLA::table {
                 {'\"',	18},
                 {'&',   23},
                 {'|',   25}
-        }, 21, TransChar1()),
+        }, 21, new TransChar1()),
         TransFunc(map<char, int>{		//2
                 {'A',	2},
                 {'0',	2}
@@ -93,16 +93,16 @@ const array<TransFunc, 27> AutomatonLA::table {
                 {'0',	4},
                 {'.',	6},
                 {'e',	7}
-        }, -2, TransChar3()),
+        }, -2, new TransChar3()),
         TransFunc(map<char, int>{		//4
                 {'0',	4},
                 {'.',	6},
                 {'e',	7}
-        }, -2, TransChar3()),
+        }, -2, new TransChar3()),
         TransFunc(map<char, int>{		//5
                 {'0',	22},
                 {'a',	22}
-        }, 0, TransChar5()),
+        }, 0, new TransChar5()),
         TransFunc(map<char, int>{		//6
                 {'0',	10}
         }),
@@ -120,7 +120,7 @@ const array<TransFunc, 27> AutomatonLA::table {
         TransFunc(map<char, int>{		//10
                 {'0',	10},
                 {'e',	7}
-        }, -3, TransChar3()),
+        }, -3,new TransChar3()),
         TransFunc(map<char, int>{		//11
                 {'=',	12}
         }, -4),
@@ -143,7 +143,7 @@ const array<TransFunc, 27> AutomatonLA::table {
         TransFunc(map<char, int>{		//22
                 {'0',	22},
                 {'a',	22}
-        }, -2, TransChar5()),
+        }, -2, new TransChar5()),
         TransFunc(map<char,int>{        //23
                 {'&',   24}
         }),

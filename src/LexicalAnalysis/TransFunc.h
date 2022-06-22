@@ -25,12 +25,13 @@ public:
 class TransFunc {
 public:
     //构造函数：使用对应法则字典、默认状态序号与翻译函数来初始化
-    TransFunc(map<char, int> &&mp,int df = 0,TransChar tr = TransChar());
+    TransFunc(map<char, int> &&mp,int df = 0,TransChar *tr = new TransChar());
     //状态转移函数的核心功能：在读到某个输入时，返回转移到的状态
     int getNextState(char ch) const;
+    ~TransFunc();
 private:
     int defaultState;		//默认状态
-    TransChar t;    		//字符翻译函数
+    TransChar *t;    		//字符翻译函数
     map<char, int> transTable;	//对应法则字典
 };
 
