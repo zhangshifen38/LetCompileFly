@@ -18,15 +18,15 @@ class ArithmeticExpression {
 public:
     using LexicalToken = std::pair<std::string, int>;
     ArithmeticExpression();
-    bool analysis();
-    Token getResult();
+    bool analysis();            //分析主函数
+    Token getResult();          //若符合语法规则，获取算术表达式计算的结果变量
     void setPrev(Token tk,string n);
 private:
-    stack<Token> waitForAssign;
+    stack<Token> waitForAssign; //待生成四元式的变量分析栈
     bool hasPrev;
-    Token offset;
+    Token offset;               //与数组有关
     string vname;
-
+    //分析子程序
     bool funcE();
     bool funcT();
     bool funcF();

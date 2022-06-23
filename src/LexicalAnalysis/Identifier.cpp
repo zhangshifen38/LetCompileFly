@@ -28,7 +28,7 @@ void Identifier::addSentence() {
 }
 
 void Identifier::nextW() {
-    if (!this->pushStack.empty()) {
+    if (!this->pushStack.empty()) { //栈非空，取栈内单词
         this->pushStack.pop();
         return;
     }
@@ -39,7 +39,7 @@ void Identifier::nextW() {
             this->currentWord = make_pair(ret, 0);
             return;             //没有要识别的单词了，返回结束标记0
         }
-        if (!todo) {
+        if (!todo) {                //加入下一行
             addSentence();
             todo = true;
             index = 0;
@@ -54,10 +54,10 @@ void Identifier::nextW() {
         }
     }
     while (!at.machineHalt(tmp[index])) {
-        ret += tmp[index];
+        ret += tmp[index];          //持续读字符直到停机
         ++index;
     }
-    if (tmp[index] == '\0') {
+    if (tmp[index] == '\0') {       //结束标记
         todo = false;
     }
     this->currentWord = make_pair(ret, at.getState());

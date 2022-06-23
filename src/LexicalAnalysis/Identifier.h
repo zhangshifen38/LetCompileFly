@@ -28,6 +28,8 @@ public:
     void feedBack(pair<string,int> fb); //送回语法成分
     string transInt(string st);         //将整数转换为十进制表示的字符串
     long long transIntDirectly(string st);  //将整数字符串翻译成long long型数字
+    int getRow() const;
+    int getColoum() const;
 private:
     AutomatonLA at;						//识别器自动机
     queue<string> buffer;				//待识别的字符串暂存队列
@@ -38,11 +40,6 @@ private:
     pair<string ,int> currentWord;      //当前的符号
     stack<pair<string ,int>> pushStack; //下推栈，可用于反悔分析
     int row,coloum;                     //当前识别到的行与列
-public:
-    int getRow() const;
-
-    int getColoum() const;
-
 };
 
 

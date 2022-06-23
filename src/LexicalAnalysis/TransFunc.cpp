@@ -9,6 +9,7 @@ TransFunc::TransFunc(map<char, int> &&mp, int df, TransChar *tr)
 
 int TransFunc::getNextState(char ch) const {
     char tch = (*t)(ch);            //先翻译读入的字符
+    //然后去状态转移表里查询
     if (transTable.find(tch) != transTable.end()) {
         return transTable.at(tch);    //若读入该字符有特殊转移状态
     } else {
